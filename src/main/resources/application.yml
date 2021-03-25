@@ -19,9 +19,9 @@ spring:
   datasource:
     #druid基本属性
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://121.5.39.223:3306/ydx_tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    username: ydx_tell
-    password: 123
+    url: jdbc:mysql://8.136.1.98:3306/tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
     #druid相关配置
     druid:

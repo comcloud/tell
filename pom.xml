@@ -64,6 +64,17 @@
             </exclusions>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.zyplayer/swagger-mg-ui -->
+        <dependency>
+            <groupId>com.zyplayer</groupId>
+            <artifactId>swagger-mg-ui</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.0.6</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
