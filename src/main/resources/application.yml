@@ -69,3 +69,5 @@ spring:
     topic-name: topic-test
   application:
     name: tell
+time:
+  cron: 0 0 12 * * ?

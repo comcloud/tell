@@ -14,7 +14,10 @@ public enum RedisEnums implements RedsiBaseEnums {
     /**
      * redis 系统美文 的redis 数据库号，以及key 值
      */
-    SYS_BEAUTYWEN_HASHCODE(2,"system:beautyWen:hashCode");
+    SYS_BEAUTYWEN_HASHCODE(2,"system:beautyWen:hashCode"),
+
+    SYS_BEAUTYWEN_JSONS(2,"system:beautyWen:JSONS"),
+    SYS_ERROR_BEAUTYWEN_JSONS(2,"system:error:beautyWen:JSONS");
 
     @Setter
     private int dbIndex;

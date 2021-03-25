@@ -582,7 +582,12 @@ public class FileUtil {
         }
     }
 
-
+    /**
+     * xu序列化对象
+     * @param path 序列化弘扬文件存储位置加名字
+     * @param obj 序列化对象
+     * @return
+     */
     public static boolean writeFile(String path,Object obj){
         try {
             // 创建序列化流对象
@@ -599,14 +604,14 @@ public class FileUtil {
         }
         return true;
     }
-    public static List<Map<String, String>>   redaFile(String path){
-        ArrayList<Map<String, String>> list ;
+    public static Object  redaFile(File path){
+        Object list ;
         try {
             // 创建反序列化流
             FileInputStream fileIn = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(fileIn);
             // 读取一个对象
-            list = (ArrayList<Map<String, String>>) in.readObject();
+            list = in.readObject();
             // 释放资源
             in.close();
             fileIn.close();
