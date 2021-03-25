@@ -53,7 +53,7 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   redis:
-    host: 47.95.221.79
+    host: 121.5.39.223
     port: 6379
     timeout: 300000
     lettuce:
@@ -62,9 +62,12 @@ spring:
         max-wait: 100000
         max-idle: 8
         min-idle: 0
+    password:
+    database: 1
   #自定义的监听的TOPIC路径
   message:
     topic-name: topic-test
   application:
     name: tell
-
+time:
+  cron: 0 0 12 * * ?
