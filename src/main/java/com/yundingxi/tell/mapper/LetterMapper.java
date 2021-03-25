@@ -4,6 +4,8 @@ import com.yundingxi.tell.bean.entity.Letter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @version v1.0
  * @ClassName LetterMapper
@@ -14,4 +16,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface LetterMapper {
     void insertSingleLetter(@Param("letter") Letter letter);
+
+    List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation);
 }

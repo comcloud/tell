@@ -22,7 +22,8 @@ public interface LetterService {
     String putUnreadMessage(String openId);
 
     /**
-     * 获取信件要保证
+     * 获取信件要保证以下结果
+     * 只要不是当天登陆，都会进行重新获取三封信
      * @param openId 用户 open id
      * @return 结果集
      */

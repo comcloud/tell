@@ -8,4 +8,9 @@
         value(#{letter.id},#{letter.stampUrl},#{letter.openId},#{letter.content},#{letter.state},
             #{letter.penName},#{letter.tapIds},#{letter.releaseTime})
     </insert>
+    <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        limit #{letterCountLocation}, 3;
+    </select>
 </mapper>
