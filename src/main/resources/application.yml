@@ -56,14 +56,14 @@ spring:
     host: 121.5.39.223
     port: 6379
     timeout: 300000
+    password: 123
+    database: 1
     lettuce:
       pool:
         max-active: 8
         max-wait: 100000
         max-idle: 8
         min-idle: 0
-    password:
-    database: 1
   #自定义的监听的TOPIC路径
   message:
     topic-name: topic-test

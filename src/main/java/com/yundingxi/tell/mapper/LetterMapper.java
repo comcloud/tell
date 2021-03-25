@@ -1,8 +1,8 @@
 package com.yundingxi.tell.mapper;
 
 import com.yundingxi.tell.bean.entity.Letter;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.mapstruct.Mapper;
 
 /**
  * @version v1.0

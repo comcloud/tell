@@ -2,6 +2,8 @@ package com.yundingxi.tell.service;
 
 import com.yundingxi.tell.bean.entity.Letter;
 
+import java.util.List;
+
 /**
  * @version v1.0
  * @ClassName LetterService
@@ -18,4 +20,11 @@ public interface LetterService {
      * @return 唯独消息的Json串
      */
     String putUnreadMessage(String openId);
+
+    /**
+     * 获取信件要保证
+     * @param openId 用户 open id
+     * @return 结果集
+     */
+    List<Letter> getLettersByOpenId(String openId);
 }

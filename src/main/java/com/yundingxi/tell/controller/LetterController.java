@@ -7,6 +7,8 @@ import com.yundingxi.tell.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @version v1.0
  * @ClassName LetterController
@@ -31,9 +33,24 @@ public class LetterController {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
     }
 
+    /**
+     * 拉去用户未读消息
+     * @param openId 用户open id
+     * @return 用户未读消息
+     */
     @GetMapping(value = "/putUnreadMessage")
     public Result<String> putUnreadMessage(@RequestParam("openId") String openId){
         String letterJson = letterService.putUnreadMessage(openId);
         return ResultGenerator.genSuccessResult(letterJson);
+    }
+
+    /**
+     * 获取三封信件
+     * @param openId 用户 open id
+     * @return 信件结果集
+     */
+    @GetMapping(value = "/getLetter")
+    public Result<List<Letter>> getLetters(String openId){
+        return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 }
