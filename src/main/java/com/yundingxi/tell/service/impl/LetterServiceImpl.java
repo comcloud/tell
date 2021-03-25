@@ -46,7 +46,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public String putUnreadMessage(String openId) {
         //使用redis获取
-        return (String) redisUtil.get(openId);
+        return (String) redisUtil.get(openId+"_unread_message");
     }
 
     @Override
