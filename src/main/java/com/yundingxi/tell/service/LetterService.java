@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service;
 
 import com.yundingxi.tell.bean.entity.Letter;
+import com.yundingxi.tell.bean.entity.Reply;
 
 import java.util.List;
 
@@ -12,6 +13,11 @@ import java.util.List;
  */
 
 public interface LetterService {
+    /**
+     * 保存单封信件到数据库，返回信件的送达时间
+     * @param letter 信件对象
+     * @return 返回信件的送达时间
+     */
     String saveSingleLetter(Letter letter);
 
     /**
@@ -28,4 +34,6 @@ public interface LetterService {
      * @return 结果集
      */
     List<Letter> getLettersByOpenId(String openId);
+
+    void saveReplyFromSenderToRecipient(Reply reply);
 }

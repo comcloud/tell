@@ -8,6 +8,10 @@
         value(#{letter.id},#{letter.stampUrl},#{letter.openId},#{letter.content},#{letter.state},
             #{letter.penName},#{letter.tapIds},#{letter.releaseTime})
     </insert>
+    <insert id="insertReply">
+        insert into reply
+        value(#{reply.id},#{reply.letterId},#{reply.replyTime},#{reply.content},#{reply.openId},#{reply.penName})
+    </insert>
     <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter

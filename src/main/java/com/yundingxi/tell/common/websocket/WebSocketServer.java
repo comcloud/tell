@@ -1,11 +1,7 @@
 package com.yundingxi.tell.common.websocket;
 
-import cn.hutool.db.Db;
-import cn.hutool.db.Entity;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.util.SpringUtil;
+import com.yundingxi.tell.bean.vo.LetterVo;
+import com.yundingxi.tell.util.message.SendMailUtil;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -18,13 +14,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableWebSocket
 @EnableWebSocketMessageBroker
 @Api(value = "/websocket/openid/toOpenid", tags = "websocket服务端")
-@ServerEndpoint(value = "/reply/{openid}/{toOpenid}")
+@ServerEndpoint(value = "/reply/{openid}/{reply}")
 public class WebSocketServer {
 
     private Logger log = LoggerFactory.getLogger(WebSocketServer.class);
@@ -70,21 +60,28 @@ public class WebSocketServer {
     /***接收者 */
     private String recipient = "";
 
+    /*** 回复的消息，包含要回复的信件id，回复者的笔名 */
+    private List<String> replyList = new ArrayList<>(2);
+
     /**
      * 连接建立成功调用的方法
      **/
     @OnOpen
     public void onOpen(Session session,
-                                    @PathParam("openid") String openid,
-                                    @PathParam("toOpenid") String toOpenid) {
-        if(openid == null || toOpenid == null){
-            return ;
+                       @PathParam("openid") String openid,
+                       @PathParam("reply") String reply) {
+        if (openid == null || reply == null) {
+            return;
         }
         this.session = session;
         data.put(openid, this);
         addOnlineCount();
-        this.sender = openid;
-        this.recipient = toOpenid;
+        String[] s = openid.split(" ");
+        this.sender = s[0];
+        this.recipient = s[1];
+        String[] replySplit = reply.split(" ");
+        replyList.add(replySplit[0]);
+        replyList.add(replySplit[1]);
         log.info("sender = {}", sender);
         log.info("recipient = {}", this.recipient);
 
@@ -94,39 +91,17 @@ public class WebSocketServer {
     public void onMessage(String message, Session session) throws IOException {
         log.info("收到来自窗口" + sender + "的信息:" + message + "，发送给：" + recipient);
         log.info("当前我是：" + this.sender + ",我对应的集合存储位置是：" + data.get(this.sender));
-        sendMessage(message);
+        LetterVo letterVo = LetterVo.builder()
+                .letterId(replyList.get(0))
+                .penName(replyList.get(1))
+                .sender(sender)
+                .recipient(recipient)
+                .server(this)
+                .message(message)
+                .build();
+        SendMailUtil.enMessageToQueue(letterVo);
     }
 
-    private void sendMessage(String message) throws IOException {
-        log.info("即将发送消息来自" + this.sender + "，发送给" + this.recipient);
-        WebSocketServer socketServer = data.get(this.recipient);
-        if (socketServer != null) {
-            log.info("recipientServer.get().sender = {}", socketServer.sender);
-            assert false;
-            socketServer.session.getBasicRemote().sendText(message);
-            log.info("已经发送");
-            try {
-                Db.use().insert(
-                        Entity.create("chat_record")
-                                .set("chat_record_content", message)
-                                .set("send_open_id", this.sender)
-                                .set("receive_open_id", this.recipient)
-                                .set("send_time", LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //此时将信息暂时存放到redis
-            log.info(MessageFormat.format("消息接收者{0}还未建立WebSocket连接，{1}发送的消息【{2}】将被存储到Redis的【{3}】列表中", recipient, sender, message, this.recipient));
-            //存储消息到Redis中
-            final ObjectNode node = JsonNodeFactory.instance.objectNode();
-            node.put("sender", this.sender);
-            node.put("message", message);
-            node.put("sendTime", LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            final RedisUtil redisService = (RedisUtil) SpringUtil.getBean("redisUtil");
-            redisService.set(this.recipient + "_unread_message", node.toString());
-        }
-    }
 
     @OnClose
     public void onClose() {

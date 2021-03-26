@@ -1,6 +1,7 @@
 package com.yundingxi.tell.mapper;
 
 import com.yundingxi.tell.bean.entity.Letter;
+import com.yundingxi.tell.bean.entity.Reply;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,4 +19,6 @@ public interface LetterMapper {
     void insertSingleLetter(@Param("letter") Letter letter);
 
     List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation);
+
+    void insertReply(@Param("reply") Reply reply);
 }

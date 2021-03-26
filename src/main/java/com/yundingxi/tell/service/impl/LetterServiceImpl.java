@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Letter;
+import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.service.LetterService;
@@ -40,13 +41,17 @@ public class LetterServiceImpl implements LetterService {
         letter.setId(UUID.randomUUID().toString());
         letter.setState(1);
         letterMapper.insertSingleLetter(letter);
-        return JsonNodeFactory.instance.objectNode().put("sendTime", 0).toPrettyString();
+        return JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
     }
 
     @Override
     public String putUnreadMessage(String openId) {
         //使用redis获取
-        return (String) redisUtil.get(openId+"_unread_message");
+        String unreadMessage = (String) redisUtil.get(openId + "_unread_message");
+        if(unreadMessage != null){
+            redisUtil.del(openId + "_unread_message");
+        }
+        return unreadMessage;
     }
 
     @Override
@@ -63,5 +68,10 @@ public class LetterServiceImpl implements LetterService {
             redisUtil.set(openId+"_letter_info",newValue.toPrettyString());
         }
         return letterMapper.selectLetterLimit(letterCountLocation);
+    }
+
+    @Override
+    public void saveReplyFromSenderToRecipient(Reply reply) {
+        letterMapper.insertReply(reply);
     }
 }
