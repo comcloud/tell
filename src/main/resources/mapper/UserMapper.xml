@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -5,3 +6,15 @@
 <mapper namespace="D:com.yundingxi.tell.bean.dto.UserMapper.java">
     
 </mapper>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yundingxi.tell.mapper.UserMapper">
+
+
+    <select id="selectAllOpenId" resultType="java.lang.String">
+        select open_id
+        from user;
+    </select>
+</mapper>
+>>>>>>> 1dec623bf8103d6296e8ed7d371037c37d6e4f32

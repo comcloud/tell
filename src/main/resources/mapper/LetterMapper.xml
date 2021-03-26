@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yundingxi.tell.mapper.LetterMapper">
+
+
+    <insert id="insertSingleLetter">
+        insert into letter
+        value(#{letter.id},#{letter.stampUrl},#{letter.openId},#{letter.content},#{letter.state},
+            #{letter.penName},#{letter.tapIds},#{letter.releaseTime})
+    </insert>
+    <insert id="insertReply">
+        insert into reply
+        value(#{reply.id},#{reply.letterId},#{reply.replyTime},#{reply.content},#{reply.openId},#{reply.penName})
+    </insert>
+    <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        limit #{letterCountLocation}, 3;
+    </select>
+</mapper>

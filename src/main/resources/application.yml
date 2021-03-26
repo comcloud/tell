@@ -19,9 +19,9 @@ spring:
   datasource:
     #druid基本属性
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://121.5.39.223:3306/ydx_tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    username: ydx_tell
-    password: 123
+    url: jdbc:mysql://8.136.1.98:3306/tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
     #druid相关配置
     druid:
@@ -56,14 +56,19 @@ spring:
     host: 121.5.39.223
     port: 6379
     timeout: 300000
+    password: 123
+    database: 1
     lettuce:
       pool:
         max-active: 8
         max-wait: 100000
         max-idle: 8
         min-idle: 0
+<<<<<<< HEAD
     password: 123
     database: 1
+=======
+>>>>>>> 1dec623bf8103d6296e8ed7d371037c37d6e4f32
   #自定义的监听的TOPIC路径
   message:
     topic-name: topic-test

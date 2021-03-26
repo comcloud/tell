@@ -20,7 +20,12 @@ import java.util.*;
  */
 @Controller
 public class BeautyArticleController {
+<<<<<<< HEAD
     @Resource
+=======
+
+    @Autowired
+>>>>>>> 1dec623bf8103d6296e8ed7d371037c37d6e4f32
     private RedisUtil redisUtil;
     @Resource
     private BeautyArticleService beautyArticleService;

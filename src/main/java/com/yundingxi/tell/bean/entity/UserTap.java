@@ -27,5 +27,4 @@ public class UserTap implements Serializable {
      * 标签名
      */
     private String name;
-
 }
