@@ -1,4 +1,5 @@
 package com.yundingxi.tell.controller;
+
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.service.BeautyArticleService;
 import com.yundingxi.tell.utils.Result;
@@ -22,6 +23,10 @@ import java.util.*;
 @Controller
 public class BeautyArticleController {
     @Resource
+<<<<<<< HEAD
+=======
+
+>>>>>>> 710cb05e4001f12eaede559facdd4ea76cb515a1
     @Autowired
     private RedisUtil redisUtil;
     @Resource
