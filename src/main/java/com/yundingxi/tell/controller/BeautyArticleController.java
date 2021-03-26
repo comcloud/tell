@@ -3,6 +3,7 @@ import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.service.BeautyArticleService;
 import com.yundingxi.tell.utils.Result;
 import com.yundingxi.tell.utils.ResultGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +21,8 @@ import java.util.*;
  */
 @Controller
 public class BeautyArticleController {
-<<<<<<< HEAD
     @Resource
-=======
-
     @Autowired
->>>>>>> 1dec623bf8103d6296e8ed7d371037c37d6e4f32
     private RedisUtil redisUtil;
     @Resource
     private BeautyArticleService beautyArticleService;
