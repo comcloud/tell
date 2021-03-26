@@ -74,6 +74,7 @@ public class ReptileUtils {
             map.put("articleTitle", articleTitle);
             map.put("articleTime", articleTime);
             map.put("articleContent", articleContent);
+            map.put("articleTag", articleTag);
             list.add(map);
         }
         return list;
