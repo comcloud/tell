@@ -20,8 +20,8 @@ public class ResultGenerator {
      * 无参数 获取成功结果
      * @return
      */
-    public static Result genSuccessResult() {
-        Result result = new Result();
+    public static Result<String> genSuccessResult() {
+        Result<String> result = new Result<String>();
         result.setResultCode(RESULT_CODE_SUCCESS);
         result.setMessage(DEFAULT_SUCCESS_MESSAGE);
         return result;
@@ -32,8 +32,8 @@ public class ResultGenerator {
      * @param message 成功信息
      * @return
      */
-    public static Result genSuccessResult(String message) {
-        Result result = new Result();
+    public static Result<String> genSuccessResult(String message) {
+        Result<String> result = new Result<String>();
         result.setResultCode(RESULT_CODE_SUCCESS);
         result.setMessage(message);
         return result;
@@ -44,8 +44,8 @@ public class ResultGenerator {
      * @param data 传入对象数据
      * @return
      */
-    public static Result genSuccessResult(Object data) {
-        Result result = new Result();
+    public static Result<Object> genSuccessResult(Object data) {
+        Result<Object> result = new Result<Object>();
         result.setResultCode(RESULT_CODE_SUCCESS);
         result.setMessage(DEFAULT_SUCCESS_MESSAGE);
         result.setData(data);
@@ -57,8 +57,8 @@ public class ResultGenerator {
      * @param message 失败结果
      * @return 失败结果
      */
-    public static Result genFailResult(String message) {
-        Result result = new Result();
+    public static Result<String> genFailResult(String message) {
+        Result<String> result = new Result<String>();
         result.setResultCode(RESULT_CODE_SERVER_ERROR);
         if (StringUtils.isEmpty(message)) {
             result.setMessage(DEFAULT_FAIL_MESSAGE);
@@ -74,8 +74,8 @@ public class ResultGenerator {
      * @param message 返回信息
      * @return 结果，有状态码
      */
-    public static Result genErrorResult(int code, String message) {
-        Result result = new Result();
+    public static Result<String> genErrorResult(int code, String message) {
+        Result<String> result = new Result<String>();
         result.setResultCode(code);
         result.setMessage(message);
         return result;

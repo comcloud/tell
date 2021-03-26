@@ -10,7 +10,7 @@ import lombok.Setter;
  * @date 2021/3/25-9:13
  */
 @AllArgsConstructor
-public enum RedisEnums implements RedsiBaseEnums {
+public enum RedisEnums implements RedisEaseEnums {
     /**
      * redis 系统美文 的redis 数据库号，以及key 值
      */

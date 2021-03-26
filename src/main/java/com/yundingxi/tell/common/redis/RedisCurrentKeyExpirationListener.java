@@ -6,7 +6,7 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
 /**
- * 监听 Redis 当前库 key 过期事件
+ * Redis 消息接收
  *
  */
 @Slf4j

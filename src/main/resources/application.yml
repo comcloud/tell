@@ -62,7 +62,7 @@ spring:
         max-wait: 100000
         max-idle: 8
         min-idle: 0
-    password:
+    password: 123
     database: 1
   #自定义的监听的TOPIC路径
   message:

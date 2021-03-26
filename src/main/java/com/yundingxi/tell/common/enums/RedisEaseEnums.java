@@ -7,14 +7,16 @@ package com.yundingxi.tell.common.enums;
  * <p>描述:
  * @date 2021/3/25-9:14
  */
-public interface RedsiBaseEnums {
+public interface RedisEaseEnums {
     /**
      * 获取几号数据库
      * @return
      */
     int getRedisDbIndex();
+
     /**
-     * 获取Key
+     * 获取key
+     * @return
      */
     String getRedisKey();
 }
