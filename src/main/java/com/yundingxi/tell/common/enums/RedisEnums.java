@@ -1,4 +1,5 @@
 package com.yundingxi.tell.common.enums;
+
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 

@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Controller
 public class BeautyArticleController {
+
     @Autowired
     private RedisUtil redisUtil;
 
