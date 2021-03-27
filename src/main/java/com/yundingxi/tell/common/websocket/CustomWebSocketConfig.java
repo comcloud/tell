@@ -33,8 +33,8 @@ public class CustomWebSocketConfig extends AbstractWebSocketMessageBrokerConfigu
     }
 
 
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
-    }
+//    @Bean
+//    public ServerEndpointExporter serverEndpointExporter() {
+//        return new ServerEndpointExporter();
+//    }
 }
