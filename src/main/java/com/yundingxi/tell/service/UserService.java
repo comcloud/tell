@@ -1,5 +1,7 @@
 package com.yundingxi.tell.service;
-import org.apache.tomcat.jni.User;
+import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.util.Result;
+import org.springframework.stereotype.Service;
 
 /**
  * @author hds
@@ -8,6 +10,7 @@ import org.apache.tomcat.jni.User;
  * <p>描述:
  * @date 2021/3/26-20:36
  */
+@Service
 public interface UserService {
-    Integer insertUser(User user);
+    Result<String> insertUser(User user);
 }

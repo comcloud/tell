@@ -1,24 +1,14 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yundingxi.tell.mapper.UserMapper">
 
     <insert id="insertUser">
         insert into `user`
-            value(#{user.openId},#{user.dateBirth},#{reply.gender},#{reply.registrationTime},#{reply.lastLoginTime},#{reply.state},#{replypenName},#{reply.avatarUrl})
+            value(#{user.openId},#{user.dateBirth},#{user.gender},#{user.registrationTime},#{user.lastLoginTime},#{user.state},#{user.penName},#{user.avatarUrl})
     </insert>
-</mapper>
-=======
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<mapper namespace="com.yundingxi.tell.mapper.UserMapper">
-
-
-    <select id="selectAllOpenId" resultType="java.lang.String">
+    <select id="selectAllOpenId" resultType="java.util.List">
         select open_id
-        from user;
+        from `user`;
     </select>
 </mapper>
->>>>>>> 710cb05e4001f12eaede559facdd4ea76cb515a1
+

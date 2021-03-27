@@ -53,7 +53,7 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   redis:
-    host: 121.5.39.223
+    host:  121.5.39.223
     port: 6379
     timeout: 300000
     password: 123
