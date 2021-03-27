@@ -23,7 +23,6 @@ import java.util.*;
 @Controller
 public class BeautyArticleController {
     @Resource
-
     @Autowired
     private RedisUtil redisUtil;
     @Resource

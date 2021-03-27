@@ -1,6 +1,9 @@
 package com.yundingxi.tell.mapper;
 
+import com.yundingxi.tell.bean.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
@@ -13,5 +16,16 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
-    List<String> selectAllOpenId();
+    /**
+     *  插入用户信息
+     * @param user 用户类
+     * @return
+     */
+    Integer insertUser(@Param("user") User user);
+
+    /**
+     *  S
+     * @return
+     */
+    List selectAllOpenId();
 }

@@ -19,12 +19,14 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.stereotype.Controller;
 
 /**
  * Redis核心配置类
  *
  */
 @Configuration
+@Controller
 public class RedisConfig extends CachingConfigurerSupport {
 
     @Autowired

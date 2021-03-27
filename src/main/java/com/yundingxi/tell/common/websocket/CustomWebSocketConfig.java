@@ -2,6 +2,7 @@ package com.yundingxi.tell.common.websocket;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -37,4 +38,9 @@ public class CustomWebSocketConfig extends AbstractWebSocketMessageBrokerConfigu
 //    public ServerEndpointExporter serverEndpointExporter() {
 //        return new ServerEndpointExporter();
 //    }
+//    @Bean(value = "serverEndpointExporter")
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
 }
