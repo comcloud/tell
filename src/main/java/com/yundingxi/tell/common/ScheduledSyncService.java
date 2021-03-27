@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @version v1.0
@@ -18,6 +19,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Component
 public class ScheduledSyncService {
 
+    /**
+     * 定时发送未发送的信件
+     */
     @Scheduled(cron = "0/10 * * * * ?")
     public void executeReplyLetterFromQueue(){
         BlockingDeque<LetterVo> waitQueue = SendMailUtil.getWAIT_QUEUE();
@@ -25,6 +29,15 @@ public class ScheduledSyncService {
             return;
         }
         ThreadPoolExecutor pool = SendMailUtil.getPOOL();
-        waitQueue.forEach(letterVo -> pool.execute(new SendMailUtil.LetterTask(letterVo)));
+        ReentrantLock mainLock = SendMailUtil.getLOCK();
+        mainLock.lock();
+        try {
+            for (int i = 0; i < waitQueue.size(); i++) {
+                LetterVo letterVo = waitQueue.peek();
+                pool.execute(new SendMailUtil.LetterTask(letterVo));
+            }
+        }finally {
+            mainLock.unlock();
+        }
     }
 }

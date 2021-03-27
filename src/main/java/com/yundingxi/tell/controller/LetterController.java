@@ -4,6 +4,7 @@ import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/letter")
+@Api(value = "/letter",tags = "信件接口")
 public class LetterController {
 
     @Autowired
@@ -28,6 +30,7 @@ public class LetterController {
      * @param letter 发送的信件
      * @return 返回结果
      */
+
     @PostMapping(value = "/send")
     public Result<String> saveLetter(@RequestParam Letter letter){
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));

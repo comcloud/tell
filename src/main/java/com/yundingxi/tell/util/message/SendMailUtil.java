@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @version v1.0
@@ -53,6 +54,9 @@ public class SendMailUtil {
     private static final int LETTER_THRESHOLD = 5;
 
     @Getter
+    private static final ReentrantLock LOCK = new ReentrantLock();
+
+    @Getter
     private static final ThreadPoolExecutor POOL = new ThreadPoolExecutor(CORE_POOL_SIZE
             , MAX_POOL_SIZE
             , KEEP_ALIVE_TIME
@@ -68,14 +72,18 @@ public class SendMailUtil {
      * @param letterVo 回复信件集合
      */
     public static void enMessageToQueue(LetterVo letterVo) {
-        int activeCount = POOL.getActiveCount();
         int waitQueueSize = WAIT_QUEUE.size();
         if (waitQueueSize >= LETTER_THRESHOLD) {
-            List<LetterVo> letterVos = new ArrayList<>();
-            for (int i = 0; i < LETTER_THRESHOLD; i++) {
-                letterVos.add(WAIT_QUEUE.peek());
+            LOCK.lock();
+            try{
+                List<LetterVo> letterVos = new ArrayList<>();
+                for (int i = 0; i < LETTER_THRESHOLD; i++) {
+                    letterVos.add(WAIT_QUEUE.peek());
+                }
+                POOL.execute(new LetterTask(letterVos));
+            }finally {
+                LOCK.unlock();
             }
-            POOL.execute(new LetterTask(letterVos));
         }else{
             WAIT_QUEUE.push(letterVo);
         }
