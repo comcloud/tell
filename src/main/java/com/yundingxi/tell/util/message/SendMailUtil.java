@@ -2,6 +2,7 @@ package com.yundingxi.tell.util.message;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.LetterVo;
@@ -149,12 +150,13 @@ public class SendMailUtil {
                 //此时将信息暂时存放到redis
                 log.info(MessageFormat.format("消息接收者{0}还未建立WebSocket连接，{1}发送的消息【{2}】将被存储到Redis的【{3}】列表中", letterVo.getRecipient(), letterVo.getSender(), letterVo.getMessage(), letterVo.getRecipient()));
                 //存储消息到Redis中
-                final ObjectNode node = JsonNodeFactory.instance.objectNode();
-                node.put("sender", letterVo.getSender());
-                node.put("letter", letterVo.getMessage());
-                node.put("sendTime", LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                UnreadMessageDto unreadMessageDto = new UnreadMessageDto();
+                unreadMessageDto.setSender(letterVo.getSender());
+                unreadMessageDto.setMessage(letterVo.getMessage());
+                unreadMessageDto.setSenderTime(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                unreadMessageDto.setRecipient(letterVo.getRecipient());
                 final RedisUtil redisService = (RedisUtil) SpringUtil.getBean("redisUtil");
-                redisService.set(letterVo.getRecipient() + "_unread_message", node.toString());
+                redisService.set(letterVo.getRecipient() + "_unread_message", unreadMessageDto);
             }
             LetterService letterService = (LetterService) SpringUtil.getBean("letterService");
             letterService.saveReplyFromSenderToRecipient(

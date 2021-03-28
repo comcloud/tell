@@ -2,6 +2,7 @@ package com.yundingxi.tell.service.Impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -47,9 +48,9 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public String putUnreadMessage(String openId) {
+    public UnreadMessageDto putUnreadMessage(String openId) {
         //使用redis获取
-        String unreadMessage = (String) redisUtil.get(openId + "_unread_message");
+        UnreadMessageDto unreadMessage = (UnreadMessageDto) redisUtil.get(openId + "_unread_message");
         if (unreadMessage != null) {
             redisUtil.del(openId + "_unread_message");
         }
