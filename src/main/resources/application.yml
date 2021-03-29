@@ -1,5 +1,5 @@
 server:
-  port: 443
+  port: 8089
   max-http-header-size: 52428800
   ssl:
     key-store: 5128774_rayss.host.pfx
