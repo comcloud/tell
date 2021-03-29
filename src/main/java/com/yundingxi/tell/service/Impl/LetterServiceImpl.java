@@ -1,4 +1,5 @@
 package com.yundingxi.tell.service.Impl;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -13,15 +14,19 @@ import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
+import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @version v1.0
@@ -85,14 +90,17 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public String replyLetter(LetterReplyDto letterReplyDto) {
-        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
-        SendMailUtil.enMessageToQueue(new LetterVo(letterReplyDto.getSender()
-                ,letterReplyDto.getRecipient()
-                ,letterReplyDto.getLetterId()
-                ,letterReplyDto.getPenName()
-                ,letterReplyDto.getMessage()
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int nextInt = random.nextInt(2, 7);
+        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
+        ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
+                new LetterVo(letterReplyDto.getSender()
+                , letterReplyDto.getRecipient()
+                , letterReplyDto.getLetterId()
+                , letterReplyDto.getPenName()
+                , letterReplyDto.getMessage()
                 , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
-        ));
+        )), nextInt);
         return arrivalTime;
     }
 }
