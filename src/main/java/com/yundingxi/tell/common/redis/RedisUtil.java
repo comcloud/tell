@@ -37,7 +37,6 @@ public final class RedisUtil {
         jedisConnectionFactory.setDatabase(dbIndex);
         redisTemplate.setConnectionFactory(jedisConnectionFactory);
         jedisConnectionFactory.afterPropertiesSet();
-
     }
     /**
      * 指定缓存失效时间

@@ -25,5 +25,9 @@ public interface BeautyArticleService {
      */
     Result<String> updateBeautyArticle();
 
-    List<Map<String, String>> getBeautyArticle();
+    Map<String, String> getBeautyArticle(String id);
+
+    List<Map<String, String>> getBeautyArticleVo();
+
+    Result<Object> addBeautyArticleImg(String url);
 }

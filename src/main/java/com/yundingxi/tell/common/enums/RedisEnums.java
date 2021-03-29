@@ -18,6 +18,9 @@ public enum RedisEnums implements RedisEaseEnums {
     SYS_BEAUTYWEN_HASHCODE(2,"system:beautyWen:hashCode"),
 
     SYS_BEAUTYWEN_JSONS(2,"system:beautyWen:JSONS"),
+    SYS_BEAUTYWEN_HOME_JSONS(2,"system:beautyWen:home:JSONS"),
+    SYS_BEAUTYWEN_HOME_IMG_URL(2,"system:beautyWen:home:img:url"),
+    SYS_BEAUTYWEN_HOME_IMG_URL_INDEX(2,"system:beautyWen:home:img:url:index"),
     SYS_ERROR_BEAUTYWEN_JSONS(2,"system:error:beautyWen:JSONS");
 
     @Setter

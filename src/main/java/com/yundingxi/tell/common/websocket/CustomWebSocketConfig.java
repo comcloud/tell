@@ -1,11 +1,6 @@
 package com.yundingxi.tell.common.websocket;
 
 import org.springframework.context.annotation.Bean;
-<<<<<<< HEAD
-=======
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Controller;
->>>>>>> 75d2082aa6fb72e3f0dac51f98bf7caa01194167
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -34,17 +29,14 @@ public class CustomWebSocketConfig extends AbstractWebSocketMessageBrokerConfigu
         // Handshake endpoint
         registry.addEndpoint("stomp").withSockJS();
     }
-<<<<<<< HEAD
-    @Bean
+//    @Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
-=======
 
 
 //    @Bean
 //    public ServerEndpointExporter serverEndpointExporter() {
 //        return new ServerEndpointExporter();
 //    }
->>>>>>> 75d2082aa6fb72e3f0dac51f98bf7caa01194167
 }
