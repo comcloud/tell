@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * (User)实体类
@@ -27,7 +28,7 @@ public class User implements Serializable {
     /**
      * 出生日期
      */
-    private Date dateBirth;
+    private Date dateBirth=new Date();
     /**
      * 0：女 1：男
      */
@@ -35,15 +36,15 @@ public class User implements Serializable {
     /**
      * 注册时间
      */
-    private Date registrationTime;
+    private Date registrationTime=new Date();
     /**
      * 最后一次登陆时间
      */
-    private Date lastLoginTime;
+    private Date lastLoginTime =new Date();
     /**
      * 状态 0  正常，1 停用
      */
-    private Integer state;
+    private Integer state =0;
     /**
      * 笔名
      */

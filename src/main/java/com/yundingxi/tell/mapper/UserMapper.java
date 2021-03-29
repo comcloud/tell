@@ -3,7 +3,6 @@ package com.yundingxi.tell.mapper;
 import com.yundingxi.tell.bean.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
@@ -27,5 +26,5 @@ public interface UserMapper {
      *  S
      * @return
      */
-    List selectAllOpenId();
+    List<String> selectAllOpenId();
 }

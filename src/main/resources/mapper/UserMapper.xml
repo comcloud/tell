@@ -6,9 +6,9 @@
         insert into `user`
             value(#{user.openId},#{user.dateBirth},#{user.gender},#{user.registrationTime},#{user.lastLoginTime},#{user.state},#{user.penName},#{user.avatarUrl})
     </insert>
-    <select id="selectAllOpenId" resultType="java.util.List">
+    <select id="selectAllOpenId" resultType="java.lang.String">
         select open_id
-        from `user`;
+        from `user`
     </select>
 </mapper>
 
