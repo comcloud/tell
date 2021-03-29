@@ -1,5 +1,6 @@
 package com.yundingxi.tell.service;
 
+import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 
@@ -25,7 +26,7 @@ public interface LetterService {
      * @param openId 用户的open id
      * @return 唯独消息的Json串
      */
-    String putUnreadMessage(String openId);
+    UnreadMessageDto putUnreadMessage(String openId);
 
     /**
      * 获取信件要保证以下结果

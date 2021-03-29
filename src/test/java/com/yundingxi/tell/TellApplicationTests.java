@@ -18,6 +18,6 @@ class TellApplicationTests {
     private UserService userService;
     @Test
     void contextLoads() {
-        userService.insertUser(new User("vx0012",new Date(),1,new Date(),new Date(),0,"幸福的小洞洞","aaa"));
+
     }
 }

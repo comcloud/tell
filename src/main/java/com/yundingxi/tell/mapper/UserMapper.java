@@ -23,8 +23,6 @@ public interface UserMapper {
     Integer insertUser(@Param("user") User user);
 
     /**
-     *  S
-     * @return
      */
     List<String> selectAllOpenId();
 }

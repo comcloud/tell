@@ -2,12 +2,14 @@ package com.yundingxi.tell.service.Impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -23,15 +25,19 @@ import java.util.UUID;
  * @Datetime 2021/3/24 6:31 下午
  */
 
+@Slf4j
 @Service
 public class LetterServiceImpl implements LetterService {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    private LetterMapper letterMapper;
+    private final LetterMapper letterMapper;
+
+    private final RedisUtil redisUtil;
 
     @Autowired
-    private RedisUtil redisUtil;
+    public LetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil) {
+        this.letterMapper = letterMapper;
+        this.redisUtil = redisUtil;
+    }
 
     @Override
     public String saveSingleLetter(Letter letter) {
@@ -42,10 +48,10 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public String putUnreadMessage(String openId) {
+    public UnreadMessageDto putUnreadMessage(String openId) {
         //使用redis获取
-        String unreadMessage = (String) redisUtil.get(openId + "_unread_message");
-        if(unreadMessage != null){
+        UnreadMessageDto unreadMessage = (UnreadMessageDto) redisUtil.get(openId + "_unread_message");
+        if (unreadMessage != null) {
             redisUtil.del(openId + "_unread_message");
         }
         return unreadMessage;
@@ -53,16 +59,16 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public List<Letter> getLettersByOpenId(String openId) {
-        JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId+"_letter_info"));
+        JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
         String date = letterInfo.findPath("date").toString();
-        int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"",""));
+        int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
         String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if (!currentDate.equals(date)) {
             letterCountLocation = letterCountLocation + 3;
             ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
-            newValue.put("date",currentDate);
-            newValue.put("letter_count_location",letterCountLocation);
-            redisUtil.set(openId+"_letter_info",newValue.toPrettyString());
+            newValue.put("date", currentDate);
+            newValue.put("letter_count_location", letterCountLocation);
+            redisUtil.set(openId + "_letter_info", newValue.toPrettyString());
         }
         return letterMapper.selectLetterLimit(letterCountLocation);
     }

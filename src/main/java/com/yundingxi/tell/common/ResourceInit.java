@@ -27,6 +27,7 @@ public class ResourceInit implements CommandLineRunner {
     private final Logger log = LoggerFactory.getLogger(ResourceInit.class);
 
     private final RedisUtil redisUtil;
+
     private final UserMapper userMapper;
 
     @Autowired

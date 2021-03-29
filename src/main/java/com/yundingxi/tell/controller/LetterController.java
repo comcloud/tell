@@ -1,13 +1,17 @@
 package com.yundingxi.tell.controller;
 
+import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -19,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/letter")
-@Api(value = "/letter",tags = "信件接口")
+@Api(value = "/letter", tags = "信件接口")
 public class LetterController {
 
     @Autowired
@@ -27,33 +31,40 @@ public class LetterController {
 
     /**
      * 普通发送
+     *
      * @param letter 发送的信件
      * @return 返回结果
      */
 
     @PostMapping(value = "/send")
-    public Result<String> saveLetter(@RequestParam Letter letter){
+    @Operation(description = "保存信件")
+    public Result<String> saveLetter(@Parameter(description = "信件对象",required = true) @RequestParam Letter letter) {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
     }
 
     /**
      * 拉去用户未读消息
+     *
      * @param openId 用户open id
      * @return 用户未读消息
      */
     @GetMapping(value = "/putUnreadMessage")
-    public Result<String> putUnreadMessage(@RequestParam("openId") String openId){
-        String letterJson = letterService.putUnreadMessage(openId);
-        return ResultGenerator.genSuccessResult(letterJson);
+    @Operation(description = "要拉取的用户的open id")
+    public Result<UnreadMessageDto> putUnreadMessage(@Parameter(description = "open id", required = true)
+                                               @RequestParam("openId") String openId) {
+        UnreadMessageDto messageDto = letterService.putUnreadMessage(openId);
+        return ResultGenerator.genSuccessResult(messageDto);
     }
 
     /**
      * 获取三封信件
+     *
      * @param openId 用户 open id
      * @return 信件结果集
      */
     @GetMapping(value = "/getLetter")
-    public Result<List<Letter>> getLetters(String openId){
+    @Operation(description = "获取信件的用户的open id")
+    public Result<List<Letter>> getLetters(@Parameter(description = "open id", required = true) String openId) {
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 }
