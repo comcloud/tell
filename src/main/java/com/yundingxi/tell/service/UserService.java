@@ -13,4 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService {
     Result<String> insertUser(User user);
+
+    String getKey(String jsCode);
 }

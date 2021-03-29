@@ -1,35 +1,37 @@
 package com.yundingxi.tell.bean.entity;
 
+import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 /**
- * (LetterTap)实体类
+ * <p>
+ * 
+ * </p>
  *
- * @author makejava
- * @since 2021-03-24 08:34:36
+ * @author houdongsheng
+ * @since 2021-03-28
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(value="LetterTap对象", description="")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class LetterTap implements Serializable {
-    private static final long serialVersionUID = 314974066085607197L;
-    /**
-     * 信的标签主键
-     */
+
+    private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "信的标签主键")
     private String id;
-    /**
-     * 标签名
-     */
+
+    @ApiModelProperty(value = "标签名")
     private String name;
-    /**
-     * 标签使用数量
-     */
+
+    @ApiModelProperty(value = "标签使用数量")
     private Long count;
 
 

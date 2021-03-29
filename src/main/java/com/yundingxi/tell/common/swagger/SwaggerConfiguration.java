@@ -57,7 +57,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
                 // 支持的通讯协议集合
                 .protocols(newHashSet("https", "http"))
                 // 授权信息设置，必要的header token等认证信息
-                .securitySchemes(securitySchemes())
+//                .securitySchemes(securitySchemes())
                 // 授权信息全局应用
                 .securityContexts(securityContexts());
     }
@@ -77,10 +77,10 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
     /**
      * 设置授权信息
      */
-    private List<SecurityScheme> securitySchemes() {
-        ApiKey apiKey = new ApiKey("BASE_TOKEN", "token", In.HEADER.toValue());
-        return Collections.singletonList(apiKey);
-    }
+//    private List<SecurityScheme> securitySchemes() {
+//        ApiKey apiKey = new ApiKey("BASE_TOKEN", "token", In.HEADER.toValue());
+//        return Collections.singletonList(apiKey);
+//    }
 
     /**
      * 授权信息全局应用

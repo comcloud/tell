@@ -3,12 +3,12 @@ package com.yundingxi.tell.controller;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.Result;
+import com.yundingxi.tell.util.ResultGenerator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author hds
@@ -17,14 +17,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * <p>描述:
  * @date 2021/3/26-16:13
  */
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
-    @ResponseBody
+
     @PostMapping("/registeredUser")
-    public Result<String> registeredUser(@RequestBody User user){
-       return userService.insertUser(user);
+    public Result<String> registeredUser(@RequestBody User user) {
+        return userService.insertUser(user);
     }
+
+    @GetMapping("/getKey")
+    @Operation(description = "根据动态的js code生成用户的open id")
+    public Result<String> getKey(@Parameter(description = "js code", required = true)
+                                     @RequestParam String jsCode) {
+        String openId = userService.getKey(jsCode);
+        return ResultGenerator.genSuccessResult(openId);
+    }
+
 }
