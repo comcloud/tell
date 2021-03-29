@@ -1,9 +1,6 @@
 package com.yundingxi.tell.util.message;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
-import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -130,11 +127,11 @@ public class SendMailUtil {
          */
         @Override
         public void run() {
-            this.letterVoList.forEach(this::sendMessage);
+            this.letterVoList.forEach(this::sendMessageToSingle);
             this.letterVoList.clear();
         }
 
-        private void sendMessage(LetterVo letterVo) {
+        private void sendMessageToSingle(LetterVo letterVo) {
             log.info("即将发送消息来自" + letterVo.getSender() + "，发送给" + letterVo.getRecipient());
             WebSocketServer socketServer = letterVo.getServer();
             if (socketServer != null) {

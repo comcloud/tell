@@ -1,14 +1,19 @@
 package com.yundingxi.tell.service.Impl;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
+import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
+import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
+import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,5 +81,18 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public void saveReplyFromSenderToRecipient(Reply reply) {
         letterMapper.insertReply(reply);
+    }
+
+    @Override
+    public String replyLetter(LetterReplyDto letterReplyDto) {
+        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
+        SendMailUtil.enMessageToQueue(new LetterVo(letterReplyDto.getSender()
+                ,letterReplyDto.getRecipient()
+                ,letterReplyDto.getLetterId()
+                ,letterReplyDto.getPenName()
+                ,letterReplyDto.getMessage()
+                , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
+        ));
+        return arrivalTime;
     }
 }

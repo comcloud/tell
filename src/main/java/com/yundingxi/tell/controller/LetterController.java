@@ -1,5 +1,6 @@
 package com.yundingxi.tell.controller;
 
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.service.LetterService;
@@ -43,6 +44,14 @@ public class LetterController {
     public Result<String> saveLetter(@Parameter(description = "信件对象",required = true)
                                           Letter letter) {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
+    }
+
+    @PostMapping(value = "/reply")
+    @Operation(description = "给对方回复信件")
+    public Result<String> replyLetter(@Parameter(description = "回复信件的对象",required = true)
+                                                  LetterReplyDto letterReplyDto){
+        String result =  letterService.replyLetter(letterReplyDto);
+        return ResultGenerator.genSuccessResult(result);
     }
 
     /**

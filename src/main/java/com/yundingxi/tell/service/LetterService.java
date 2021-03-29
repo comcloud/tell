@@ -1,5 +1,6 @@
 package com.yundingxi.tell.service;
 
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
@@ -37,4 +38,10 @@ public interface LetterService {
     List<Letter> getLettersByOpenId(String openId);
 
     void saveReplyFromSenderToRecipient(Reply reply);
+
+    /**
+     * @param letterReplyDto 回复信件的类
+     * @return 信件何时会被送达
+     */
+    String replyLetter(LetterReplyDto letterReplyDto);
 }
