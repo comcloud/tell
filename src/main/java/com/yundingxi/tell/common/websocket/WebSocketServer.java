@@ -133,8 +133,12 @@ public class WebSocketServer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WebSocketServer that = (WebSocketServer) o;
         return session.equals(that.session) && sender.equals(that.sender) && recipient.equals(that.recipient);
     }

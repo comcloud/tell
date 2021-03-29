@@ -1,48 +1,48 @@
 package com.yundingxi.tell.bean.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.Date;
 import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
- * (Reply)实体类
+ * <p>
+ * 
+ * </p>
  *
- * @author makejava
- * @since 2021-03-24 08:34:36
+ * @author houdongsheng
+ * @since 2021-03-28
  */
 @Data
-@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(value="Reply对象", description="")
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class Reply implements Serializable {
-    private static final long serialVersionUID = -61199323300631797L;
-    /**
-     * 回信表主键
-     */
+
+    private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "回信表主键")
     private String id;
-    /**
-     * 回复信的ID
-     */
+
+    @ApiModelProperty(value = "回复信的ID")
     private String letterId;
-    /**
-     * 回复时间
-     */
+
+    @ApiModelProperty(value = "回复时间")
     private Date replyTime;
-    /**
-     * 回复内容
-     */
+
+    @ApiModelProperty(value = "回复内容")
     private String content;
-    /**
-     * 回复者的open_id
-     */
+
+    @ApiModelProperty(value = "回复者的open_id")
     private String openId;
-    /**
-     * 回复者的笔名
-     */
+
+    @ApiModelProperty(value = "回复者的笔名")
     private String penName;
+
 
 }

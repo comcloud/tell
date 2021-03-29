@@ -6,8 +6,10 @@ import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +40,8 @@ public class LetterController {
 
     @PostMapping(value = "/send")
     @Operation(description = "保存信件")
-    public Result<String> saveLetter(@Parameter(description = "信件对象",required = true) @RequestParam Letter letter) {
+    public Result<String> saveLetter(@Parameter(description = "信件对象",required = true)
+                                          Letter letter) {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
     }
 
@@ -49,7 +52,7 @@ public class LetterController {
      * @return 用户未读消息
      */
     @GetMapping(value = "/putUnreadMessage")
-    @Operation(description = "要拉取的用户的open id")
+    @Operation(description = "根据用户的open id获取此用户的未读消息")
     public Result<UnreadMessageDto> putUnreadMessage(@Parameter(description = "open id", required = true)
                                                @RequestParam("openId") String openId) {
         UnreadMessageDto messageDto = letterService.putUnreadMessage(openId);

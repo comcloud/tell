@@ -1,4 +1,5 @@
 package com.yundingxi.tell.service.Impl;
+import cn.hutool.http.HttpUtil;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.UserService;
@@ -26,5 +27,14 @@ public class UserServiceImpl implements UserService {
       }else {
           return ResultGenerator.genFailResult("注册失败！！！");
       }
+    }
+
+    @Override
+    public String getKey(String jsCode) {
+        String baseUrl = "https://api.weixin.qq.com/sns/jscode2session" + "?js_code=" + jsCode;
+        String appid = "wx45847f8c326518ee";
+        String secret = "39b3662386b4bc8ec624f814369bf205";
+        String grantType = "authorization_code";
+        return HttpUtil.get(baseUrl + "&appid=" + appid + "&secret=" + secret + "&grant_type=" + grantType);
     }
 }

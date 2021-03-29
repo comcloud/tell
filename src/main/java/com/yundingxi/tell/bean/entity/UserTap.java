@@ -1,30 +1,35 @@
 package com.yundingxi.tell.bean.entity;
 
+import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 /**
- * (UserTap)实体类
+ * <p>
+ * 
+ * </p>
  *
- * @author makejava
- * @since 2021-03-24 08:34:37
+ * @author houdongsheng
+ * @since 2021-03-28
  */
 @Data
-@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(value="UserTap对象", description="")
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class UserTap implements Serializable {
-    private static final long serialVersionUID = -89166060372252197L;
-    /**
-     * user标签
-     */
+
+    private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "user标签")
     private String id;
-    /**
-     * 标签名
-     */
+
+    @ApiModelProperty(value = "标签名")
     private String name;
+
+
 }

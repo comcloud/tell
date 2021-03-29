@@ -1,4 +1,4 @@
-package com.yundingxi.tell.utils;
+package com.yundingxi.tell.util;
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
