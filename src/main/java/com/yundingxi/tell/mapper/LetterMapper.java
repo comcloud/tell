@@ -21,4 +21,6 @@ public interface LetterMapper {
     List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation);
 
     void insertReply(@Param("reply") Reply reply);
+
+    void updateLetterTap(@Param("tabId") String tabId);
 }

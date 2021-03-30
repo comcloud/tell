@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableWebSocket
 @EnableWebSocketMessageBroker
 @Api(value = "/websocket/openid/toOpenid", tags = "websocket服务端")
-@ServerEndpoint(value = "/reply/{openid}/{reply}")
+@ServerEndpoint(value = "/reply/{openid}")
 public class WebSocketServer {
 
     private Logger log = LoggerFactory.getLogger(WebSocketServer.class);
@@ -42,7 +42,7 @@ public class WebSocketServer {
     /**
      * 关联用户的open id与他对应的websocket对象
      */
-    public static volatile Map<String, WebSocketServer> data = new ConcurrentHashMap<>();
+    private static volatile Map<String, WebSocketServer> data = new ConcurrentHashMap<>();
 
     /**
      * concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
@@ -52,7 +52,7 @@ public class WebSocketServer {
     /**
      * 与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
-    public Session session;
+     public Session session;
 
     /*** 接收openid */
     public String sender = "";
@@ -68,22 +68,15 @@ public class WebSocketServer {
      **/
     @OnOpen
     public void onOpen(Session session,
-                       @PathParam("openid") String openid,
-                       @PathParam("reply") String reply) {
-        if (openid == null || reply == null) {
+                       @PathParam("openid") String openid) {
+        if (openid == null) {
             return;
         }
         this.session = session;
         data.put(openid, this);
         addOnlineCount();
-        String[] s = openid.split(" ");
-        this.sender = s[0];
-        this.recipient = s[1];
-        String[] replySplit = reply.split(" ");
-        replyList.add(replySplit[0]);
-        replyList.add(replySplit[1]);
+        this.sender = openid;
         log.info("sender = {}", sender);
-        log.info("recipient = {}", this.recipient);
 
     }
 
@@ -91,15 +84,15 @@ public class WebSocketServer {
     public void onMessage(String message, Session session) throws IOException {
         log.info("收到来自窗口" + sender + "的信息:" + message + "，发送给：" + recipient);
         log.info("当前我是：" + this.sender + ",我对应的集合存储位置是：" + data.get(this.sender));
-        LetterVo letterVo = LetterVo.builder()
-                .letterId(replyList.get(0))
-                .penName(replyList.get(1))
-                .sender(sender)
-                .recipient(recipient)
-                .server(this)
-                .message(message)
-                .build();
-        SendMailUtil.enMessageToQueue(letterVo);
+//        LetterVo letterVo = LetterVo.builder()
+//                .letterId(replyList.get(0))
+//                .penName(replyList.get(1))
+//                .sender(sender)
+//                .recipient(recipient)
+//                .server(this)
+//                .message(message)
+//                .build();
+//        SendMailUtil.enMessageToQueue(letterVo);
     }
 
 
@@ -129,6 +122,10 @@ public class WebSocketServer {
 
     private static synchronized void subOnlineCount() {
         WebSocketServer.onlineCount--;
+    }
+
+    public static WebSocketServer getServerByOpenId(String openId){
+        return data.get(openId);
     }
 
     @Override

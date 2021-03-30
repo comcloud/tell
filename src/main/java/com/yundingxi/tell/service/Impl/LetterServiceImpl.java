@@ -1,22 +1,31 @@
 package com.yundingxi.tell.service.Impl;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
+import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
+import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
+import com.yundingxi.tell.util.message.ScheduledUtil;
+import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @version v1.0
@@ -43,6 +52,11 @@ public class LetterServiceImpl implements LetterService {
     public String saveSingleLetter(Letter letter) {
         letter.setId(UUID.randomUUID().toString());
         letter.setState(1);
+        String tapIds = letter.getTapIds();
+        String[] tabIdArr = tapIds.split(",");
+        for (String tabId : tabIdArr) {
+            letterMapper.updateLetterTap(tabId);
+        }
         letterMapper.insertSingleLetter(letter);
         return JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
     }
@@ -76,5 +90,21 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public void saveReplyFromSenderToRecipient(Reply reply) {
         letterMapper.insertReply(reply);
+    }
+
+    @Override
+    public String replyLetter(LetterReplyDto letterReplyDto) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int nextInt = random.nextInt(2, 7);
+        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
+        ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
+                new LetterVo(letterReplyDto.getSender()
+                , letterReplyDto.getRecipient()
+                , letterReplyDto.getLetterId()
+                , letterReplyDto.getPenName()
+                , letterReplyDto.getMessage()
+                , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
+        )), nextInt);
+        return arrivalTime;
     }
 }
