@@ -8,7 +8,7 @@
     </insert>
     <select id="selectAllOpenId" resultType="java.lang.String">
         select open_id
-        from `user`;
+        from `user`
     </select>
 </mapper>
 

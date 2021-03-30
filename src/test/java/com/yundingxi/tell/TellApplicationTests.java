@@ -1,5 +1,10 @@
 package com.yundingxi.tell;
 
+import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.common.redis.RedisUtil;
+import com.yundingxi.tell.mapper.LetterMapper;
+import com.yundingxi.tell.mapper.UserMapper;
+import com.yundingxi.tell.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -27,5 +32,4 @@ class TellApplicationTests {
 //        userMapper.insertUser(new User());
 //        userMapperr.insertUser();
     }
-
 }

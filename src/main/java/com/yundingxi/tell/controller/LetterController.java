@@ -38,8 +38,7 @@ public class LetterController {
 
     @PostMapping(value = "/send")
     @Operation(description = "保存信件")
-    public Result<String> saveLetter(@Parameter(description = "信件对象",required = true)
-                                          Letter letter) {
+    public Result<String> saveLetter(@Parameter(description = "信件对象",required = true) Letter letter) {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
     }
 

@@ -1,13 +1,10 @@
 package com.yundingxi.tell.common.websocket;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
-
 /**
  * websocket的配置类
  * 使用websocket的话基本需要三个类
@@ -31,6 +28,10 @@ public class CustomWebSocketConfig extends AbstractWebSocketMessageBrokerConfigu
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         // Handshake endpoint
         registry.addEndpoint("stomp").withSockJS();
+    }
+//    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
     }
 
 

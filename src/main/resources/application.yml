@@ -1,21 +1,10 @@
 server:
-  port: 443
+  port: 8089
   max-http-header-size: 52428800
-  ssl:
-    key-store: 5128774_rayss.host.pfx
-    key-store-password: zY79E8qt
-    keyStoreType: PKCS12
-
-swagger:
-  enable: true
-  application-name: ${spring.application.name}
-  application-version: 1.0
-  application-description: 云顶犀小程序后台管理接口
-  try-host: http://localhost/
-springfox:
-  documentation:
-    swagger-ui:
-      enabled: true
+#  ssl:
+#    key-store: 5128774_rayss.host.pfx
+#    key-store-password: zY79E8qt
+#    keyStoreType: PKCS12
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -30,7 +19,7 @@ spring:
   datasource:
     #druid基本属性
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://8.136.1.98:3306/tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://8.136.1.98:3306/tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&useSSL=false
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -64,7 +53,7 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   redis:
-    host:  121.5.39.223
+    host: 121.5.39.223
     port: 6379
     timeout: 300000
     password: 123
