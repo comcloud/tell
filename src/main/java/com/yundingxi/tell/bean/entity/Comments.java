@@ -1,8 +1,7 @@
 package com.yundingxi.tell.bean.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +16,9 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ApiModel(value="Comments对象", description="评论")
 public class Comments implements Serializable {
 
@@ -36,6 +38,8 @@ public class Comments implements Serializable {
 
     @ApiModelProperty(value = "评论时间")
     private Date date;
+    @ApiModelProperty(value = "定论的对象的ID")
+    private String sgId;
 
 
 }

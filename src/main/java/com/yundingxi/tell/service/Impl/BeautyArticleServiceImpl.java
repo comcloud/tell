@@ -8,8 +8,8 @@ import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.util.ReptileUtils;
 import com.yundingxi.tell.service.BeautyArticleService;
 import com.yundingxi.tell.util.FileUtil;
-import com.yundingxi.tell.utils.Result;
-import com.yundingxi.tell.utils.ResultGenerator;
+import com.yundingxi.tell.util.Result;
+import com.yundingxi.tell.util.ResultGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

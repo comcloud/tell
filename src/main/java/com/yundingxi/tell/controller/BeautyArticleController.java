@@ -1,7 +1,7 @@
 package com.yundingxi.tell.controller;
 import com.yundingxi.tell.service.BeautyArticleService;
-import com.yundingxi.tell.utils.Result;
-import com.yundingxi.tell.utils.ResultGenerator;
+import com.yundingxi.tell.util.Result;
+import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.v3.oas.annotations.Operation;
