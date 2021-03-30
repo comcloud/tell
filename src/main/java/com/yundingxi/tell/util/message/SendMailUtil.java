@@ -79,6 +79,7 @@ public class SendMailUtil {
                     letterVos.add(WAIT_QUEUE.peek());
                 }
                 POOL.execute(new LetterTask(letterVos));
+                log.info("开启一个线程");
             }finally {
                 LOCK.unlock();
             }

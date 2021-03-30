@@ -9,6 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class DiaryController {
     @Autowired
     private DiaryService diaryService;
 
-    @Operation(description = "保存用户日记")
+    @Operation(description = "保存用户日记",summary = "保存日记")
     @PostMapping("/saveDiary")
     public Result<Object> saveDiary(@Parameter(description = "日记对象")
                                     DiaryDto diaryDto){
@@ -36,10 +38,10 @@ public class DiaryController {
         return ResultGenerator.genSuccessResult();
     }
 
-    @Operation(description = "删除日记")
+    @Operation(description = "删除日记" , summary = "删除日记")
     @DeleteMapping("/removeDiaryById")
-    public Result<Object> removeDiaryById(@Parameter(description = "要删除的日记id")
-                                          String id){
+    @CacheEvict("diary_detail")
+    public Result<Object> removeDiaryById(@Parameter(description = "要删除的日记id") @RequestParam String id){
         diaryService.removeDiaryById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -49,15 +51,17 @@ public class DiaryController {
      * @param openId 单个用户的open id
      * @return 此用户的发布的所有日记
      */
-    @Operation(description = "获取一个用户的历史所有日记,但是不包含每篇日记的详细内容")
+    @Operation(description = "获取一个用户的历史所有日记,但是不包含每篇日记的详细内容",summary = "获取历史发布日记")
     @GetMapping("/getAllDiaryForSelf")
+    @Cacheable("all_diary")
     public Result<List<Diarys>> getAllDiaryForSelf(@Parameter(description = "open id")
                                        String openId){
         return ResultGenerator.genSuccessResult(diaryService.getAllDiaryForSelfByOpenId(openId));
     }
 
-    @Operation(description = "根据日记的id获取这篇日记的详细内容")
+    @Operation(description = "根据日记的id获取这篇日记的详细内容",summary = "获取日记内容")
     @GetMapping("/getDetailForDiary")
+    @Cacheable("diary_detail")
     public Result<Diarys> getDetailForDiary(@Parameter(description = "日记id")
                                       String id){
         return ResultGenerator.genSuccessResult(diaryService.getDetailById(id));
