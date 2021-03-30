@@ -1,10 +1,21 @@
 server:
   port: 8089
   max-http-header-size: 52428800
-  ssl:
-    key-store: 5128774_rayss.host.pfx
-    key-store-password: zY79E8qt
-    keyStoreType: PKCS12
+#  ssl:
+#    key-store: 5128774_rayss.host.pfx
+#    key-store-password: zY79E8qt
+#    keyStoreType: PKCS12
+
+swagger:
+  enable: true
+  application-name: ${spring.application.name}
+  application-version: 1.0
+  application-description: 云顶犀小程序后台管理接口
+  try-host: http://localhost/
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

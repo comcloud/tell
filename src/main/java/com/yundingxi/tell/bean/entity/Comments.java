@@ -1,7 +1,5 @@
 package com.yundingxi.tell.bean.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,7 +24,6 @@ public class Comments implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "吐槽评论表ID")
-    @TableId(value = "id", type = IdType.ID_WORKER)
     private String id;
 
     @ApiModelProperty(value = "评论人openid")

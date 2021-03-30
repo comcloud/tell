@@ -3,6 +3,7 @@ import com.yundingxi.tell.service.BeautyArticleService;
 import com.yundingxi.tell.utils.Result;
 import com.yundingxi.tell.utils.ResultGenerator;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.scheduling.annotation.Scheduled;

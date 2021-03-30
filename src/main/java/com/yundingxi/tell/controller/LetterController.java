@@ -1,19 +1,17 @@
 package com.yundingxi.tell.controller;
 
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -42,6 +40,14 @@ public class LetterController {
     @Operation(description = "保存信件")
     public Result<String> saveLetter(@Parameter(description = "信件对象",required = true) Letter letter) {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
+    }
+
+    @PostMapping(value = "/reply")
+    @Operation(description = "给对方回复信件")
+    public Result<String> replyLetter(@Parameter(description = "回复信件的对象",required = true)
+                                                  LetterReplyDto letterReplyDto){
+        String result =  letterService.replyLetter(letterReplyDto);
+        return ResultGenerator.genSuccessResult(result);
     }
 
     /**
