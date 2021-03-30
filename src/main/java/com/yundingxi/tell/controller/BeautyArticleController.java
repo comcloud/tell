@@ -4,6 +4,7 @@ import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.service.BeautyArticleService;
 import com.yundingxi.tell.utils.Result;
 import com.yundingxi.tell.utils.ResultGenerator;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import java.util.*;
  * @date 2021/3/24-14:27
  */
 @Controller
+@Api(tags = "美文接口")
 public class BeautyArticleController {
     @Resource
     @Autowired
