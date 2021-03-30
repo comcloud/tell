@@ -1,4 +1,4 @@
-package com.yundingxi.tell.bean.entity;
+package com.yundingxi.tell.bean.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,33 +21,22 @@ import java.util.Date;
 @Builder
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="SpittingGrooves对象", description="吐槽")
-public class SpittingGrooves implements Serializable {
+public class SpittingGroovesVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "吐槽id")
     private String id;
-
-    @ApiModelProperty(value = "内容")
-    private String content;
-
-    @ApiModelProperty(value = "发布日期")
-    private Date date;
-
     @ApiModelProperty(value = "吐槽评论数量")
     private String number;
-
-    @ApiModelProperty(value = "0：正常 1 删除")
-    private String state;
-
-    @ApiModelProperty(value = "发布人openid")
-    private String openId;
     @ApiModelProperty(value = "吐槽标题")
     private String title;
     @ApiModelProperty(value = "吐槽发布人头像")
     private String avatarUrl;
     @ApiModelProperty(value = "发布者笔名")
     private String penName;
+
+
 
 
 }

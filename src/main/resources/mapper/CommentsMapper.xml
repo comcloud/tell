@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yundingxi.tell.mapper.CommentsMapper">
+    <!--开启二级缓存,使用Ehcache缓存框架-->
+    <!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap id="CommentsMap" type="com.yundingxi.tell.bean.entity.Comments">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="date" jdbcType="TIMESTAMP" property="date"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="sg_id" jdbcType="VARCHAR" property="sgId"/>
+    </resultMap>
+    <!--表中所有属性-->
+    <sql id="Base_Column_List">
+        `id`, `content`, `date`, `state`, `open_id`,`sg_id`
+    </sql>
+    <!--添加属性sql-->
+    <sql id="Base_Insert_Key_List">
+        <if test="entity.id != null">
+            id,
+        </if>
+        <if test="entity.content != null">
+            content,
+        </if>
+        <if test="entity.date != null">
+            `date`,
+        </if>
+        <if test="entity.state != null">
+            `state`,
+        </if>
+        <if test="entity.openId != null">
+            open_id,
+        </if>
+        <if test="entity.sgId != null">
+            sg_id,
+        </if>
+    </sql>
+
+    <!--添加值sql-->
+    <sql id="Base_Insert_Value_List">
+        <if test="entity.id != null">
+            #{entity.id},
+        </if>
+        <if test="entity.content != null">
+            #{entity.content},
+        </if>
+        <if test="entity.date != null">
+            #{entity.date},
+        </if>
+        <if test="entity.state != null">
+            #{entity.state},
+        </if>
+        <if test="entity.openId != null">
+            #{entity.openId},
+        </if>
+        <if test="entity.sgId != null">
+            #{entity.sgId},
+        </if>
+    </sql>
+
+    <!--修改sql-->
+    <sql id="Base_Update_List">
+        <if test="entity.id != null">
+            id=#{entity.id},
+        </if>
+        <if test="entity.content != null">
+            content=#{entity.content},
+        </if>
+        <if test="entity.date != null">
+            `date`=#{entity.date},
+        </if>
+        <if test="entity.state != null">
+            `state`=#{entity.state},
+        </if>
+        <if test="entity.openId != null">
+            open_id=#{entity.openId},
+        </if>
+        <if test="entity.sgId != null">
+            open_id=#{entity.sgId},
+        </if>
+    </sql>
+    <insert id="insert">
+        insert into   comments
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="Base_Insert_Key_List"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="Base_Insert_Value_List"/>
+        </trim>
+    </insert>
+    <update id="deleteById">
+        update comments c
+        set c.state=1
+        where c.id=#{id}
+    </update>
+    <resultMap id="CommentsVoMap" type="com.yundingxi.tell.bean.vo.CommentVo">
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="date" jdbcType="TIMESTAMP" property="date"/>
+        <association property="userVo" javaType="com.yundingxi.tell.bean.vo.UserVo">
+            <result column="pen_name" property="penName"/>
+            <result column="avatar_url" property="avatarUrl"/>
+        </association>
+    </resultMap>
+    <select id="selectAll" resultMap="CommentsVoMap">
+        select  c.`content`, c.`date`,u.pen_name,u.avatar_url
+        from comments  c, `user`  u where  c.open_id=u.open_id
+        and c.sg_id=#{id}
+    </select>
+
+
+</mapper>

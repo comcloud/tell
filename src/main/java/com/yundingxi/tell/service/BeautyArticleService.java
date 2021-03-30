@@ -1,7 +1,7 @@
 package com.yundingxi.tell.service;
 
 
-import com.yundingxi.tell.utils.Result;
+import com.yundingxi.tell.util.Result;
 
 import java.util.List;
 import java.util.Map;
