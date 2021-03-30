@@ -35,12 +35,6 @@
             <artifactId>jsoup</artifactId>
             <version>1.13.1</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-devtools</artifactId>-->
-        <!--            <scope>runtime</scope>-->
-        <!--            <optional>true</optional>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -131,6 +125,12 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
+        <!--        bean映射工具-->
+<!--        <dependency>-->
+<!--            <groupId>org.mapstruct</groupId>-->
+<!--            <artifactId>mapstruct-processor</artifactId>-->
+<!--            <version>1.2.0.Final</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -152,12 +152,12 @@
                     <mainClass>com.yundingxi.tell.TellApplication</mainClass>
                     <layout>ZIP</layout>
                     <!--                    这个让每次打包出来不会将依赖的Jar也导入项目jar包-->
-                    <!--                    <includes>-->
-                    <!--                        <include>-->
-                    <!--                            <groupId>nothing</groupId>-->
-                    <!--                            <artifactId>nothing</artifactId>-->
-                    <!--                        </include>-->
-                    <!--                    </includes>-->
+                    <includes>
+                        <include>
+                            <groupId>nothing</groupId>
+                            <artifactId>nothing</artifactId>
+                        </include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
@@ -166,14 +166,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <!--                <configuration>-->
-                <!--                    <excludes>-->
-                <!--                        <exclude>-->
-                <!--                            <groupId>org.projectlombok</groupId>-->
-                <!--                            <artifactId>lombok</artifactId>-->
-                <!--                        </exclude>-->
-                <!--                    </excludes>-->
-                <!--                </configuration>-->
             </plugin>
         </plugins>
     </build>

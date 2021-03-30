@@ -1,0 +1,51 @@
+package com.yundingxi.tell.service.Impl;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.yundingxi.tell.bean.dto.DiaryDto;
+import com.yundingxi.tell.bean.entity.Diarys;
+import com.yundingxi.tell.mapper.DiaryMapper;
+import com.yundingxi.tell.service.DiaryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * @version v1.0
+ * @ClassName DiaryServiceImpl
+ * @Author rayss
+ * @Datetime 2021/3/30 10:42 上午
+ */
+
+@Service
+public class DiaryServiceImpl implements DiaryService {
+
+    @Autowired
+    private DiaryMapper diaryMapper;
+
+    @Override
+    public void saveDiary(DiaryDto diaryDto) {
+        Diarys diarys = BeanUtil.toBean(diaryDto, Diarys.class);
+        diarys.setId(UUID.randomUUID().toString());
+        diarys.setDate(new Date());
+        diarys.setNumber("0");
+        diaryMapper.insertSingleDiary(diarys);
+    }
+
+    @Override
+    public void removeDiaryById(String id) {
+        diaryMapper.deleteSingleDiaryById(id);
+    }
+
+    @Override
+    public List<Diarys> getAllDiaryForSelfByOpenId(String openId) {
+        return diaryMapper.selectAllDiaryByOpenId(openId);
+    }
+
+    @Override
+    public Diarys getDetailById(String id) {
+        return diaryMapper.selectSingleDiary(id);
+    }
+}

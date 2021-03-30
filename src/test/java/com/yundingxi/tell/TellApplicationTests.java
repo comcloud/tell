@@ -1,10 +1,8 @@
 package com.yundingxi.tell;
 
-import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.LetterMapper;
-import com.yundingxi.tell.mapper.UserMapper;
-import com.yundingxi.tell.service.UserService;
+import cn.hutool.core.bean.BeanUtil;
+import com.yundingxi.tell.bean.dto.DiaryDto;
+import com.yundingxi.tell.bean.entity.Diarys;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,24 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 class TellApplicationTests {
     @Test
     void contextLoads() {
+
     }
 
     @Test
     void fileUtilTest() {
-//        String md5ByFile = FileUtil.getMd5ByFile(new File("D:\\numer1\\tell\\a\\1616581236597.txt"));
-//        String md5ByFile2 = FileUtil.getMd5ByFile(new File("D:\\numer1\\tell\\b\\1616581244627.txt"));
-//        System.out.println(md5ByFile.equals(md5ByFile2));
+        DiaryDto diaryDto = DiaryDto.builder().content("content").openId("open id").weather("weather").penName("pen name").build();
 
-//        ArrayList<Object> objects = new ArrayList<>();
-//        objects.add('a');
-//        ArrayList<Object> objects2 = new ArrayList<>();
-//        objects2.add(97);
-//        System.out.println(objects.equals(objects2));
-//        System.out.println(objects.hashCode());
-//        System.out.println(objects2.hashCode());
-//
-//        System.out.println("A".hashCode());
-//        userMapper.insertUser(new User());
-//        userMapperr.insertUser();
+        Diarys diarys = BeanUtil.toBean(diaryDto, Diarys.class);
+        System.out.println(diarys);
     }
 }
