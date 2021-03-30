@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yundingxi.tell.mapper.SpittingGroovesMapper">
+    <!--开启二级缓存,使用Ehcache缓存框架-->
+<!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <resultMap id="SpittingGroovesMap" type="com.yundingxi.tell.bean.entity.SpittingGrooves">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="date" jdbcType="TIMESTAMP" property="date"/>
+        <result column="number" jdbcType="VARCHAR" property="number"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
+    </resultMap>
+    <!--表中所有属性-->
+    <sql id="Base_Column_List">
+        `id`, `content`, `date`, `number`, `state`, `open_id`,title,avatar_url,pen_name
+    </sql>
+    <!--添加属性sql-->
+    <sql id="Base_Insert_Key_List">
+        <if test="entity.id != null">
+            id,
+        </if>
+        <if test="entity.content != null">
+            content,
+        </if>
+        <if test="entity.date != null">
+            `date`,
+        </if>
+        <if test="entity.number != null">
+            `number`,
+        </if>
+        <if test="entity.state != null">
+            `state`,
+        </if>
+        <if test="entity.openId != null">
+            open_id,
+        </if>
+        <if test="entity.title != null">
+            title,
+        </if>
+        <if test="entity.avatarUrl != null">
+            avatar_url,
+        </if>
+        <if test="entity.penName != null">
+            pen_name,
+        </if>
+
+    </sql>
+
+    <!--添加值sql-->
+    <sql id="Base_Insert_Value_List">
+        <if test="entity.id != null">
+            #{entity.id},
+        </if>
+        <if test="entity.content != null">
+            #{entity.content},
+        </if>
+        <if test="entity.date != null">
+            #{entity.date},
+        </if>
+        <if test="entity.number != null">
+            #{entity.number},
+        </if>
+        <if test="entity.state != null">
+            #{entity.state},
+        </if>
+        <if test="entity.openId != null">
+            #{entity.openId},
+        </if>
+        <if test="entity.title != null">
+            #{entity.title},
+        </if>
+        <if test="entity.avatarUrl != null">
+            #{entity.avatarUrl},
+        </if>
+        <if test="entity.penName != null">
+            #{entity.penName},
+        </if>
+    </sql>
+    <!--修改sql-->
+    <sql id="Base_Update_List">
+        <if test="entity.id != null">
+            id=#{entity.id},
+        </if>
+        <if test="entity.content != null">
+            content=#{entity.content},
+        </if>
+        <if test="entity.date != null">
+            `date`=#{entity.date},
+        </if>
+        <if test="entity.number != null">
+            `number`=#{entity.number},
+        </if>
+        <if test="entity.state != null">
+           `state`=#{entity.state},
+        </if>
+        <if test="entity.openId != null">
+            open_id=#{entity.openId},
+        </if>
+        <if test="entity.title != null">
+            title=#{entity.title},
+        </if>
+        <if test="entity.avatarUrl != null">
+            avatar_url=#{entity.avatarUrl},
+        </if>
+        <if test="entity.penName != null">
+            pen_name=#{entity.penName},
+        </if>
+    </sql>
+    <insert id="insert" parameterType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+        insert into   spitting_grooves
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="Base_Insert_Key_List"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="Base_Insert_Value_List"/>
+        </trim>
+    </insert>
+    <update id="updateById">
+        update spitting_grooves
+        <set>
+            <include refid="Base_Update_List"/>
+        </set>
+        where id=#{entity.id}
+    </update>
+    <update id="deleteById">
+        update spitting_grooves sg
+        set sg.state=1
+        where sg.id=#{id}
+    </update>
+    <resultMap id="SpittingGroovesVoMap" type="com.yundingxi.tell.bean.vo.SpittingGroovesVo">
+        <id column="id" jdbcType="VARCHAR"  property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
+        <result column="number" jdbcType="VARCHAR" property="number"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+    </resultMap>
+    <select id="selectAllVo" resultMap="SpittingGroovesVoMap">
+        select id,title,avatar_url,pen_name,`number`
+        from spitting_grooves
+        where `state`=0
+    </select>
+
+    <select id="selectDetailsById" parameterType="java.lang.String" resultMap="SpittingGroovesMap">
+        select
+        <include refid="Base_Column_List"/>
+        from spitting_grooves
+        where   `state`=0 and id=#{id}
+    </select>
+    <select id="getAllID" resultType="java.lang.String">
+        select  id from spitting_grooves
+    </select>
+</mapper>
