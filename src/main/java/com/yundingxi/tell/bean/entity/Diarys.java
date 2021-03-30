@@ -18,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="Diarys对象", description="")
+@ApiModel(value="Diarys对象", description="日记")
 public class Diarys implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -18,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="SpittingGrooves对象", description="")
+@ApiModel(value="SpittingGrooves对象", description="吐槽")
 public class SpittingGrooves implements Serializable {
 
     private static final long serialVersionUID = 1L;

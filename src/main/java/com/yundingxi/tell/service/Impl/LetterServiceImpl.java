@@ -52,6 +52,11 @@ public class LetterServiceImpl implements LetterService {
     public String saveSingleLetter(Letter letter) {
         letter.setId(UUID.randomUUID().toString());
         letter.setState(1);
+        String tapIds = letter.getTapIds();
+        String[] tabIdArr = tapIds.split(",");
+        for (String tabId : tabIdArr) {
+            letterMapper.updateLetterTap(tabId);
+        }
         letterMapper.insertSingleLetter(letter);
         return JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
     }

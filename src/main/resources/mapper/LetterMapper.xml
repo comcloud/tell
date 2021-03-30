@@ -12,6 +12,10 @@
         insert into reply
         value(#{reply.id},#{reply.letterId},#{reply.replyTime},#{reply.content},#{reply.openId},#{reply.penName})
     </insert>
+    <update id="updateLetterTap">
+        update letter_tap
+        set count=count+1 where id=#{tabId}
+    </update>
     <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter

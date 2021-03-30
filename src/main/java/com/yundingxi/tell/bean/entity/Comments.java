@@ -18,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="Comments对象", description="")
+@ApiModel(value="Comments对象", description="评论")
 public class Comments implements Serializable {
 
     private static final long serialVersionUID = 1L;
