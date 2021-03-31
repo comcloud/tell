@@ -125,21 +125,18 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
-<<<<<<< HEAD
         <!--        bean映射工具-->
 <!--        <dependency>-->
 <!--            <groupId>org.mapstruct</groupId>-->
 <!--            <artifactId>mapstruct-processor</artifactId>-->
 <!--            <version>1.2.0.Final</version>-->
 <!--        </dependency>-->
-=======
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.5</version>
         </dependency>
 
->>>>>>> feature/teasing
     </dependencies>
 
     <build>

@@ -1,5 +1,6 @@
 package com.yundingxi.tell.controller;
 
+import com.yundingxi.tell.bean.dto.LetterDto;
 import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
@@ -78,7 +79,7 @@ public class LetterController {
     @GetMapping(value = "/getLetter")
     @Cacheable("letters")
     @Operation(description = "获取信件的用户的open id",summary = "获取三封信件")
-    public Result<List<Letter>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
+    public Result<List<LetterDto>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
         log.info("没有缓存");
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
