@@ -76,7 +76,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public List<Letter> getLettersByOpenId(String openId) {
         JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
-        String date = letterInfo.findPath("date").toString();
+        String date = letterInfo.findPath("date").toString().replace("\"","");
         int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
         String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if (!currentDate.equals(date)) {

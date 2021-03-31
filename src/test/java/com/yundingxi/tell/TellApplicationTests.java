@@ -22,13 +22,13 @@ class TellApplicationTests {
     SpittingGroovesService service;
     @Test
     void contextLoads() {
-        SpittingGrooves lllll = new SpittingGrooves("00001","...0000.",new Date(),"1","s","002","","","");
-        service.insert(lllll);
+//        SpittingGrooves lllll = new SpittingGrooves("00001","...0000.",new Date(),"1","s","002","","","");
+//        service.insert(lllll);
 //        s.insert(lllll);
 //        s.updateById(lllll);
 //            s.deleteById("001");
 //        System.out.println(s.selectDetailsById("001"));
-        System.out.println(a.selectAll("ab30fc9c-aabd-48f5-8e98-2a701052bffc"));
+//        System.out.println(a.selectAll("ab30fc9c-aabd-48f5-8e98-2a701052bffc"));
 
     }
 
