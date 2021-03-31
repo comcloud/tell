@@ -92,7 +92,7 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
             int index= (int)(Math.random()*num+1);
             //在redis中 获取图片 url
             String imgUrl = (String) redisUtil.hget(RedisEnums.SYS_BEAUTYWEN_HOME_IMG_URL.getRedisKey(), index+"");
-
+            maps.get(i).put("img_url",imgUrl);
             stringStringHashMap.put("img_url",imgUrl);
             //添加到list集合中
             maps1.add(stringStringHashMap);
