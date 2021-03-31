@@ -18,7 +18,7 @@
     </select>
     <select id="selectSingleDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
         select *
-        from diarys;
+        from diarys
         where id = #{id}
     </select>
 </mapper>

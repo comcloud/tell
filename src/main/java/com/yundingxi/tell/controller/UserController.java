@@ -25,13 +25,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Operation(description = "用户注册",summary = "用户注册")
     @PostMapping("/registeredUser")
     public Result<String> registeredUser(@RequestBody User user) {
         return userService.insertUser(user);
     }
 
     @GetMapping("/getKey")
-    @Operation(description = "根据动态的js code生成用户的open id")
+    @Operation(description = "根据动态的js code生成用户的open id",summary = "获取open id")
     public Result<String> getKey(@Parameter(description = "js code", required = true)
                                      @RequestParam String jsCode) {
         String openId = userService.getKey(jsCode);

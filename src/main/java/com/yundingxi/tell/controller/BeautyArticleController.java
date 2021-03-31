@@ -32,7 +32,7 @@ public class BeautyArticleController {
      */
 
     @ResponseBody
-    @Operation(description = "爬取美文")
+    @Operation(description = "爬取美文",summary = "爬取美文")
     @RequestMapping(value = "/getArtIndex", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     public Result<String> deliciousIndex() {
         Result<String> result = beautyArticleService.saveCrawlObject();
@@ -44,27 +44,28 @@ public class BeautyArticleController {
      *
      * @return
      */
-    @Operation(description = "定时更新美文")
+    @Operation(description = "定时更新美文",summary = "定时更新美文")
     @Scheduled(cron = "${time.cron}")
     @ResponseBody
     @GetMapping("/update_beauty_article")
     public Result<String> updateBeautyArticle() {
         return beautyArticleService.updateBeautyArticle();
     }
-    @Operation(description = "根据文章index获取美文详细内容")
+
+    @Operation(description = "根据文章index获取美文详细内容",summary = "获取美文内容")
     @ResponseBody
     @GetMapping("get_beauty_article")
     public Result<Object> getBeautyArticle(@Parameter(description = "文章的索引") @RequestParam String index) {
         Map<String, String> o = beautyArticleService.getBeautyArticle(index);
         return ResultGenerator.genSuccessResult(o);
     }
-    @Operation(description = "获取美文显示页面信息")
+    @Operation(description = "获取美文显示页面信息",summary = "美文页面信息")
     @GetMapping("/getBeautyArticleVo")
     @ResponseBody
     Result<Object> getBeautyArticleVo(){
         return ResultGenerator.genSuccessResult(beautyArticleService.getBeautyArticleVo());
     }
-    @Operation(description = "插入美文首页图片")
+    @Operation(description = "插入美文首页图片",summary = "插入美文图片")
     @GetMapping("/addBeautyArticleImg")
     @ResponseBody
     Result<Object> addBeautyArticleImg(@Parameter(description = "图片url")@RequestParam(required = false, defaultValue = "") String url){

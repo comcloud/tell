@@ -9,7 +9,11 @@ import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +33,7 @@ public class LetterController {
     @Autowired
     private LetterService letterService;
 
+    private Logger log = LoggerFactory.getLogger(LetterController.class);
     /**
      * 普通发送
      *
@@ -37,13 +42,13 @@ public class LetterController {
      */
 
     @PostMapping(value = "/send")
-    @Operation(description = "保存信件")
+    @Operation(description = "保存信件",summary = "保存信件")
     public Result<String> saveLetter(@Parameter(description = "信件对象",required = true) Letter letter) {
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
     }
 
     @PostMapping(value = "/reply")
-    @Operation(description = "给对方回复信件")
+    @Operation(description = "给对方回复信件",summary = "回复信件")
     public Result<String> replyLetter(@Parameter(description = "回复信件的对象",required = true)
                                                   LetterReplyDto letterReplyDto){
         String result =  letterService.replyLetter(letterReplyDto);
@@ -57,7 +62,7 @@ public class LetterController {
      * @return 用户未读消息
      */
     @GetMapping(value = "/putUnreadMessage")
-    @Operation(description = "根据用户的open id获取此用户的未读消息")
+    @Operation(description = "根据用户的open id获取此用户的未读消息",summary = "拉取未读消息")
     public Result<UnreadMessageDto> putUnreadMessage(@Parameter(description = "open id", required = true)
                                                @RequestParam("openId") String openId) {
         UnreadMessageDto messageDto = letterService.putUnreadMessage(openId);
@@ -71,8 +76,10 @@ public class LetterController {
      * @return 信件结果集
      */
     @GetMapping(value = "/getLetter")
-    @Operation(description = "获取信件的用户的open id")
-    public Result<List<Letter>> getLetters(@Parameter(description = "open id", required = true) String openId) {
+    @Cacheable("letters")
+    @Operation(description = "获取信件的用户的open id",summary = "获取三封信件")
+    public Result<List<Letter>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
+        log.info("没有缓存");
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 }
