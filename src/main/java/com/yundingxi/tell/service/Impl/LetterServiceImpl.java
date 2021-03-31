@@ -1,8 +1,10 @@
 package com.yundingxi.tell.service.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yundingxi.tell.bean.dto.LetterDto;
 import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
@@ -16,6 +18,7 @@ import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -24,10 +27,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version v1.0
@@ -74,7 +79,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public List<Letter> getLettersByOpenId(String openId) {
+    public List<LetterDto> getLettersByOpenId(String openId) {
         JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
         String date = letterInfo.findPath("date").toString().replace("\"","");
         int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
@@ -84,9 +89,15 @@ public class LetterServiceImpl implements LetterService {
             ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
             newValue.put("date", currentDate);
             newValue.put("letter_count_location", letterCountLocation);
-            redisUtil.set(openId + "_letter_info", newValue.toPrettyString());
+            redisUtil.set(openId + "_letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
         }
-        return letterMapper.selectLetterLimit(letterCountLocation);
+        List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
+        List<LetterDto> letterDtoList = new ArrayList<>();
+        letters.forEach(letter -> {
+            LetterDto letterDto = BeanUtil.toBean(letter, LetterDto.class);
+            letterDtoList.add(letterDto);
+        });
+        return letterDtoList;
     }
 
     @Override
