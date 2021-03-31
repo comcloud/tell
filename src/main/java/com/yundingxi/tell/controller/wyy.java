@@ -1,10 +1,8 @@
 package com.yundingxi.tell.controller;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yundingxi.tell.bean.entity.Comments;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.mapper.CommentsMapper;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
 import com.yundingxi.tell.mapper.UserMapper;
@@ -24,7 +22,6 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -86,27 +83,6 @@ public class wyy {
         return List;
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @ToString
-    class poj1{
-        private String content;
-        private String likedCount;
-        private String time;
-        private String userimg;
-        private String username;
-        private List beReplied;
-    }
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @ToString
-    class poj2{
-        private String content;
-        private String userimg;
-        private String username;
-    }
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

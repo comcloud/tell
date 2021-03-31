@@ -86,7 +86,7 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
             HashMap<String, String> stringStringHashMap = new HashMap<>();
             stringStringHashMap.put("index", i+"");
             stringStringHashMap.put("articleTitle",maps.get(i).get("articleTitle"));
-            //获取url 控制主键值
+            stringStringHashMap.put("articleTime", maps.get(i).get("articleTime"));          //获取url 控制主键值
             int num = (Integer) redisUtil.get(RedisEnums.SYS_BEAUTYWEN_HOME_IMG_URL_INDEX.getRedisKey());
             //随机生成图片
             int index= (int)(Math.random()*num+1);
