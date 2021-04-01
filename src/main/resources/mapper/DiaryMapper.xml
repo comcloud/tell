@@ -21,4 +21,9 @@
         from diarys
         where id = #{id}
     </select>
+    <select id="selectAllPublicDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
+        select id,date,number,pen_name,weather,state,open_id
+        from diarys
+        where state=1;
+    </select>
 </mapper>

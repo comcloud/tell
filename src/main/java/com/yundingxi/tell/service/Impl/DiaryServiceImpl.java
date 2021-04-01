@@ -1,6 +1,8 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.mapper.DiaryMapper;
@@ -47,5 +49,19 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     public Diarys getDetailById(String id) {
         return diaryMapper.selectSingleDiary(id);
+    }
+
+    @Override
+    public List<Diarys> getAllPublicDiary() {
+        return diaryMapper.selectAllPublicDiary();
+    }
+
+    @Override
+    public PageInfo<Diarys> getAllPublicDiary(Integer pageNum) {
+        String orderBy = "id desc";
+        PageHelper.startPage(pageNum,10,orderBy);
+        List<Diarys> diarys = diaryMapper.selectAllPublicDiary();
+        return new PageInfo<>(diarys);
+
     }
 }

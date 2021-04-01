@@ -22,4 +22,7 @@ public interface DiaryMapper {
     List<Diarys> selectAllDiaryByOpenId(@Param("openId") String openId);
 
     Diarys selectSingleDiary(@Param("id") String id);
+
+    List<Diarys> selectAllPublicDiary();
+
 }

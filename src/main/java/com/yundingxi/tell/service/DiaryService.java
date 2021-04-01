@@ -1,5 +1,6 @@
 package com.yundingxi.tell.service;
 
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 
@@ -24,4 +25,8 @@ public interface DiaryService {
     List<Diarys> getAllDiaryForSelfByOpenId(String openId);
 
     Diarys getDetailById(String id);
+
+    List<Diarys> getAllPublicDiary();
+
+    PageInfo<Diarys> getAllPublicDiary(Integer pageNum);
 }

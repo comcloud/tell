@@ -1,5 +1,6 @@
 package com.yundingxi.tell.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.service.DiaryService;
@@ -59,6 +60,11 @@ public class DiaryController {
         return ResultGenerator.genSuccessResult(diaryService.getAllDiaryForSelfByOpenId(openId));
     }
 
+    @Operation(description = "获取广场发布日记",summary = "获取广场日记")
+    @GetMapping("/getAllDiary")
+    public Result<PageInfo<Diarys>> getAllDiary(@Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1",value = "pageNum") Integer pageNum){
+        return ResultGenerator.genSuccessResult(diaryService.getAllPublicDiary(pageNum));
+    }
     @Operation(description = "根据日记的id获取这篇日记的详细内容",summary = "获取日记内容")
     @GetMapping("/getDetailForDiary")
     @Cacheable("diary_detail")
