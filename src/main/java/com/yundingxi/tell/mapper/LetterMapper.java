@@ -23,4 +23,6 @@ public interface LetterMapper {
     void insertReply(@Param("reply") Reply reply);
 
     void updateLetterTap(@Param("tabId") String tabId);
+
+    Letter selectLetterById(String letterId);
 }

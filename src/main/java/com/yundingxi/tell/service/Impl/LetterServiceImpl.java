@@ -78,7 +78,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public List<LetterDto> getLettersByOpenId(String openId) {
         JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
-        String date = letterInfo.findPath("date").toString().replace("\"","");
+        String date = letterInfo.findPath("date").toString().replace("\"", "");
         int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
         String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if (!currentDate.equals(date)) {
@@ -109,21 +109,36 @@ public class LetterServiceImpl implements LetterService {
         String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
         ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
                 new LetterVo(letterReplyDto.getSender()
-                , letterReplyDto.getRecipient()
-                , letterReplyDto.getLetterId()
-                , letterReplyDto.getPenName()
-                , letterReplyDto.getMessage()
-                , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
-        )), nextInt);
+                        , letterReplyDto.getRecipient()
+                        , letterReplyDto.getLetterId()
+                        , letterReplyDto.getPenName()
+                        , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
+                        , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
+                )), nextInt);
         return arrivalTime;
     }
 
     @Override
     public Map<Integer, Integer> getNumberOfLetter(String openId) {
-        @SuppressWarnings("unchecked")List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(1,messageDtoList.size());
-
+        map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
         return map;
+    }
+
+    @Override
+    public List<UnreadMessageDto> getAllUnreadLetter(String openId) {
+        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+
+        if (messageDtoList != null) {
+            redisUtil.del(openId + "_unread_message");
+        }
+        return messageDtoList;
+    }
+
+    @Override
+    public LetterDto getLetterById(String letterId) {
+        Letter letter = letterMapper.selectLetterById(letterId);
+        return BeanUtil.toBean(letter, LetterDto.class);
     }
 }

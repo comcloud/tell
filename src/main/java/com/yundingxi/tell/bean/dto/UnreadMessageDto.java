@@ -28,4 +28,8 @@ public class UnreadMessageDto {
     private String message;
     @ApiModelProperty("发送这个消息的时间")
     private String senderTime;
+    @ApiModelProperty("发送者笔名")
+    private String penName;
+    @ApiModelProperty("被回复信的ID")
+    private String letterId;
 }

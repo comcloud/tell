@@ -153,6 +153,8 @@ public class SendMailUtil {
                 unreadMessageDto.setMessage(letterVo.getMessage());
                 unreadMessageDto.setSenderTime(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 unreadMessageDto.setRecipient(letterVo.getRecipient());
+                unreadMessageDto.setLetterId(letterVo.getLetterId());
+                unreadMessageDto.setPenName(letterVo.getPenName());
                 final RedisUtil redisService = (RedisUtil) SpringUtil.getBean("redisUtil");
                 Object o = redisService.get(letterVo.getRecipient() + "_unread_message");
                 if(o == null){

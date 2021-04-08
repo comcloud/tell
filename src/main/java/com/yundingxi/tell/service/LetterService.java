@@ -50,4 +50,6 @@ public interface LetterService {
     Map<Integer,Integer> getNumberOfLetter(String openId);
 
     List<UnreadMessageDto> getAllUnreadLetter(String openId);
+
+    LetterDto getLetterById(String letterId);
 }

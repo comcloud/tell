@@ -85,7 +85,7 @@ public class LetterController {
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 
-    @Operation(description = "获取回信，评论的数量,这里设定1为回信，2为评论",summary = "获取信件与评论数量")
+    @Operation(description = "获取未读回信的数量,这里设定1为回信，2为评论",summary = "获取未读信件数量")
     @GetMapping("/getNumberOfLetter")
     public Result<Map<Integer,Integer>> getNumberOfLetter(@Parameter(description = "open id", required = true)
                                                           @RequestParam("openId") String openId){
@@ -96,5 +96,11 @@ public class LetterController {
     @GetMapping("/getAllUnreadLetter")
     public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id") String openId){
         return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId));
+    }
+
+    @Operation(description = "根据信件id获取信件具体信息",summary = "获取信件信息")
+    @GetMapping("/getDetailOfLetter")
+    public Result<LetterDto> getDetailOfLetter(@Parameter(description = "信件id") String letterId){
+        return ResultGenerator.genSuccessResult(letterService.getLetterById(letterId));
     }
 }
