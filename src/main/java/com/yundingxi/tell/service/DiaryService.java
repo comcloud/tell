@@ -29,4 +29,6 @@ public interface DiaryService {
     List<Diarys> getAllPublicDiary();
 
     PageInfo<Diarys> getAllPublicDiary(Integer pageNum);
+
+    void setViews(String id, Integer viewNum);
 }

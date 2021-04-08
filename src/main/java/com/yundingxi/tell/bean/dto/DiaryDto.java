@@ -28,4 +28,6 @@ public class DiaryDto {
     private String weather;
     @ApiModelProperty("open id")
     private String openId;
+    @ApiModelProperty("state，0表示不公开，1表示公开")
+    private String state;
 }

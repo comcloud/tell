@@ -1,10 +1,18 @@
 package com.yundingxi.tell.common.websocket;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.server.HandshakeFailureException;
+import org.springframework.web.socket.server.HandshakeHandler;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+
+import java.util.Map;
+
 /**
  * websocket的配置类
  * 使用websocket的话基本需要三个类
@@ -15,8 +23,8 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  * @author 成都犀牛
  * @date 2020年10月20日16:06:20
  */
-@Component
-public class CustomWebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+@Configuration
+public class CustomWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     /**
      * 注册stomp端点。起到的作用就是添加一个服务端点，来接收客户端的连接，
@@ -26,17 +34,21 @@ public class CustomWebSocketConfig extends AbstractWebSocketMessageBrokerConfigu
      */
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        // Handshake endpoint
+//     Handshake endpoint
         registry.addEndpoint("stomp").withSockJS();
     }
-//    @Bean
+
+    @Bean(value = "serverEndpointExporter")
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
 
-
-//    @Bean
-//    public ServerEndpointExporter serverEndpointExporter() {
-//        return new ServerEndpointExporter();
+//    @Override
+//    public StompWebSocketEndpointRegistration addEndpoint(String... paths) {
+//        this.subProtocolWebSocketHandler.addProtocolHandler(this.stompHandler);
+//        WebMvcStompWebSocketEndpointRegistration registration =
+//                new WebMvcStompWebSocketEndpointRegistration(paths, this.webSocketHandler, this.sockJsScheduler);
+//        this.registrations.add(registration);
+//        return registration;
 //    }
 }

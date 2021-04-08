@@ -41,7 +41,7 @@ public class ResourceInit implements CommandLineRunner {
         log.info("项目初始化");
         List<String> openIdList = userMapper.selectAllOpenId();
         openIdList.forEach(openId -> {
-            ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject("letter_info");
+            ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
             String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             letterInfo.put("date", date);
             letterInfo.put("letter_count_location", 1);

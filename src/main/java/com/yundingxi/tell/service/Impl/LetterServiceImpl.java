@@ -27,10 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -119,5 +116,14 @@ public class LetterServiceImpl implements LetterService {
                 , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
         )), nextInt);
         return arrivalTime;
+    }
+
+    @Override
+    public Map<Integer, Integer> getNumberOfLetter(String openId) {
+        @SuppressWarnings("unchecked")List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1,messageDtoList.size());
+
+        return map;
     }
 }

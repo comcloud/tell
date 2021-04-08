@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version v1.0
@@ -62,13 +63,13 @@ public class LetterController {
      * @param openId 用户open id
      * @return 用户未读消息
      */
-    @GetMapping(value = "/putUnreadMessage")
-    @Operation(description = "根据用户的open id获取此用户的未读消息",summary = "拉取未读消息")
-    public Result<UnreadMessageDto> putUnreadMessage(@Parameter(description = "open id", required = true)
-                                               @RequestParam("openId") String openId) {
-        UnreadMessageDto messageDto = letterService.putUnreadMessage(openId);
-        return ResultGenerator.genSuccessResult(messageDto);
-    }
+//    @GetMapping(value = "/putUnreadMessage")
+//    @Operation(description = "根据用户的open id获取此用户的未读消息",summary = "拉取未读消息")
+//    public Result<UnreadMessageDto> putUnreadMessage(@Parameter(description = "open id", required = true)
+//                                               @RequestParam("openId") String openId) {
+//        UnreadMessageDto messageDto = letterService.putUnreadMessage(openId);
+//        return ResultGenerator.genSuccessResult(messageDto);
+//    }
 
     /**
      * 获取三封信件
@@ -82,5 +83,18 @@ public class LetterController {
     public Result<List<LetterDto>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
         log.info("没有缓存");
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
+    }
+
+    @Operation(description = "获取回信，评论的数量,这里设定1为回信，2为评论",summary = "获取信件与评论数量")
+    @GetMapping("/getNumberOfLetter")
+    public Result<Map<Integer,Integer>> getNumberOfLetter(@Parameter(description = "open id", required = true)
+                                                          @RequestParam("openId") String openId){
+        return ResultGenerator.genSuccessResult(letterService.getNumberOfLetter(openId));
+    }
+
+    @Operation(description = "获取所有未读信件，注意这里接口调用之后后台将会将此信件标记未已读，需要前台缓存这个数据",summary = "获取未读信件")
+    @GetMapping("/getAllUnreadLetter")
+    public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id") String openId){
+        return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId));
     }
 }

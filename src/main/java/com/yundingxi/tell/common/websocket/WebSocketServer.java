@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @EnableWebSocket
 @EnableWebSocketMessageBroker
-@Api(value = "/websocket/openid/toOpenid", tags = "websocket服务端")
+@Api(value = "/reply/openid", tags = "websocket服务端")
 @ServerEndpoint(value = "/reply/{openid}")
 public class WebSocketServer {
 
@@ -59,9 +59,6 @@ public class WebSocketServer {
 
     /***接收者 */
     private String recipient = "";
-
-    /*** 回复的消息，包含要回复的信件id，回复者的笔名 */
-    private List<String> replyList = new ArrayList<>(2);
 
     /**
      * 连接建立成功调用的方法
