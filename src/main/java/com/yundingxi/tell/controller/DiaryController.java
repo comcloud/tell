@@ -73,5 +73,11 @@ public class DiaryController {
         return ResultGenerator.genSuccessResult(diaryService.getDetailById(id));
     }
 
-
+    @Operation(description = "更新日记浏览量",summary = "更新日记浏览量")
+    @PutMapping("/setViews")
+    public Result<Object> setViews(@Parameter(description = "日记id") @RequestParam("id") String id,
+                                    @Parameter(description = "浏览量") @RequestParam("viewNum") Integer viewNum){
+        diaryService.setViews(id,viewNum);
+        return ResultGenerator.genSuccessResult();
+    }
 }

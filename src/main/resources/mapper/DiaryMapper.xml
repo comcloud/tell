@@ -8,6 +8,11 @@
         value (#{diarys.id},#{diarys.content},#{diarys.date},#{diarys.number},#{diarys.penName},
             #{diarys.weather},#{diarys.state},#{diarys.openId})
     </insert>
+    <update id="updateDiaryNumber">
+        update diarys
+        set number=number+#{viewNum}
+        where id=#{id}
+    </update>
     <delete id="deleteSingleDiaryById">
         delete from diarys where id = #{id}
     </delete>

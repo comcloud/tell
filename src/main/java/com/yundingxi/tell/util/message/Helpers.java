@@ -52,8 +52,9 @@ class Helpers {
     static String collectionToString(Collection<?> c) {
         final Object[] a = c.toArray();
         final int size = a.length;
-        if (size == 0)
+        if (size == 0) {
             return "[]";
+        }
         int charLength = 0;
 
         // Replace every array element with its string representation

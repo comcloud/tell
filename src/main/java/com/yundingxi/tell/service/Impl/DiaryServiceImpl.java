@@ -64,4 +64,9 @@ public class DiaryServiceImpl implements DiaryService {
         return new PageInfo<>(diarys);
 
     }
+
+    @Override
+    public void setViews(String id, Integer viewNum) {
+        diaryMapper.updateDiaryNumber(id,viewNum);
+    }
 }

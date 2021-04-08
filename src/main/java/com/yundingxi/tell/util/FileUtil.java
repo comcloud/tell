@@ -16,7 +16,6 @@ import java.util.zip.ZipOutputStream;
 @SuppressWarnings("resource")
 public class FileUtil {
 
-
     /**
      * 获取文件MD5值
      *
@@ -48,7 +47,6 @@ public class FileUtil {
         }
         return value;
     }
-
     /**
      * 获取文件大小
      *
@@ -627,16 +625,6 @@ public class FileUtil {
         }
         return list;
     }
-
-    public static void main(String[] args) {
-        try {
-            unZip("c:/test", "c:/test");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
 }
 
 
