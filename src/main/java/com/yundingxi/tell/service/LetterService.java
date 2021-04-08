@@ -52,4 +52,6 @@ public interface LetterService {
     List<UnreadMessageDto> getAllUnreadLetter(String openId);
 
     LetterDto getLetterById(String letterId);
+
+    void setLetterInitInfoByOpenId(String openId);
 }

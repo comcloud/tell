@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.UserMapper;
+import com.yundingxi.tell.service.LetterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +31,24 @@ public class ResourceInit implements CommandLineRunner {
 
     private final UserMapper userMapper;
 
+    private final LetterService letterService;
     @Autowired
-    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper) {
+    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper,LetterService letterService) {
         this.redisUtil = redisUtil;
         this.userMapper = userMapper;
+        this.letterService = letterService;
     }
 
     @Override
     public void run(String... args) throws Exception {
         log.info("项目初始化");
-        List<String> openIdList = userMapper.selectAllOpenId();
-        openIdList.forEach(openId -> {
-            ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
-            String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            letterInfo.put("date", date);
-            letterInfo.put("letter_count_location", 1);
-            redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
-        });
+        letterInitForEveryOpenId();
     }
+
+    public void letterInitForEveryOpenId(){
+        List<String> openIdList = userMapper.selectAllOpenId();
+        openIdList.forEach(letterService::setLetterInitInfoByOpenId);
+    }
+
+
 }

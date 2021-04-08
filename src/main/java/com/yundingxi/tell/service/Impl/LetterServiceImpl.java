@@ -18,10 +18,7 @@ import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -77,6 +74,10 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public List<LetterDto> getLettersByOpenId(String openId) {
+        Object o = redisUtil.get(openId + "_letter_info");
+        if(o == null){
+            setLetterInitInfoByOpenId(openId);
+        }
         JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
         String date = letterInfo.findPath("date").toString().replace("\"", "");
         int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
@@ -121,7 +122,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public Map<Integer, Integer> getNumberOfLetter(String openId) {
         @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
-        Map<Integer, Integer> map = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>(10);
         map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
         return map;
     }
@@ -140,5 +141,14 @@ public class LetterServiceImpl implements LetterService {
     public LetterDto getLetterById(String letterId) {
         Letter letter = letterMapper.selectLetterById(letterId);
         return BeanUtil.toBean(letter, LetterDto.class);
+    }
+
+    @Override
+    public void setLetterInitInfoByOpenId(String openId){
+        ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
+        String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        letterInfo.put("date", date);
+        letterInfo.put("letter_count_location", 1);
+        redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
     }
 }
