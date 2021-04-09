@@ -28,7 +28,8 @@ public class ResultGenerator {
     public static Result<String> genSuccessResult(String message) {
         Result<String> result = new Result<>();
         result.setResultCode(RESULT_CODE_SUCCESS);
-        result.setMessage(message);
+        result.setMessage(DEFAULT_SUCCESS_MESSAGE);
+        result.setData(message);
         return result;
     }
 

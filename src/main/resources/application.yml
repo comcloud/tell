@@ -1,10 +1,10 @@
 server:
-  port: 8089
-  max-http-header-size: 52428800
-#  ssl:
-#    key-store: 5128774_rayss.host.pfx
-#    key-store-password: zY79E8qt
-#    keyStoreType: PKCS12
+  port: 443
+  ssl:
+    key-store: 5128774_rayss.host.pfx
+    key-store-password: zY79E8qt
+    keyStoreType: PKCS12
+#注意这里不可以添加请求头大小
 
 swagger:
   enable: true
@@ -39,7 +39,7 @@ spring:
       # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
       filters: stat,wall
       #配置初始化大小/最小/最大
-      initial-size: 5
+      initial-size: 10
       min-idle: 1
       max-active: 50
       #获取连接等待超时时间
@@ -64,7 +64,7 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   redis:
-    host: 127.0.0.1
+    host: 121.5.39.223
     port: 6379
     timeout: 300000
 #    password: 123

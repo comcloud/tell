@@ -22,7 +22,7 @@ public class ScheduledSyncService {
     /**
      * 定时发送未发送的信件
      */
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0/100 * * * * ?")
     public void executeReplyLetterFromQueue(){
         BlockingDeque<LetterVo> waitQueue = SendMailUtil.getWAIT_QUEUE();
         if(waitQueue.isEmpty()) {

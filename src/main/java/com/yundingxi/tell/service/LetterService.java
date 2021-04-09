@@ -7,6 +7,7 @@ import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version v1.0
@@ -45,4 +46,12 @@ public interface LetterService {
      * @return 信件何时会被送达
      */
     String replyLetter(LetterReplyDto letterReplyDto);
+
+    Map<Integer,Integer> getNumberOfLetter(String openId);
+
+    List<UnreadMessageDto> getAllUnreadLetter(String openId);
+
+    LetterDto getLetterById(String letterId);
+
+    void setLetterInitInfoByOpenId(String openId);
 }

@@ -18,19 +18,13 @@ import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -80,8 +74,12 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public List<LetterDto> getLettersByOpenId(String openId) {
+        Object o = redisUtil.get(openId + "_letter_info");
+        if(o == null){
+            setLetterInitInfoByOpenId(openId);
+        }
         JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
-        String date = letterInfo.findPath("date").toString().replace("\"","");
+        String date = letterInfo.findPath("date").toString().replace("\"", "");
         int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
         String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if (!currentDate.equals(date)) {
@@ -112,12 +110,45 @@ public class LetterServiceImpl implements LetterService {
         String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
         ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
                 new LetterVo(letterReplyDto.getSender()
-                , letterReplyDto.getRecipient()
-                , letterReplyDto.getLetterId()
-                , letterReplyDto.getPenName()
-                , letterReplyDto.getMessage()
-                , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
-        )), nextInt);
+                        , letterReplyDto.getRecipient()
+                        , letterReplyDto.getLetterId()
+                        , letterReplyDto.getPenName()
+                        , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
+                        , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
+                )), nextInt);
         return arrivalTime;
+    }
+
+    @Override
+    public Map<Integer, Integer> getNumberOfLetter(String openId) {
+        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+        Map<Integer, Integer> map = new HashMap<>(10);
+        map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
+        return map;
+    }
+
+    @Override
+    public List<UnreadMessageDto> getAllUnreadLetter(String openId) {
+        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+
+        if (messageDtoList != null) {
+            redisUtil.del(openId + "_unread_message");
+        }
+        return messageDtoList;
+    }
+
+    @Override
+    public LetterDto getLetterById(String letterId) {
+        Letter letter = letterMapper.selectLetterById(letterId);
+        return BeanUtil.toBean(letter, LetterDto.class);
+    }
+
+    @Override
+    public void setLetterInitInfoByOpenId(String openId){
+        ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
+        String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        letterInfo.put("date", date);
+        letterInfo.put("letter_count_location", 1);
+        redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
     }
 }
