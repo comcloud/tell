@@ -25,19 +25,6 @@ public class BeautyArticleController {
     @Resource
     private BeautyArticleService beautyArticleService;
 
-    /**
-     * 爬取美食网站信息集合
-     *
-     * @return 美食信息集合
-     */
-
-    @ResponseBody
-    @Operation(description = "爬取美文",summary = "爬取美文")
-    @RequestMapping(value = "/getArtIndex", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-    public Result<String> deliciousIndex() {
-        Result<String> result = beautyArticleService.saveCrawlObject();
-        return result;
-    }
 
     /**
      * 定时任务，每天中午12点更新数据

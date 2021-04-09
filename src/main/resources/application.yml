@@ -67,7 +67,7 @@ spring:
     host: 121.5.39.223
     port: 6379
     timeout: 300000
-    password: 123
+#    password: 123
     database: 1
     lettuce:
       pool:
