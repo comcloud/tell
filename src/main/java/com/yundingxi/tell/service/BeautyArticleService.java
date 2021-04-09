@@ -17,7 +17,7 @@ public interface BeautyArticleService {
     /**
      * 保存 获取的对象到指定文件目录
      */
-    Result<String> saveCrawlObject();
+    Result<String> saveCrawlObject(int index,int end);
 
     /**
      * 更新美文数据
