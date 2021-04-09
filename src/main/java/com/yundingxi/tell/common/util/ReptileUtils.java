@@ -20,12 +20,11 @@ import java.util.concurrent.TimeUnit;
 public class ReptileUtils {
     private static final String URL="http://www.meiwenjx.com/lizhimeiwen/lizhimingyan/list_";
     private static final int TIMEOUT_MILLIS =10000;
-    private static final int NUMBER=1;
     private static final int TIMEOUT=2;
-    public static  List<Map<String, Object>> getElements(){
+    public static  List<Map<String, Object>> getElements(int head,int end){
         Elements lis = null;
         List<Map<String, Object>> list = new ArrayList<>();
-        for (int i = 1; i <= NUMBER; i++) {
+        for (int i = head; i <= end; i++) {
             String url =URL+ i + ".html";
             Document document = null;
             try {

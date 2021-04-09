@@ -11,6 +11,7 @@ import com.yundingxi.tell.util.FileUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,9 +32,9 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
     private RedisUtil redisUtil;
 
     @Override
-    public Result<String> saveCrawlObject() {
+    public Result<String> saveCrawlObject(int head,int end) {
         List<Object> list = new ArrayList<>();
-        List<Map<String, Object>> lis = ReptileUtils.getElements();
+        List<Map<String, Object>> lis = ReptileUtils.getElements(head,end);
         int num = 0;
         for (Map<String, Object> li : lis) {
             num++;
@@ -61,7 +62,7 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
             }
         }
         log.info("=================>对象序列化成功！！！！！！");
-        return ResultGenerator.genFailResult("序列化成功！！！！！");
+        return ResultGenerator.genSuccessResult("序列化成功！！！！！");
     }
 
     @Override
@@ -74,8 +75,19 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
             log.info("=============> IO异常 {}", e.getMessage());
             return ResultGenerator.genFailResult("更新失败");
         }
+        if(files.size()<=2){
+            redisUtil.incr(RedisEnums.SYS_PMW_INDEX.getRedisKey(),2);
+            Integer o = (Integer) redisUtil.get(RedisEnums.SYS_PMW_INDEX.getRedisKey());
+            saveCrawlObject(o,o+2);
+        }
         if (files.isEmpty()) {
-            return ResultGenerator.genFailResult("数据源空 null 更新失败");
+            try {
+                files = FileUtil.listFiles(FileEnums.SYS_BEAUTY_ARTICLE_FILE_DELETE_PATH.getFilePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.info("更新异常 ,异常原因:{}",e.getMessage());
+                return ResultGenerator.genFailResult("更新失败");
+            }
         }
         int random = (int) (Math.random() * files.size());
         File file = files.get(random);
