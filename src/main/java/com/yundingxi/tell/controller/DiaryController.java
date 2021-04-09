@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version v1.0
@@ -75,9 +76,8 @@ public class DiaryController {
 
     @Operation(description = "更新日记浏览量",summary = "更新日记浏览量")
     @PutMapping("/setViews")
-    public Result<Object> setViews(@Parameter(description = "日记id") @RequestParam("id") String id,
-                                    @Parameter(description = "浏览量") @RequestParam("viewNum") Integer viewNum){
-        diaryService.setViews(id,viewNum);
+    public Result<Object> setViews(@Parameter(description = "日记浏览量键值对,日记id作为键，浏览量作为值") Map<String,Integer> data){
+        diaryService.setViews(data);
         return ResultGenerator.genSuccessResult();
     }
 }

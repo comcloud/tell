@@ -63,9 +63,9 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public UnreadMessageDto putUnreadMessage(String openId) {
+    public List<UnreadMessageDto> putUnreadMessage(String openId) {
         //使用redis获取
-        UnreadMessageDto unreadMessage = (UnreadMessageDto) redisUtil.get(openId + "_unread_message");
+        @SuppressWarnings("unchecked") List<UnreadMessageDto> unreadMessage = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
         if (unreadMessage != null) {
             redisUtil.del(openId + "_unread_message");
         }
@@ -105,18 +105,25 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public String replyLetter(LetterReplyDto letterReplyDto) {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        int nextInt = random.nextInt(2, 7);
-        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
-        ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
-                new LetterVo(letterReplyDto.getSender()
-                        , letterReplyDto.getRecipient()
-                        , letterReplyDto.getLetterId()
-                        , letterReplyDto.getPenName()
-                        , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
-                        , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
-                )), nextInt);
-        return arrivalTime;
+        Reply reply = BeanUtil.toBean(letterReplyDto, Reply.class);
+        String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        reply.setId(UUID.randomUUID().toString());
+        reply.setContent(letterReplyDto.getMessage());
+        reply.setReplyTime(new Date());
+        reply.setOpenId(letterReplyDto.getSender());
+        letterMapper.insertReply(reply);
+        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(letterReplyDto.getRecipient() + "_unread_message");
+        UnreadMessageDto messageDto = BeanUtil.toBean(letterReplyDto, UnreadMessageDto.class);
+        messageDto.setSenderTime(replyTime);
+        if(messageDtoList == null){
+            List<UnreadMessageDto> list = new ArrayList<>();
+            list.add(messageDto);
+            redisUtil.set(letterReplyDto.getRecipient()+"_unread_message",list);
+        }else{
+            messageDtoList.add(messageDto);
+            redisUtil.set(letterReplyDto.getRecipient()+"_unread_message",messageDtoList);
+        }
+        return "";
     }
 
     @Override
@@ -131,9 +138,10 @@ public class LetterServiceImpl implements LetterService {
     public List<UnreadMessageDto> getAllUnreadLetter(String openId) {
         @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
 
-        if (messageDtoList != null) {
-            redisUtil.del(openId + "_unread_message");
-        }
+        //  delete the key
+//        if (messageDtoList != null) {
+//            redisUtil.del(openId + "_unread_message");
+//        }
         return messageDtoList;
     }
 
@@ -150,5 +158,21 @@ public class LetterServiceImpl implements LetterService {
         letterInfo.put("date", date);
         letterInfo.put("letter_count_location", 1);
         redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
+
+    }
+
+    public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int nextInt = random.nextInt(2, 7);
+        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
+        ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
+                new LetterVo(letterReplyDto.getSender()
+                        , letterReplyDto.getRecipient()
+                        , letterReplyDto.getLetterId()
+                        , letterReplyDto.getPenName()
+                        , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
+                        , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
+                )), 0);
+        return arrivalTime;
     }
 }

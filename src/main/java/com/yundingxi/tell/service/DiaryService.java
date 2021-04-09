@@ -5,6 +5,7 @@ import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version v1.0
@@ -30,5 +31,5 @@ public interface DiaryService {
 
     PageInfo<Diarys> getAllPublicDiary(Integer pageNum);
 
-    void setViews(String id, Integer viewNum);
+    void setViews(Map<String,Integer> data);
 }

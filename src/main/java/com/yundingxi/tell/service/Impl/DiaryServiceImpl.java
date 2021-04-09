@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -66,7 +67,7 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public void setViews(String id, Integer viewNum) {
-        diaryMapper.updateDiaryNumber(id,viewNum);
+    public void setViews(Map<String,Integer> data) {
+        data.forEach((diaryId,viewNum) -> diaryMapper.updateDiaryNumber(diaryId,viewNum));
     }
 }
