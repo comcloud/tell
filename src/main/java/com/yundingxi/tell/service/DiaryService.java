@@ -2,6 +2,7 @@ package com.yundingxi.tell.service;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
+import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 
 import java.util.List;
@@ -31,5 +32,5 @@ public interface DiaryService {
 
     PageInfo<Diarys> getAllPublicDiary(Integer pageNum);
 
-    void setViews(Map<String,Integer> data);
+    void setViews(DiaryViewDto[] viewDtoArray);
 }
