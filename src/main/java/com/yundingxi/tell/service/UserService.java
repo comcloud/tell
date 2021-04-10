@@ -1,7 +1,10 @@
 package com.yundingxi.tell.service;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.UserCommentVo;
 import com.yundingxi.tell.util.Result;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author hds
@@ -15,4 +18,7 @@ public interface UserService {
     Result<String> insertUser(User user);
 
     String getKey(String jsCode);
+
+    Result<Object> getAllUserCommentVo(String openId);
+    Result<Object> getCommNum(String openId);
 }

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * <p>
@@ -26,7 +27,7 @@ public class SpittingGrooves implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "吐槽id")
-    private String id;
+    private String id= UUID.randomUUID().toString();
 
     @ApiModelProperty(value = "内容")
     private String content;

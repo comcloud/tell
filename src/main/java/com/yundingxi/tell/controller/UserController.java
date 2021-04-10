@@ -38,5 +38,15 @@ public class UserController {
         String openId = userService.getKey(jsCode);
         return ResultGenerator.genSuccessResult(openId);
     }
+    @GetMapping("/getAllUserCommentVo")
+    @Operation(description = "根据 openid 获取评论信息 ",summary = "根据 openid 获取评论信息")
+    public Result<Object> getAllUserCommentVo(@Parameter(description = "openid") String openId) {
+        return userService.getAllUserCommentVo(openId);
+    }
+    @GetMapping("/getCommNum")
+    @Operation(description = "获取收到评论未读消息个数 ",summary = "获取收到评论未读消息个数")
+    public Result<Object> getCommNum(@Parameter(description = "openid") String openId){
+        return userService.getCommNum(openId);
+    }
 
 }

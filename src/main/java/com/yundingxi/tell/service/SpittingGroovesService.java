@@ -53,4 +53,12 @@ public interface SpittingGroovesService{
      */
     Result<SpittingGrooves> selectDetailsById( String id);
 
+    /**
+     * 根据吐槽ID 获取 发布吐槽用户ID
+     * @param id
+     * @return
+     */
+
+    String getOpenIdBySID(@Param("id") String id);
+
 }

@@ -36,7 +36,7 @@ public class SpittingGroovesController {
      * @param entity 实体对象
      */
     @PostMapping("/insert")
-    @Operation(description = "保存/发布 吐槽")
+    @Operation(description = "保存/发布 吐槽",summary = "保存/发布 吐槽")
     Result<String> insert(@Parameter(description = "吐槽类对象",required = true)SpittingGrooves entity){
         return spittingGroovesService.insert(entity);
     }
@@ -47,7 +47,7 @@ public class SpittingGroovesController {
      * @param id 主键ID
      */
     @PostMapping("delete")
-    @Operation(description = "根据吐槽ID删除吐槽")
+    @Operation(description = "根据吐槽ID删除吐槽",summary = "根据吐槽ID删除吐槽")
     Result<String> deleteById(@Parameter(description = "吐槽ID" ,required=true) Serializable id){
         return  spittingGroovesService.deleteById(id);
     }
@@ -58,6 +58,7 @@ public class SpittingGroovesController {
      * @param entity 实体对象
      */
     @PostMapping("/update")
+    @Operation(description = "根据吐槽ID删除吐槽",summary = "根据吐槽ID删除吐槽")
     Result<String> updateById(@Parameter(description = "吐槽类对象",required = true)SpittingGrooves entity){
         return spittingGroovesService.updateById(entity);
     }
@@ -67,7 +68,7 @@ public class SpittingGroovesController {
      * @return list
      */
     @GetMapping("/selectAllVo")
-    @Operation(description = "分页返回吐槽信息")
+    @Operation(description = "分页返回吐槽信息",summary ="分页返回吐槽信息" )
     Result<PageInfo<SpittingGroovesVo>> selectAllVo(@RequestParam(defaultValue = "1",value = "pageNum") Integer pageNum){
         return spittingGroovesService.selectAllVo(pageNum);
     }
@@ -78,6 +79,7 @@ public class SpittingGroovesController {
      * @return 吐槽详细信息
      */
     @GetMapping("/selectDetailsById")
+    @Operation(description = "根据ID 查询吐槽详细内容",summary ="根据ID 查询吐槽详细内容" )
     Result<SpittingGrooves> selectDetailsById(@Parameter(description = "吐槽类对象ID",required = true) String id){
         return spittingGroovesService.selectDetailsById(id);
     }

@@ -1,6 +1,8 @@
 package com.yundingxi.tell.mapper;
 
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.UserCommentVo;
+import com.yundingxi.tell.bean.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,4 +27,9 @@ public interface UserMapper {
     /**
      */
     List<String> selectAllOpenId();
+
+
+    List<UserCommentVo> getUserCommentVos(@Param("openId") String openId);
+
+    UserVo getUserVoById(@Param("openId")String openId);
 }

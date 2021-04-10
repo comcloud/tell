@@ -93,4 +93,9 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
             return ResultGenerator.genSuccessResult(hget);
         }
     }
+
+    @Override
+    public String getOpenIdBySID(String id) {
+        return spittingGroovesMapper.getOpenIdBySID(id);
+    }
 }

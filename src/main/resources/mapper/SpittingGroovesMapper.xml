@@ -153,4 +153,10 @@
     <select id="getAllID" resultType="java.lang.String">
         select  id from spitting_grooves
     </select>
+    <select id="getOpenIdBySID" resultType="java.lang.String">
+        select open_id from spitting_grooves where id=#{id}
+    </select>
+    <select id="getConById" resultType="java.lang.String">
+        select content from spitting_grooves where  id=#{id}
+    </select>
 </mapper>
