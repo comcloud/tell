@@ -29,7 +29,7 @@ public interface LetterService {
      * @param openId 用户的open id
      * @return 唯独消息的Json串
      */
-    UnreadMessageDto putUnreadMessage(String openId);
+    List<UnreadMessageDto> putUnreadMessage(String openId);
 
     /**
      * 获取信件要保证以下结果

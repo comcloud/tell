@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
+import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.mapper.DiaryMapper;
 import com.yundingxi.tell.service.DiaryService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -66,7 +68,9 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public void setViews(String id, Integer viewNum) {
-        diaryMapper.updateDiaryNumber(id,viewNum);
+    public void setViews(DiaryViewDto[] viewDtoArray) {
+        for (DiaryViewDto viewDto : viewDtoArray) {
+            diaryMapper.updateDiaryNumber(viewDto.getDiaryId(),viewDto.getViewNum());
+        }
     }
 }

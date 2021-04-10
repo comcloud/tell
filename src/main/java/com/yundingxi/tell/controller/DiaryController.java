@@ -2,6 +2,7 @@ package com.yundingxi.tell.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
+import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.util.Result;
@@ -15,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version v1.0
@@ -73,11 +75,10 @@ public class DiaryController {
         return ResultGenerator.genSuccessResult(diaryService.getDetailById(id));
     }
 
-    @Operation(description = "更新日记浏览量",summary = "更新日记浏览量")
+    @Operation(description = "更新日记浏览量,传入参数为一个数组",summary = "更新日记浏览量")
     @PutMapping("/setViews")
-    public Result<Object> setViews(@Parameter(description = "日记id") @RequestParam("id") String id,
-                                    @Parameter(description = "浏览量") @RequestParam("viewNum") Integer viewNum){
-        diaryService.setViews(id,viewNum);
+    public Result<Object> setViews(@Parameter(description = "日记浏览量键值对,日记id作为键，浏览量作为值") @RequestBody DiaryViewDto[] viewDtoArray){
+        diaryService.setViews(viewDtoArray);
         return ResultGenerator.genSuccessResult();
     }
 }
