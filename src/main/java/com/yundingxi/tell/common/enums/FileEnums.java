@@ -20,8 +20,8 @@ public enum FileEnums implements FileBaseEnums{
 //    SYS_BEAUTY_ARTICLE_FILE_PATH("src/main/resources/static/beautyArticle/","美文序列化对象保存文件夹"),
 //    SYS_BEAUTY_ARTICLE_FILE_DELETE_PATH("src/main/resources/static/delete/","美文序列化对象删除文件夹");
 //=======
-    SYS_BEAUTY_ARTICLE_FILE_PATH("/home/tell/beauty/update/","美文序列化对象保存文件夹"),
-    SYS_BEAUTY_ARTICLE_FILE_DELETE_PATH("/home/tell/beauty/delete/","美文序列化对象删除文件夹");
+    SYS_BEAUTY_ARTICLE_FILE_PATH("D:\\YunDingXi\\tell\\src\\main\\resources\\static\\beautyArticle\\","美文序列化对象保存文件夹"),
+    SYS_BEAUTY_ARTICLE_FILE_DELETE_PATH("D:\\YunDingXi\\tell\\src\\main\\resources\\static\\delete\\","美文序列化对象删除文件夹");
 
     @Setter
     private String  filePath;

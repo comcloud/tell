@@ -55,4 +55,8 @@ public interface SpittingGroovesMapper {
 
     List<String> getAllID();
 
+    String getOpenIdBySID(@Param("id") String id);
+
+    String getConById(@Param("id")String id);
+
 }

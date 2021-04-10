@@ -32,7 +32,7 @@ public class CommentsController {
      * @param entity 实体对象
      */
     @PostMapping("/insert")
-    @Operation(description = "保存/发布 吐槽 评论")
+    @Operation(description = "保存/发布 吐槽 评论" ,summary = "保存/发布 吐槽 评论")
     Result<String> insert(@Parameter(description = "吐槽评论类对象",required = true)Comments entity) {
         return commentsService.insert(entity);
     }
@@ -43,7 +43,7 @@ public class CommentsController {
      * @param id 主键ID
      */
     @PostMapping("delete")
-    @Operation(description = "根据吐槽评论ID删除吐槽评论")
+    @Operation(description = "根据吐槽评论ID删除吐槽评论" ,summary = "根据吐槽评论ID删除吐槽评论")
     Result<String> deleteById(Serializable id) {
         return  commentsService.deleteById(id);
     }
@@ -55,8 +55,9 @@ public class CommentsController {
      * @return 吐槽详细信息
      */
     @GetMapping("/selectAll")
-    @Operation(description = "分页返回吐槽信息")
+    @Operation(description = "分页返回吐槽信息",summary = "分页返回吐槽信息")
     Result<PageInfo<CommentVo>> selectAll(@Parameter(description = "吐槽类对象ID",required = true)String id, Integer pageNum) {
         return commentsService.selectAll(id,pageNum);
     }
+
 }

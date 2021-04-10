@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * <p>
@@ -25,7 +26,7 @@ public class Comments implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "吐槽评论表ID")
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     @ApiModelProperty(value = "评论人openid")
     private String openId;

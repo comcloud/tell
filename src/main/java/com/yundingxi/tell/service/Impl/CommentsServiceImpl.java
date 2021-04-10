@@ -3,8 +3,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.vo.CommentVo;
+import com.yundingxi.tell.bean.vo.UserCommentVo;
+import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.CommentsMapper;
+import com.yundingxi.tell.mapper.SpittingGroovesMapper;
+import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.CommentsService;
+import com.yundingxi.tell.service.SpittingGroovesService;
+import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,11 +33,24 @@ import java.util.List;
 public class CommentsServiceImpl implements CommentsService {
     @Autowired
     private CommentsMapper commentsMapper;
+
+    @Autowired
+    private SpittingGroovesService spittingGroovesService;
+    @Autowired
+    private SpittingGroovesMapper spittingGroovesMapper;
+    @Autowired
+    private RedisUtil redisUtil;
+    @Autowired
+    private UserMapper userMapper;
     @Override
     public Result<String> insert(Comments entity) {
         int state = commentsMapper.insert(entity);
         if (state>0){
             log.info("===================> {} 数据保存成功" ,entity);
+            redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
+            UserCommentVo userCommentVo = new UserCommentVo(entity.getSgId(),entity.getContent(),new Date(), spittingGroovesMapper.getConById(entity.getSgId()),userMapper.getUserVoById(entity.getOpenId()));
+            redisUtil.lSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
+
             return ResultGenerator.genSuccessResult("发布成功");
         }else {
             log.info("===================> {} 数据保存失败" ,entity);
