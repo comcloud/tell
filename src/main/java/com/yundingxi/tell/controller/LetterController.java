@@ -100,7 +100,9 @@ public class LetterController {
 
     @Operation(description = "根据信件id获取信件具体信息",summary = "获取信件信息")
     @GetMapping("/getDetailOfLetter")
-    public Result<LetterDto> getDetailOfLetter(@Parameter(description = "信件id") String letterId){
-        return ResultGenerator.genSuccessResult(letterService.getLetterById(letterId));
+    public Result<LetterDto> getDetailOfLetter(@Parameter(description = "信件id") @RequestParam("letterId") String letterId
+                                                ,@Parameter(description = "是否是回信请求") @RequestParam("isReply") boolean isReply,
+                                               @Parameter(description = "open id") String openId){
+        return ResultGenerator.genSuccessResult(letterService.getLetterById(letterId,isReply,openId));
     }
 }

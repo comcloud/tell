@@ -9,10 +9,13 @@ import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
+import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
+import com.yundingxi.tell.mapper.ReplyMapper;
+import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
@@ -43,10 +46,15 @@ public class LetterServiceImpl implements LetterService {
 
     private final RedisUtil redisUtil;
 
+    private final ReplyMapper replyMapper;
+
+    private final UserMapper userMapper;
     @Autowired
-    public LetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil) {
+    public LetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil, ReplyMapper replyMapper, UserMapper userMapper) {
         this.letterMapper = letterMapper;
         this.redisUtil = redisUtil;
+        this.replyMapper = replyMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -146,6 +154,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    @Deprecated
     public LetterDto getLetterById(String letterId) {
         Letter letter = letterMapper.selectLetterById(letterId);
         return BeanUtil.toBean(letter, LetterDto.class);
@@ -161,6 +170,18 @@ public class LetterServiceImpl implements LetterService {
 
     }
 
+    @Override
+    public LetterDto getLetterById(String letterId, boolean isReply,String openId) {
+        String recipientPenName = userMapper.selectPenNameByOpenId(openId);
+        if(isReply){
+            Reply reply = replyMapper.selectReplyById(letterId);
+            return new LetterDto(letterMapper.selectContentByLetterId(reply.getLetterId()),reply.getContent(),reply.getId(),reply.getPenName(),recipientPenName,reply.getReplyTime());
+        }else{
+            Letter letter = letterMapper.selectLetterById(letterId);
+            return new LetterDto(null,letter.getContent(),letterId,letter.getPenName(),recipientPenName,letter.getReleaseTime());
+        }
+    }
+
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int nextInt = random.nextInt(2, 7);
@@ -169,7 +190,8 @@ public class LetterServiceImpl implements LetterService {
                 new LetterVo(letterReplyDto.getSender()
                         , letterReplyDto.getRecipient()
                         , letterReplyDto.getLetterId()
-                        , letterReplyDto.getPenName()
+                        , letterReplyDto.getSenderPenName()
+                        , letterReplyDto.getRecipientPenName()
                         , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
                         , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
                 )), 0);

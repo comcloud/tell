@@ -22,14 +22,16 @@ import java.util.Date;
 @AllArgsConstructor
 @ApiModel("信件返回数据对象")
 public class LetterDto {
-    @ApiModelProperty("信件内容")
-    private String content;
+    @ApiModelProperty("被回复信件的内容一部分")
+    private String lastContent;
+    @ApiModelProperty("回复的信件内容")
+    private String replyContent;
     @ApiModelProperty("信件id")
     private String id;
     @ApiModelProperty("发布信件的笔名")
-    private String penName;
+    private String senderPenName;
+    @ApiModelProperty("接收者的笔名")
+    private String recipientPenName;
     @ApiModelProperty("发布时间")
     private Date releaseTime;
-    @ApiModelProperty("邮票图片地址")
-    private String stampUrl;
 }

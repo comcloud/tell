@@ -1,5 +1,6 @@
 package com.yundingxi.tell.util.message;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.LetterVo;
@@ -148,13 +149,8 @@ public class SendMailUtil {
                 //此时将信息暂时存放到redis
                 log.info(MessageFormat.format("消息接收者{0}还未建立WebSocket连接，{1}发送的消息【{2}】将被存储到Redis的【{3}】列表中", letterVo.getRecipient(), letterVo.getSender(), letterVo.getMessage(), letterVo.getRecipient()));
                 //存储消息到Redis中
-                UnreadMessageDto unreadMessageDto = new UnreadMessageDto();
-                unreadMessageDto.setSender(letterVo.getSender());
-                unreadMessageDto.setMessage(letterVo.getMessage());
+                UnreadMessageDto unreadMessageDto = BeanUtil.toBean(letterVo,UnreadMessageDto.class);
                 unreadMessageDto.setSenderTime(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                unreadMessageDto.setRecipient(letterVo.getRecipient());
-                unreadMessageDto.setLetterId(letterVo.getLetterId());
-                unreadMessageDto.setPenName(letterVo.getPenName());
                 final RedisUtil redisService = (RedisUtil) SpringUtil.getBean("redisUtil");
                 Object o = redisService.get(letterVo.getRecipient() + "_unread_message");
                 if(o == null){
@@ -173,7 +169,7 @@ public class SendMailUtil {
                             , letterVo.getLetterId()
                             , new Date()
                             , letterVo.getMessage()
-                            , letterVo.getSender(), letterVo.getPenName())
+                            , letterVo.getSender(), letterVo.getSender())
             );
         }
         private void addAll(List<LetterVo> letterVos){

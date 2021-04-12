@@ -1,6 +1,8 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
@@ -8,6 +10,7 @@ import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.mapper.DiaryMapper;
 import com.yundingxi.tell.service.DiaryService;
+import com.yundingxi.tell.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,9 +71,9 @@ public class DiaryServiceImpl implements DiaryService {
     }
 
     @Override
-    public void setViews(DiaryViewDto[] viewDtoArray) {
-        for (DiaryViewDto viewDto : viewDtoArray) {
-            diaryMapper.updateDiaryNumber(viewDto.getDiaryId(),viewDto.getViewNum());
+    public void setViews(DiaryViewDto[] viewDtoList) {
+        for (DiaryViewDto diaryViewDto : viewDtoList) {
+            diaryMapper.updateDiaryNumber(diaryViewDto.getDiaryId(),diaryViewDto.getViewNum());
         }
     }
 }

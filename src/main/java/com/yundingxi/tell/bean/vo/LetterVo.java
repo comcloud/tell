@@ -21,7 +21,8 @@ public class LetterVo {
     private String sender;
     private String recipient;
     private String letterId;
-    private String penName;
+    private String senderPenName;
+    private String recipientPenName;
     private String message;
     private WebSocketServer server;
 }

@@ -32,5 +32,5 @@ public interface DiaryService {
 
     PageInfo<Diarys> getAllPublicDiary(Integer pageNum);
 
-    void setViews(DiaryViewDto[] viewDtoArray);
+    void setViews(DiaryViewDto[] viewDtoList);
 }

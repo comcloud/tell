@@ -25,4 +25,8 @@ public interface LetterMapper {
     void updateLetterTap(@Param("tabId") String tabId);
 
     Letter selectLetterById(String letterId);
+
+    String selectPenNameByOpenId(@Param("openId") String openId);
+
+    String selectContentByLetterId(@Param("letterId") String letterId);
 }

@@ -68,7 +68,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title(swaggerProperties.getApplicationName() + " 小程序后台接口")
                 .description(swaggerProperties.getApplicationDescription())
-                .contact(new Contact("云顶犀软件科技有限责任公司", "https://mrkleo.top/", "2230817302@qq.com"))
+                .contact(new Contact("云顶犀软件科技有限责任公司", "https://yundingxikj.cn/", "2230817302@qq.com"))
                 .licenseUrl("https://www.mit.edu/~amini/LICENSE.md")
                 .version("Application Version: " + swaggerProperties.getApplicationVersion() + ", Spring Boot Version: " + SpringBootVersion.getVersion())
                 .build();

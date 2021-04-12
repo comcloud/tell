@@ -32,5 +32,10 @@
     <select id="getUserVoById" resultType="com.yundingxi.tell.bean.vo.UserVo">
         select pen_name ,avatar_url from `user` where  open_id=#{openId}
     </select>
+    <select id="selectPenNameByOpenId" resultType="java.lang.String">
+        select pen_name
+        from user
+        where open_id=#{openId}
+    </select>
 </mapper>
 

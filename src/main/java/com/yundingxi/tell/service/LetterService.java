@@ -51,7 +51,10 @@ public interface LetterService {
 
     List<UnreadMessageDto> getAllUnreadLetter(String openId);
 
+    @Deprecated
     LetterDto getLetterById(String letterId);
 
     void setLetterInitInfoByOpenId(String openId);
+
+    LetterDto getLetterById(String letterId, boolean isReply,String openId);
 }
