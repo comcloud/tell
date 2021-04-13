@@ -4,13 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yundingxi.tell.bean.dto.LetterDto;
-import com.yundingxi.tell.bean.dto.LetterReplyDto;
-import com.yundingxi.tell.bean.dto.ReplyInfoDto;
-import com.yundingxi.tell.bean.dto.UnreadMessageDto;
+import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
@@ -192,6 +190,13 @@ public class LetterServiceImpl implements LetterService {
             );
 
         }
+    }
+
+    @Override
+    public IndexLetterDto getLetterById(IndexLetterVo indexLetterVo) {
+        String recipientPenName = userMapper.selectPenNameByOpenId(indexLetterVo.getOpenId());
+        Letter letter = letterMapper.selectLetterById(indexLetterVo.getLetterId());
+        return new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), letter.getStampUrl(), recipientPenName, letter.getReleaseTime());
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
