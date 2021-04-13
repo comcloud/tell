@@ -114,15 +114,19 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public String replyLetter(LetterReplyDto letterReplyDto) {
-        Reply reply = BeanUtil.toBean(letterReplyDto, Reply.class);
+        Reply reply = new Reply();
+        String replyId = UUID.randomUUID().toString();
         String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        reply.setId(UUID.randomUUID().toString());
+        reply.setId(replyId);
         reply.setContent(letterReplyDto.getMessage());
         reply.setReplyTime(new Date());
         reply.setOpenId(letterReplyDto.getSender());
+        reply.setLetterId(letterReplyDto.getLetterId());
+        reply.setPenName(letterReplyDto.getSenderPenName());
         letterMapper.insertReply(reply);
         @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(letterReplyDto.getRecipient() + "_unread_message");
         UnreadMessageDto messageDto = BeanUtil.toBean(letterReplyDto, UnreadMessageDto.class);
+        messageDto.setReplyId(replyId);
         messageDto.setSenderTime(replyTime);
         if(messageDtoList == null){
             List<UnreadMessageDto> list = new ArrayList<>();

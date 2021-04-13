@@ -95,7 +95,7 @@ public class LetterController {
 
     @Operation(description = "获取所有未读信件，注意这里接口调用之后后台将会将此信件标记未已读，需要前台缓存这个数据",summary = "获取未读信件")
     @GetMapping("/getAllUnreadLetter")
-    public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id") String openId){
+    public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id",required = true) String openId){
         return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId));
     }
 

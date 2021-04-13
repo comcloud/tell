@@ -26,8 +26,6 @@ public class LetterReplyDto {
     private String recipient;
     @ApiModelProperty(value = "被回复的信件的id,后台需要是哪封信件被回复",required = true)
     private String letterId;
-    @ApiModelProperty(value = "回复的信件的id",required = true)
-    private String replyId;
     @ApiModelProperty(value = "回复人留下的笔名",required = true)
     private String senderPenName;
     @ApiModelProperty(value = "接收者的笔名",required = true)
