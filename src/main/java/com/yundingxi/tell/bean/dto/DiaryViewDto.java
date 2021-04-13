@@ -22,9 +22,9 @@ import java.util.List;
 @NoArgsConstructor
 @ApiModel("日记浏览量实体类")
 public class DiaryViewDto {
-    @ApiModelProperty(value = "日记id",dataType = "java.lang.String")
+    @ApiModelProperty(value = "日记id",dataType = "java.lang.String",required = true)
     private String diaryId;
-    @ApiModelProperty(value = "日记变化的浏览量",dataType = "java.lang.Integer")
+    @ApiModelProperty(value = "日记变化的浏览量",dataType = "java.lang.Integer",required = true)
     private Integer viewNum;
 
 }

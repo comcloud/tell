@@ -2,6 +2,7 @@ package com.yundingxi.tell.service;
 
 import com.yundingxi.tell.bean.dto.LetterDto;
 import com.yundingxi.tell.bean.dto.LetterReplyDto;
+import com.yundingxi.tell.bean.dto.ReplyInfoDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
@@ -56,5 +57,5 @@ public interface LetterService {
 
     void setLetterInitInfoByOpenId(String openId);
 
-    LetterDto getLetterById(String letterId, boolean isReply,String openId);
+    LetterDto getLetterById(ReplyInfoDto replyInfoDto);
 }

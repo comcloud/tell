@@ -2,6 +2,7 @@ package com.yundingxi.tell.controller;
 
 import com.yundingxi.tell.bean.dto.LetterDto;
 import com.yundingxi.tell.bean.dto.LetterReplyDto;
+import com.yundingxi.tell.bean.dto.ReplyInfoDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.service.LetterService;
@@ -100,9 +101,7 @@ public class LetterController {
 
     @Operation(description = "根据信件id获取信件具体信息",summary = "获取信件信息")
     @GetMapping("/getDetailOfLetter")
-    public Result<LetterDto> getDetailOfLetter(@Parameter(description = "信件id") @RequestParam("letterId") String letterId
-                                                ,@Parameter(description = "是否是回信请求") @RequestParam("isReply") boolean isReply,
-                                               @Parameter(description = "open id") String openId){
-        return ResultGenerator.genSuccessResult(letterService.getLetterById(letterId,isReply,openId));
+    public Result<LetterDto> getDetailOfLetter(@Parameter(description = "获取信件信息对象，如果只是获取普通获取信息不是回复，那么letterId应该为null") ReplyInfoDto replyInfoDto){
+        return ResultGenerator.genSuccessResult(letterService.getLetterById(replyInfoDto));
     }
 }

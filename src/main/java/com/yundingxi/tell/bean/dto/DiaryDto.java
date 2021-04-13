@@ -20,14 +20,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @ApiModel(description = "日记实体")
 public class DiaryDto {
-    @ApiModelProperty("日记内容")
+    @ApiModelProperty(value = "日记内容",required = true)
     private String content;
-    @ApiModelProperty("笔名")
+    @ApiModelProperty(value = "笔名",required = true)
     private String penName;
-    @ApiModelProperty("天气")
+    @ApiModelProperty(value = "天气",required = true)
     private String weather;
-    @ApiModelProperty("open id")
+    @ApiModelProperty(value = "open id",required = true)
     private String openId;
-    @ApiModelProperty("state，0表示不公开，1表示公开")
+    @ApiModelProperty(value = "state，0表示不公开，1表示公开",required = true)
     private String state;
 }

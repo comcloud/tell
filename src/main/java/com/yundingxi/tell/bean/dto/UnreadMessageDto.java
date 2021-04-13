@@ -20,18 +20,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @ApiModel(value = "未读消息",description = "未读消息实体类")
 public class UnreadMessageDto {
-    @ApiModelProperty("发送者的open id")
+    @ApiModelProperty(value = "发送者的open id",required = true)
     private String sender;
-    @ApiModelProperty("接收者的open id")
+    @ApiModelProperty(value = "接收者的open id",required = true)
     private String recipient;
-    @ApiModelProperty("未读消息")
+    @ApiModelProperty(value = "未读消息",required = true)
     private String message;
-    @ApiModelProperty("发送这个消息的时间")
+    @ApiModelProperty(value = "发送这个消息的时间",required = true)
     private String senderTime;
-    @ApiModelProperty("回复人留下的笔名")
+    @ApiModelProperty(value = "回复人留下的笔名",required = true)
     private String senderPenName;
-    @ApiModelProperty("接收者的笔名")
+    @ApiModelProperty(value = "接收者的笔名",required = true)
     private String recipientPenName;
-    @ApiModelProperty("被回复信的ID")
+    @ApiModelProperty(value = "被回复信的ID",required = true)
     private String letterId;
+    @ApiModelProperty(value = "回复信的id",required = true)
+    private String replyId;
 }

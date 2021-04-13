@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.dto.LetterDto;
 import com.yundingxi.tell.bean.dto.LetterReplyDto;
+import com.yundingxi.tell.bean.dto.ReplyInfoDto;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
@@ -145,11 +146,10 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public List<UnreadMessageDto> getAllUnreadLetter(String openId) {
         @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
-
         //  delete the key
-//        if (messageDtoList != null) {
-//            redisUtil.del(openId + "_unread_message");
-//        }
+        if (messageDtoList != null) {
+            redisUtil.del(openId + "_unread_message");
+        }
         return messageDtoList;
     }
 
@@ -171,14 +171,19 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public LetterDto getLetterById(String letterId, boolean isReply,String openId) {
-        String recipientPenName = userMapper.selectPenNameByOpenId(openId);
-        if(isReply){
-            Reply reply = replyMapper.selectReplyById(letterId);
-            return new LetterDto(letterMapper.selectContentByLetterId(reply.getLetterId()),reply.getContent(),reply.getId(),reply.getPenName(),recipientPenName,reply.getReplyTime());
+    public LetterDto getLetterById(ReplyInfoDto replyInfoDto) {
+        String recipientPenName = userMapper.selectPenNameByOpenId(replyInfoDto.getOpenId());
+        if(replyInfoDto.getLetterId() == null || "".equals(replyInfoDto.getLetterId().replace("\"",""))){
+            Letter letter = letterMapper.selectLetterById(replyInfoDto.getReplyId());
+            return new LetterDto(null,letter.getContent(),replyInfoDto.getReplyId(),letter.getPenName(),recipientPenName,letter.getReleaseTime());
         }else{
-            Letter letter = letterMapper.selectLetterById(letterId);
-            return new LetterDto(null,letter.getContent(),letterId,letter.getPenName(),recipientPenName,letter.getReleaseTime());
+            Reply reply = replyMapper.selectReplyById(replyInfoDto.getReplyId());
+            return new LetterDto(
+                    letterMapper.selectContentByLetterId(reply.getLetterId())
+                    ,reply.getContent(),reply.getId(),reply.getPenName()
+                    ,recipientPenName,reply.getReplyTime()
+            );
+
         }
     }
 
