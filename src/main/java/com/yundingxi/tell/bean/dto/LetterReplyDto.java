@@ -28,8 +28,6 @@ public class LetterReplyDto {
     private String letterId;
     @ApiModelProperty(value = "回复人留下的笔名",required = true)
     private String senderPenName;
-    @ApiModelProperty(value = "接收者的笔名",required = true)
-    private String recipientPenName;
     @ApiModelProperty(value = "回复人回复的消息",required = true)
     private String message;
 }

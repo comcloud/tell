@@ -101,7 +101,7 @@ public class LetterServiceImpl implements LetterService {
         List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
         List<LetterDto> letterDtoList = new ArrayList<>();
         letters.forEach(letter -> {
-            LetterDto letterDto = BeanUtil.toBean(letter, LetterDto.class);
+            LetterDto letterDto = new LetterDto(null,letter.getContent(),letter.getId(),letter.getPenName(),userMapper.selectPenNameByOpenId(openId),letter.getReleaseTime());
             letterDtoList.add(letterDto);
         });
         return letterDtoList;
@@ -166,12 +166,15 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public void setLetterInitInfoByOpenId(String openId){
+        Object o = redisUtil.get(openId + "_letter_info");
+        if(o != null){
+            return;
+        }
         ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
         String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         letterInfo.put("date", date);
         letterInfo.put("letter_count_location", 1);
         redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
-
     }
 
     @Override
@@ -194,13 +197,14 @@ public class LetterServiceImpl implements LetterService {
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int nextInt = random.nextInt(2, 7);
+        String recipientPenName = userMapper.selectPenNameByOpenId(letterReplyDto.getRecipient());
         String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
         ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
                 new LetterVo(letterReplyDto.getSender()
                         , letterReplyDto.getRecipient()
                         , letterReplyDto.getLetterId()
                         , letterReplyDto.getSenderPenName()
-                        , letterReplyDto.getRecipientPenName()
+                        , recipientPenName
                         , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
                         , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
                 )), 0);
