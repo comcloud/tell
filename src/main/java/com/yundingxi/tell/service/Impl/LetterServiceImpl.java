@@ -4,15 +4,17 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yundingxi.tell.bean.dto.LetterDto;
-import com.yundingxi.tell.bean.dto.LetterReplyDto;
-import com.yundingxi.tell.bean.dto.UnreadMessageDto;
+import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
+import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
+import com.yundingxi.tell.mapper.ReplyMapper;
+import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
@@ -43,10 +45,15 @@ public class LetterServiceImpl implements LetterService {
 
     private final RedisUtil redisUtil;
 
+    private final ReplyMapper replyMapper;
+
+    private final UserMapper userMapper;
     @Autowired
-    public LetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil) {
+    public LetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil, ReplyMapper replyMapper, UserMapper userMapper) {
         this.letterMapper = letterMapper;
         this.redisUtil = redisUtil;
+        this.replyMapper = replyMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -73,7 +80,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public List<LetterDto> getLettersByOpenId(String openId) {
+    public List<IndexLetterDto> getLettersByOpenId(String openId) {
         Object o = redisUtil.get(openId + "_letter_info");
         if(o == null){
             setLetterInitInfoByOpenId(openId);
@@ -90,9 +97,9 @@ public class LetterServiceImpl implements LetterService {
             redisUtil.set(openId + "_letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
         }
         List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
-        List<LetterDto> letterDtoList = new ArrayList<>();
+        List<IndexLetterDto> letterDtoList = new ArrayList<>();
         letters.forEach(letter -> {
-            LetterDto letterDto = BeanUtil.toBean(letter, LetterDto.class);
+            IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
             letterDtoList.add(letterDto);
         });
         return letterDtoList;
@@ -105,15 +112,19 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public String replyLetter(LetterReplyDto letterReplyDto) {
-        Reply reply = BeanUtil.toBean(letterReplyDto, Reply.class);
+        Reply reply = new Reply();
+        String replyId = UUID.randomUUID().toString();
         String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        reply.setId(UUID.randomUUID().toString());
+        reply.setId(replyId);
         reply.setContent(letterReplyDto.getMessage());
         reply.setReplyTime(new Date());
         reply.setOpenId(letterReplyDto.getSender());
+        reply.setLetterId(letterReplyDto.getLetterId());
+        reply.setPenName(letterReplyDto.getSenderPenName());
         letterMapper.insertReply(reply);
         @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(letterReplyDto.getRecipient() + "_unread_message");
         UnreadMessageDto messageDto = BeanUtil.toBean(letterReplyDto, UnreadMessageDto.class);
+        messageDto.setReplyId(replyId);
         messageDto.setSenderTime(replyTime);
         if(messageDtoList == null){
             List<UnreadMessageDto> list = new ArrayList<>();
@@ -137,15 +148,15 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public List<UnreadMessageDto> getAllUnreadLetter(String openId) {
         @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
-
         //  delete the key
-//        if (messageDtoList != null) {
-//            redisUtil.del(openId + "_unread_message");
-//        }
+        if (messageDtoList != null) {
+            redisUtil.del(openId + "_unread_message");
+        }
         return messageDtoList;
     }
 
     @Override
+    @Deprecated
     public LetterDto getLetterById(String letterId) {
         Letter letter = letterMapper.selectLetterById(letterId);
         return BeanUtil.toBean(letter, LetterDto.class);
@@ -153,23 +164,52 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public void setLetterInitInfoByOpenId(String openId){
+        Object o = redisUtil.get(openId + "_letter_info");
+        if(o != null){
+            return;
+        }
         ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
         String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         letterInfo.put("date", date);
         letterInfo.put("letter_count_location", 1);
         redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
+    }
 
+    @Override
+    public LetterDto getLetterById(ReplyInfoDto replyInfoDto) {
+        String recipientPenName = userMapper.selectPenNameByOpenId(replyInfoDto.getOpenId());
+        if(replyInfoDto.getLetterId() == null || "".equals(replyInfoDto.getLetterId().replace("\"",""))){
+            Letter letter = letterMapper.selectLetterById(replyInfoDto.getReplyId());
+            return new LetterDto(null,letter.getContent(),replyInfoDto.getReplyId(),letter.getPenName(),recipientPenName,letter.getReleaseTime());
+        }else{
+            Reply reply = replyMapper.selectReplyById(replyInfoDto.getReplyId());
+            return new LetterDto(
+                    letterMapper.selectContentByLetterId(reply.getLetterId())
+                    ,reply.getContent(),reply.getId(),reply.getPenName()
+                    ,recipientPenName,reply.getReplyTime()
+            );
+
+        }
+    }
+
+    @Override
+    public IndexLetterDto getLetterById(IndexLetterVo indexLetterVo) {
+        String recipientPenName = userMapper.selectPenNameByOpenId(indexLetterVo.getOpenId());
+        Letter letter = letterMapper.selectLetterById(indexLetterVo.getLetterId());
+        return new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), null, recipientPenName, letter.getReleaseTime());
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int nextInt = random.nextInt(2, 7);
+        String recipientPenName = userMapper.selectPenNameByOpenId(letterReplyDto.getRecipient());
         String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
         ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
                 new LetterVo(letterReplyDto.getSender()
                         , letterReplyDto.getRecipient()
                         , letterReplyDto.getLetterId()
-                        , letterReplyDto.getPenName()
+                        , letterReplyDto.getSenderPenName()
+                        , recipientPenName
                         , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
                         , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
                 )), 0);

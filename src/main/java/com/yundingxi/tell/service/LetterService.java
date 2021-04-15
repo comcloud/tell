@@ -1,10 +1,9 @@
 package com.yundingxi.tell.service;
 
-import com.yundingxi.tell.bean.dto.LetterDto;
-import com.yundingxi.tell.bean.dto.LetterReplyDto;
-import com.yundingxi.tell.bean.dto.UnreadMessageDto;
+import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
+import com.yundingxi.tell.bean.vo.IndexLetterVo;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public interface LetterService {
      * @param openId 用户 open id
      * @return 结果集
      */
-    List<LetterDto> getLettersByOpenId(String openId);
+    List<IndexLetterDto> getLettersByOpenId(String openId);
 
     void saveReplyFromSenderToRecipient(Reply reply);
 
@@ -51,7 +50,12 @@ public interface LetterService {
 
     List<UnreadMessageDto> getAllUnreadLetter(String openId);
 
+    @Deprecated
     LetterDto getLetterById(String letterId);
 
     void setLetterInitInfoByOpenId(String openId);
+
+    LetterDto getLetterById(ReplyInfoDto replyInfoDto);
+
+    IndexLetterDto getLetterById(IndexLetterVo indexLetterVo);
 }

@@ -1,10 +1,13 @@
 server:
   port: 8089
+
+############注意这个注释不要开启，也就是ssl注释，直接使用8089上线######
+
+
 #  ssl:
 #    key-store: 5128774_rayss.host.pfx
 #    key-store-password: zY79E8qt
 #    keyStoreType: PKCS12
-#注意这里不可以添加请求头大小
 
 swagger:
   enable: true
@@ -64,7 +67,9 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   redis:
+#    host: 121.5.39.223
     host: 8.136.7.184
+#    host: 127.0.0.1
     port: 6379
     timeout: 300000
     password: 1234
@@ -82,3 +87,9 @@ spring:
     name: tell
 time:
   cron: 0 0 12 * * ?
+
+wechat:
+  baseUrl: "https://api.weixin.qq.com/sns/jscode2session?js_code="
+  appid: "wx45847f8c326518ee"
+  secret: "39b3662386b4bc8ec624f814369bf205"
+  grantType: "authorization_code"

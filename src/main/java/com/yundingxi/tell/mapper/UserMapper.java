@@ -32,4 +32,6 @@ public interface UserMapper {
     List<UserCommentVo> getUserCommentVos(@Param("openId") String openId);
 
     UserVo getUserVoById(@Param("openId")String openId);
+
+    String selectPenNameByOpenId(@Param("openId") String openId);
 }

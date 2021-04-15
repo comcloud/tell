@@ -11,25 +11,25 @@ import java.util.Date;
 
 /**
  * @version v1.0
- * @ClassName LetterDto
+ * @ClassName IndexLetterDto
  * @Author rayss
- * @Datetime 2021/3/31 9:37 上午
+ * @Datetime 2021/4/13 12:42 下午
  */
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("信件返回数据对象")
-public class LetterDto {
-    @ApiModelProperty(value = "被回复信件的内容一部分",required = true)
-    private String lastContent;
-    @ApiModelProperty(value = "回复的信件内容",required = true)
-    private String replyContent;
+@ApiModel("首页信件实体类")
+public class IndexLetterDto {
+    @ApiModelProperty(value = "信件的内容",required = true)
+    private String content;
     @ApiModelProperty(value = "信件id",required = true)
     private String id;
     @ApiModelProperty(value = "发布信件的笔名",required = true)
     private String senderPenName;
+    @ApiModelProperty(value = "邮票地址")
+    private String stampUrl;
     @ApiModelProperty(value = "接收者的笔名",required = true)
     private String recipientPenName;
     @ApiModelProperty(value = "发布时间",required = true)

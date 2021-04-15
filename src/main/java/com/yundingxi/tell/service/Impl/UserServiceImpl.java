@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 import cn.hutool.http.HttpUtil;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.OpenIdVo;
 import com.yundingxi.tell.bean.vo.UserCommentVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
@@ -13,6 +14,8 @@ import com.yundingxi.tell.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +33,9 @@ public class UserServiceImpl implements UserService {
     private SpittingGroovesService spittingGroovesService;
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private OpenIdVo openIdVo;
     @Override
     public Result<String> insertUser(User user) {
       if(userMapper.insertUser(user)>0){
@@ -41,11 +47,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getKey(String jsCode) {
-        String baseUrl = "https://api.weixin.qq.com/sns/jscode2session" + "?js_code=" + jsCode;
-        String appid = "wx45847f8c326518ee";
-        String secret = "39b3662386b4bc8ec624f814369bf205";
-        String grantType = "authorization_code";
-        return HttpUtil.get(baseUrl + "&appid=" + appid + "&secret=" + secret + "&grant_type=" + grantType);
+        String baseUrl = openIdVo.getBaseUrl() + jsCode;
+        String appid = openIdVo.getAppid();
+        String secret = openIdVo.getSecret();
+        String grantType = openIdVo.getGrantType();
+        String result = HttpUtil.get(baseUrl + "&appid=" + appid + "&secret=" + secret + "&grant_type=" + grantType);
+        String openId = JsonUtil.parseJson(result).findPath("openid").toString();
+        Date currentDate = new Date();
+        try {
+            userMapper.insertUser(new User(openId,null,null,currentDate,currentDate,0,"",""));
+        }catch (Exception e){
+            e.printStackTrace();
+            return result;
+        }
+        return result;
     }
 
     @Override

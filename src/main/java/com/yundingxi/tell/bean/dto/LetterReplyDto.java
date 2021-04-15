@@ -20,14 +20,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @ApiModel(value = "回复信件需要的信息")
 public class LetterReplyDto {
-    @ApiModelProperty("要回复的人的open id")
+    @ApiModelProperty(value = "要回复的人的open id",required = true)
     private String sender;
-    @ApiModelProperty("被回复的人的open id")
+    @ApiModelProperty(value = "被回复的人的open id",required = true)
     private String recipient;
-    @ApiModelProperty("被回复的信件的id,后台需要是哪封信件被回复")
+    @ApiModelProperty(value = "被回复的信件的id,后台需要是哪封信件被回复",required = true)
     private String letterId;
-    @ApiModelProperty("要回复人留下的笔名")
-    private String penName;
-    @ApiModelProperty("回复人回复的消息")
+    @ApiModelProperty(value = "回复人留下的笔名",required = true)
+    private String senderPenName;
+    @ApiModelProperty(value = "回复人回复的消息",required = true)
     private String message;
 }
