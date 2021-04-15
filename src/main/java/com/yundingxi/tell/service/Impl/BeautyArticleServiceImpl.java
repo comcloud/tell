@@ -75,7 +75,7 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
             log.info("=============> IO异常 {}", e.getMessage());
             return ResultGenerator.genFailResult("更新失败");
         }
-        if(files.size()<=2){
+        if(files.size()<=2||files==null){
             redisUtil.incr(RedisEnums.SYS_PMW_INDEX.getRedisKey(),2);
             Integer o = (Integer) redisUtil.get(RedisEnums.SYS_PMW_INDEX.getRedisKey());
             saveCrawlObject(o,o+2);
