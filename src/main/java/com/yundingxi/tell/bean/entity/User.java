@@ -38,7 +38,7 @@ public class User implements Serializable {
      * 注册时间
      */
     @ApiModelProperty(value = "注册时间")
-    private Date registrationTime=new Date();
+    private Date registrationTime;
     /**
      * 最后一次登陆时间
      */

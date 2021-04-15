@@ -106,6 +106,7 @@
         select  c.`content`, c.`date`,u.pen_name,u.avatar_url
         from comments  c, `user`  u where  c.open_id=u.open_id
         and c.sg_id=#{id}
+
     </select>
 
 

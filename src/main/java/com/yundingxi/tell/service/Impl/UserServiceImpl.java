@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private OpenIdVo openIdVo;
     @Override
     public Result<String> insertUser(User user) {
+        System.out.println(user);
       if(userMapper.insertUser(user)>0){
           return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
       }else {
@@ -81,5 +82,24 @@ public class UserServiceImpl implements UserService {
     public Result<Object> getCommNum(String openId) {
         Object o =  redisUtil.get("comm:" + openId + ":count");
         return ResultGenerator.genSuccessResult(o);
+    }
+
+    @Override
+    public Result<String> updateUser(User entity) {
+        System.out.println(entity);
+        if(userMapper.updateUser(entity)>0){
+            return ResultGenerator.genSuccessResult("user 用户 信息 修改  成功!!!");
+        }
+
+        return ResultGenerator.genFailResult("更新失败!!!!!");
+    }
+
+    @Override
+    public Result<String> updateOutDate(String openId) {
+        if(userMapper.updateOutDate(openId)>0){
+            return ResultGenerator.genSuccessResult("user 用户 退出  成功!!!,退出时间已经记录");
+        }
+
+        return ResultGenerator.genFailResult("最后登录时间记录失败!!!!!");
     }
 }
