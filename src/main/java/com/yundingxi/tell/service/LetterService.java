@@ -36,7 +36,7 @@ public interface LetterService {
      * @param openId 用户 open id
      * @return 结果集
      */
-    List<LetterDto> getLettersByOpenId(String openId);
+    List<IndexLetterDto> getLettersByOpenId(String openId);
 
     void saveReplyFromSenderToRecipient(Reply reply);
 

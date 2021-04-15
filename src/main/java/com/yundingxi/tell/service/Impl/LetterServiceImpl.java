@@ -80,7 +80,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public List<LetterDto> getLettersByOpenId(String openId) {
+    public List<IndexLetterDto> getLettersByOpenId(String openId) {
         Object o = redisUtil.get(openId + "_letter_info");
         if(o == null){
             setLetterInitInfoByOpenId(openId);
@@ -97,9 +97,9 @@ public class LetterServiceImpl implements LetterService {
             redisUtil.set(openId + "_letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
         }
         List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
-        List<LetterDto> letterDtoList = new ArrayList<>();
+        List<IndexLetterDto> letterDtoList = new ArrayList<>();
         letters.forEach(letter -> {
-            LetterDto letterDto = new LetterDto(null,letter.getContent(),letter.getId(),letter.getPenName(),userMapper.selectPenNameByOpenId(openId),letter.getReleaseTime());
+            IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
             letterDtoList.add(letterDto);
         });
         return letterDtoList;
@@ -196,7 +196,7 @@ public class LetterServiceImpl implements LetterService {
     public IndexLetterDto getLetterById(IndexLetterVo indexLetterVo) {
         String recipientPenName = userMapper.selectPenNameByOpenId(indexLetterVo.getOpenId());
         Letter letter = letterMapper.selectLetterById(indexLetterVo.getLetterId());
-        return new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), letter.getStampUrl(), recipientPenName, letter.getReleaseTime());
+        return new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), null, recipientPenName, letter.getReleaseTime());
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {

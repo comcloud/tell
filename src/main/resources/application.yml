@@ -87,3 +87,9 @@ spring:
     name: tell
 time:
   cron: 0 0 12 * * ?
+
+wechat:
+  baseUrl: "https://api.weixin.qq.com/sns/jscode2session?js_code="
+  appid: "wx45847f8c326518ee"
+  secret: "39b3662386b4bc8ec624f814369bf205"
+  grantType: "authorization_code"
