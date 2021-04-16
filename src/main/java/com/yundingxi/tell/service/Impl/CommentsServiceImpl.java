@@ -50,7 +50,7 @@ public class CommentsServiceImpl implements CommentsService {
             redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
             UserCommentVo userCommentVo = new UserCommentVo(entity.getSgId(),entity.getContent(),new Date(), spittingGroovesMapper.getConById(entity.getSgId()),userMapper.getUserVoById(entity.getOpenId()));
             redisUtil.lSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
-
+            spittingGroovesMapper.addNumber(entity.getSgId());
             return ResultGenerator.genSuccessResult("发布成功");
         }else {
             log.info("===================> {} 数据保存失败" ,entity);
@@ -74,7 +74,7 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public Result<PageInfo<CommentVo>> selectAll(String id,Integer pageNum) {
         String orderBy = "id desc";
-        PageHelper.startPage(pageNum,10,orderBy);
+        PageHelper.startPage(pageNum,5,orderBy);
         List<CommentVo> spittingGrooves = commentsMapper.selectAll(id);
         PageInfo<CommentVo> pageInfo = new PageInfo<>(spittingGrooves);
         log.info("=====================> 查询数据成功 {}",pageInfo);

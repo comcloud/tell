@@ -38,4 +38,6 @@ public interface CommentsMapper {
      * @return 吐槽详细信息
      */
     List<CommentVo> selectAll(@Param("id") String id);
+
+
 }

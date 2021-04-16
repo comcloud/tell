@@ -59,4 +59,6 @@ public interface SpittingGroovesMapper {
 
     String getConById(@Param("id")String id);
 
+    int addNumber(@Param("id")String id);
+
 }

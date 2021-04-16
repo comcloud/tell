@@ -119,6 +119,11 @@
             <include refid="Base_Insert_Value_List"/>
         </trim>
     </insert>
+    <update id="addNumber">
+        update spitting_grooves
+        set `number` = `number`+1
+        where id=#{id}
+    </update>
     <update id="updateById">
         update spitting_grooves
         <set>
