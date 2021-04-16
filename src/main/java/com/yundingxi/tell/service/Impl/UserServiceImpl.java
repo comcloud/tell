@@ -1,4 +1,5 @@
 package com.yundingxi.tell.service.Impl;
+
 import cn.hutool.http.HttpUtil;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.OpenIdVo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author hds
@@ -36,14 +38,14 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OpenIdVo openIdVo;
+
     @Override
     public Result<String> insertUser(User user) {
-        System.out.println(user);
-      if(userMapper.insertUser(user)>0){
-          return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
-      }else {
-          return ResultGenerator.genFailResult("注册失败！！！");
-      }
+        if (userMapper.insertUser(user) > 0) {
+            return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
+        } else {
+            return ResultGenerator.genFailResult("注册失败！！！");
+        }
     }
 
     @Override
@@ -56,8 +58,8 @@ public class UserServiceImpl implements UserService {
         String openId = JsonUtil.parseJson(result).findPath("openid").toString();
         Date currentDate = new Date();
         try {
-            userMapper.insertUser(new User(openId,null,null,currentDate,currentDate,0,"",""));
-        }catch (Exception e){
+            userMapper.insertUser(new User(openId, null, null, currentDate, currentDate, 0, "", ""));
+        } catch (Exception e) {
             e.printStackTrace();
             return result;
         }
@@ -68,10 +70,10 @@ public class UserServiceImpl implements UserService {
     public Result<Object> getAllUserCommentVo(String openId) {
         List<Object> objects = redisUtil.lGet("comm:" + openId + ":info", 0, -1);
         redisUtil.del("comm:" + openId + ":count");
-        if (objects.isEmpty()){
+        if (objects.isEmpty()) {
             List<UserCommentVo> userCommentVos = userMapper.getUserCommentVos(openId);
             for (UserCommentVo userCommentVo : userCommentVos) {
-                redisUtil.lSet("comm:"+openId+":info", userCommentVo);
+                redisUtil.lSet("comm:" + openId + ":info", userCommentVo);
             }
             return ResultGenerator.genSuccessResult(userCommentVos);
         }
@@ -80,14 +82,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<Object> getCommNum(String openId) {
-        Object o =  redisUtil.get("comm:" + openId + ":count");
+        Object o = redisUtil.get("comm:" + openId + ":count");
         return ResultGenerator.genSuccessResult(o);
     }
 
     @Override
     public Result<String> updateUser(User entity) {
         System.out.println(entity);
-        if(userMapper.updateUser(entity)>0){
+        if (userMapper.updateUser(entity) > 0) {
             return ResultGenerator.genSuccessResult("user 用户 信息 修改  成功!!!");
         }
 
@@ -96,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<String> updateOutDate(String openId) {
-        if(userMapper.updateOutDate(openId)>0){
+        if (userMapper.updateOutDate(openId) > 0) {
             return ResultGenerator.genSuccessResult("user 用户 退出  成功!!!,退出时间已经记录");
         }
 

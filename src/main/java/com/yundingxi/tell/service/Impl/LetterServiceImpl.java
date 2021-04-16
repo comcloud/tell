@@ -19,6 +19,7 @@ import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -80,88 +82,108 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public List<UnreadMessageDto> putUnreadMessage(String openId) {
-        //使用redis获取
-        @SuppressWarnings("unchecked") List<UnreadMessageDto> unreadMessage = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
-        if (unreadMessage != null) {
-            redisUtil.del(openId + "_unread_message");
+        CompletableFuture<List<UnreadMessageDto>> future = CompletableFuture.supplyAsync(() -> {
+            //使用redis获取
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> unreadMessage = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+            if (unreadMessage != null) {
+                redisUtil.del(openId + "_unread_message");
+            }
+            return unreadMessage;
+        });
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-        return unreadMessage;
     }
 
+    @SneakyThrows
     @Override
     public List<IndexLetterDto> getLettersByOpenId(String openId) {
-        Object o = redisUtil.get(openId + "_letter_info");
-        if(o == null){
-            setLetterInitInfoByOpenId(openId);
-        }
-        JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
-        String date = letterInfo.findPath("date").toString().replace("\"", "");
-        int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
-        String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        if (!currentDate.equals(date)) {
-            letterCountLocation = letterCountLocation + 3;
-            ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
-            newValue.put("date", currentDate);
-            newValue.put("letter_count_location", letterCountLocation);
-            redisUtil.set(openId + "_letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
-        }
-        List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
-        List<IndexLetterDto> letterDtoList = new ArrayList<>();
-        letters.forEach(letter -> {
-            IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(),letter.getOpenId(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
-            letterDtoList.add(letterDto);
-        });
-        return letterDtoList;
+        return CompletableFuture.supplyAsync(() -> {
+            Object o = redisUtil.get(openId + "_letter_info");
+            if(o == null){
+                setLetterInitInfoByOpenId(openId);
+            }
+            JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
+            String date = letterInfo.findPath("date").toString().replace("\"", "");
+            int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
+            String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if (!currentDate.equals(date)) {
+                letterCountLocation = letterCountLocation + 3;
+                ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
+                newValue.put("date", currentDate);
+                newValue.put("letter_count_location", letterCountLocation);
+                redisUtil.set(openId + "_letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
+            }
+            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
+            List<IndexLetterDto> letterDtoList = new ArrayList<>();
+            letters.forEach(letter -> {
+                IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(),letter.getOpenId(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
+                letterDtoList.add(letterDto);
+            });
+            return letterDtoList;
+        }).get();
     }
 
     @Override
     public void saveReplyFromSenderToRecipient(Reply reply) {
-        letterMapper.insertReply(reply);
+        CompletableFuture.runAsync(() -> letterMapper.insertReply(reply));
     }
 
     @Override
     public String replyLetter(LetterReplyDto letterReplyDto) {
-        Reply reply = new Reply();
-        String replyId = UUID.randomUUID().toString();
-        String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        reply.setId(replyId);
-        reply.setContent(letterReplyDto.getMessage());
-        reply.setReplyTime(new Date());
-        reply.setOpenId(letterReplyDto.getSender());
-        reply.setLetterId(letterReplyDto.getLetterId());
-        reply.setPenName(letterReplyDto.getSenderPenName());
-        letterMapper.insertReply(reply);
-        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(letterReplyDto.getRecipient() + "_unread_message");
-        UnreadMessageDto messageDto = BeanUtil.toBean(letterReplyDto, UnreadMessageDto.class);
-        messageDto.setReplyId(replyId);
-        messageDto.setSenderTime(replyTime);
-        if(messageDtoList == null){
-            List<UnreadMessageDto> list = new ArrayList<>();
-            list.add(messageDto);
-            redisUtil.set(letterReplyDto.getRecipient()+"_unread_message",list);
-        }else{
-            messageDtoList.add(messageDto);
-            redisUtil.set(letterReplyDto.getRecipient()+"_unread_message",messageDtoList);
-        }
+        CompletableFuture.runAsync(() -> {
+            Reply reply = new Reply();
+            String replyId = UUID.randomUUID().toString();
+            String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            reply.setId(replyId);
+            reply.setContent(letterReplyDto.getMessage());
+            reply.setReplyTime(new Date());
+            reply.setOpenId(letterReplyDto.getSender());
+            reply.setLetterId(letterReplyDto.getLetterId());
+            reply.setPenName(letterReplyDto.getSenderPenName());
+            letterMapper.insertReply(reply);
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(letterReplyDto.getRecipient() + "_unread_message");
+            UnreadMessageDto messageDto = BeanUtil.toBean(letterReplyDto, UnreadMessageDto.class);
+            messageDto.setReplyId(replyId);
+            messageDto.setSenderTime(replyTime);
+            if(messageDtoList == null){
+                List<UnreadMessageDto> list = new ArrayList<>();
+                list.add(messageDto);
+                redisUtil.set(letterReplyDto.getRecipient()+"_unread_message",list);
+            }else{
+                messageDtoList.add(messageDto);
+                redisUtil.set(letterReplyDto.getRecipient()+"_unread_message",messageDtoList);
+            }
+        });
+
         return "";
     }
 
+    @SneakyThrows
     @Override
     public Map<Integer, Integer> getNumberOfLetter(String openId) {
-        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
-        Map<Integer, Integer> map = new HashMap<>(10);
-        map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
-        return map;
+        return CompletableFuture.supplyAsync(() -> {
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+            Map<Integer, Integer> map = new HashMap<>(10);
+            map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
+            return map;
+        }).get();
     }
 
+    @SneakyThrows
     @Override
     public List<UnreadMessageDto> getAllUnreadLetter(String openId) {
-        @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
-        //  delete the key
-        if (messageDtoList != null) {
-            redisUtil.del(openId + "_unread_message");
-        }
-        return messageDtoList;
+        return CompletableFuture.supplyAsync(() -> {
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+            //  delete the key
+            if (messageDtoList != null) {
+                redisUtil.del(openId + "_unread_message");
+            }
+            return messageDtoList;
+        }).get();
     }
 
     @Override
@@ -173,39 +195,47 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public void setLetterInitInfoByOpenId(String openId){
-        Object o = redisUtil.get(openId + "_letter_info");
-        if(o != null){
-            return;
-        }
-        ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
-        String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        letterInfo.put("date", date);
-        letterInfo.put("letter_count_location", 1);
-        redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
+        CompletableFuture.runAsync(() -> {
+            Object o = redisUtil.get(openId + "_letter_info");
+            if(o != null){
+                return;
+            }
+            ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
+            String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            letterInfo.put("date", date);
+            letterInfo.put("letter_count_location", 1);
+            redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
+        });
     }
 
+    @SneakyThrows
     @Override
     public LetterDto getLetterById(ReplyInfoDto replyInfoDto) {
-        String recipientPenName = userMapper.selectPenNameByOpenId(replyInfoDto.getOpenId());
-        if(replyInfoDto.getLetterId() == null || "".equals(replyInfoDto.getLetterId().replace("\"",""))){
-            Letter letter = letterMapper.selectLetterById(replyInfoDto.getReplyId());
-            return new LetterDto(null,letter.getContent(),replyInfoDto.getReplyId(),letter.getPenName(),recipientPenName,letter.getReleaseTime());
-        }else{
-            Reply reply = replyMapper.selectReplyById(replyInfoDto.getReplyId());
-            return new LetterDto(
-                    letterMapper.selectContentByLetterId(reply.getLetterId())
-                    ,reply.getContent(),reply.getId(),reply.getPenName()
-                    ,recipientPenName,reply.getReplyTime()
-            );
+        return CompletableFuture.supplyAsync(() -> {
+            String recipientPenName = userMapper.selectPenNameByOpenId(replyInfoDto.getOpenId());
+            if(replyInfoDto.getLetterId() == null || "".equals(replyInfoDto.getLetterId().replace("\"",""))){
+                Letter letter = letterMapper.selectLetterById(replyInfoDto.getReplyId());
+                return new LetterDto(null,letter.getContent(),replyInfoDto.getReplyId(),letter.getPenName(),recipientPenName,letter.getReleaseTime());
+            }else{
+                Reply reply = replyMapper.selectReplyById(replyInfoDto.getReplyId());
+                return new LetterDto(
+                        letterMapper.selectContentByLetterId(reply.getLetterId())
+                        ,reply.getContent(),reply.getId(),reply.getPenName()
+                        ,recipientPenName,reply.getReplyTime()
+                );
+            }
+        }).get();
 
-        }
     }
 
+    @SneakyThrows
     @Override
     public IndexLetterDto getLetterById(IndexLetterVo indexLetterVo) {
-        String recipientPenName = userMapper.selectPenNameByOpenId(indexLetterVo.getOpenId());
-        Letter letter = letterMapper.selectLetterById(indexLetterVo.getLetterId());
-        return new IndexLetterDto(letter.getContent(), letter.getOpenId(),letter.getId(), letter.getPenName(), null, recipientPenName, letter.getReleaseTime());
+        return CompletableFuture.supplyAsync(() -> {
+            String recipientPenName = userMapper.selectPenNameByOpenId(indexLetterVo.getOpenId());
+            Letter letter = letterMapper.selectLetterById(indexLetterVo.getLetterId());
+            return new IndexLetterDto(letter.getContent(), letter.getOpenId(),letter.getId(), letter.getPenName(), null, recipientPenName, letter.getReleaseTime());
+        }).get();
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
