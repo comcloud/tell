@@ -1,11 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yundingxi.tell.mapper.UserMapper">
+    <resultMap id="UserMap" type="com.yundingxi.tell.bean.entity.User">
+        <id column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="gender"  property="gender"/>
+        <result column="date_birth" jdbcType="TIMESTAMP" property="dateBirth"/>
+        <result column="registration_time" jdbcType="TIMESTAMP" property="registrationTime"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="pen_name" jdbcType="VARCHAR" property="openId"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+    </resultMap>
+
+
+    <!--添加属性sql-->
+    <sql id="Base_Column_List">
+        `open_id`,`gender`,`date_birth`,`registration_time`,`last_login_time`, `state`,`pen_name`,`avatar_url`
+    </sql>
+
+
+    <!--添加属性sql-->
+    <sql id="Base_Insert_Key_List">
+    <if test="entity.openId != null">
+        open_id,
+    </if>
+    <if test="entity.gender != null">
+        gender,
+    </if>
+    <if test="entity.dateBirth != null">
+        date_birth,
+    </if>
+    <if test="entity.registrationTime != null">
+        registration_time,
+    </if>
+    <if test="entity.lastLoginTime != null">
+        last_login_time,
+    </if>
+    <if test="entity.state != null">
+        `state`,
+    </if>
+    <if test="entity.penName != null">
+        `pen_name`,
+    </if>
+    <if test="entity.avatarUrl != null">
+        `avatar_url`,
+    </if>
+</sql>
+    <sql id="Base_Insert_Value_List">
+        <if test="entity.openId != null">
+            #{entity.openId},
+        </if>
+        <if test="entity.gender != null">
+            #{entity.gender},
+        </if>
+        <if test="entity.dateBirth != null">
+            #{entity.dateBirth},
+        </if>
+        <if test="entity.registrationTime != null">
+            #{entity.registrationTime},
+        </if>
+        <if test="entity.lastLoginTime != null">
+            #{entity.lastLoginTime},
+        </if>
+        <if test="entity.state != null">
+            #{entity.state},
+        </if>
+        <if test="entity.penName != null">
+            #{entity.penName},
+        </if>
+        <if test="entity.avatarUrl != null">
+            #{entity.avatarUrl},
+        </if>
+    </sql>
+
+    <!--修改sql-->
+    <sql id="Base_Update_List">
+        <if test="entity.gender != null">
+            gender=#{entity.gender},
+        </if>
+        <if test="entity.dateBirth != null">
+            date_birth=#{entity.dateBirth},
+        </if>
+        <if test="entity.penName != null">
+           pen_name=#{entity.penName},
+        </if>
+        <if test="entity.avatarUrl != null">
+            avatar_url=#{entity.avatarUrl},
+        </if>
+    </sql>
 
     <insert id="insertUser">
-        insert into `user`
-            value(#{user.openId},#{user.dateBirth},#{user.gender},#{user.registrationTime},#{user.lastLoginTime},#{user.state},#{user.penName},#{user.avatarUrl})
+        insert into   `user`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="Base_Insert_Key_List"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="Base_Insert_Value_List"/>
+        </trim>
     </insert>
+    <update id="updateUser">
+            update `user`
+            <set>
+                <include refid="Base_Update_List"/>
+            </set>
+            where open_id=#{entity.openId}
+    </update>
+    <update id="updateOutDate">
+        update `user`
+        set last_login_time=now()
+        where open_id =#{openId}
+    </update>
+
+
     <select id="selectAllOpenId" resultType="java.lang.String">
         select open_id
         from `user`

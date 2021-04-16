@@ -1,5 +1,6 @@
 package com.yundingxi.tell.controller;
 
+import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.Result;
@@ -27,7 +28,7 @@ public class UserController {
 
     @Operation(description = "用户注册",summary = "用户注册")
     @PostMapping("/registeredUser")
-    public Result<String> registeredUser(@RequestBody User user) {
+    public Result<String> registeredUser(@Parameter(description = "用户",required = true) User user) {
         return userService.insertUser(user);
     }
 
@@ -47,6 +48,29 @@ public class UserController {
     @Operation(description = "获取收到评论未读消息个数 ",summary = "获取收到评论未读消息个数")
     public Result<Object> getCommNum(@Parameter(description = "openid") String openId){
         return userService.getCommNum(openId);
+    }
+
+    /**
+     *
+     * @param user
+     * @return
+     */
+    @PostMapping("/updateUser")
+    @Operation(description = "修改用户信息 ",summary = "修改用户信息")
+    public Result<String> updateUser(@Parameter(description = "user 对象",required = true) User user){
+        System.out.println(user);
+        return userService.updateUser(user);
+    }
+
+    /**
+     * 用户退出时更新用户最初
+     * @param openId  用户OPenID
+     * @return
+     */
+    @PostMapping("/updateOutDate")
+    @Operation(description = "用户退出登录 ",summary = "用户退出,更新最后登陆时间")
+    public Result<String> updateOutDate(@Parameter(description = "openid",required = true) String openId){
+        return userService.updateOutDate(openId);
     }
 
 }

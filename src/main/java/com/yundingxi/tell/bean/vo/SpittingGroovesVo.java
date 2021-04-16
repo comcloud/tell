@@ -36,7 +36,4 @@ public class SpittingGroovesVo implements Serializable {
     @ApiModelProperty(value = "发布者笔名")
     private String penName;
 
-
-
-
 }

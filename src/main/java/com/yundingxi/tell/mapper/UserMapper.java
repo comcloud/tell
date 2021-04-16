@@ -19,12 +19,28 @@ import java.util.List;
 public interface UserMapper {
     /**
      *  插入用户信息
-     * @param user 用户类
+     * @param entity 用户类
      * @return
      */
-    Integer insertUser(@Param("user") User user);
+    Integer insertUser(@Param("entity") User entity);
 
     /**
+     * 修改用户信息
+     * @param entity User 用户实体类
+     * @return
+     */
+    Integer updateUser(@Param("entity") User entity);
+
+    /**
+     * 用户退出时更新用户最初
+     * @param openId  用户OPenID
+     * @return
+     */
+    Integer updateOutDate(@Param("openID")String openId);
+
+
+    /**
+     *
      */
     List<String> selectAllOpenId();
 

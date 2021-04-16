@@ -72,7 +72,7 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
 
     @Override
     public Result<PageInfo<SpittingGroovesVo>> selectAllVo(Integer pageNum) {
-        String orderBy = "id desc";
+        String orderBy = "date asc";
         PageHelper.startPage(pageNum,10,orderBy);
         List<SpittingGroovesVo> spittingGroovesVos = spittingGroovesMapper.selectAllVo();
         PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
