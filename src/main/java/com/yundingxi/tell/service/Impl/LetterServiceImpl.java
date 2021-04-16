@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -57,16 +58,24 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public String saveSingleLetter(Letter letter) {
-        letter.setId(UUID.randomUUID().toString());
-        letter.setState(1);
-        String tapIds = letter.getTapIds();
-        String[] tabIdArr = tapIds.split(",");
-        for (String tabId : tabIdArr) {
-            letterMapper.updateLetterTap(tabId);
-        }
-        letterMapper.insertSingleLetter(letter);
+    public String saveSingleLetter(LetterStorageDto letterStorageDto) {
+        long start = System.nanoTime();
+        Letter letter = BeanUtil.toBean(letterStorageDto, Letter.class);
+        CompletableFuture.supplyAsync(() -> {
+            letter.setId(UUID.randomUUID().toString());
+            letter.setState(1);
+            letter.setReleaseTime(new Date());
+            String tapIds = letter.getTapIds();
+            String[] tabIdArr = tapIds.split(",");
+            for (String tabId : tabIdArr) {
+                letterMapper.updateLetterTap(tabId);
+            }
+            return letter;
+        }).thenAcceptAsync(letterMapper::insertSingleLetter);
+        System.out.println("(System.nanoTime() - start) = " + (System.nanoTime() - start));
         return JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
+        //459399250
+        //166799250
     }
 
     @Override
@@ -99,7 +108,7 @@ public class LetterServiceImpl implements LetterService {
         List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation);
         List<IndexLetterDto> letterDtoList = new ArrayList<>();
         letters.forEach(letter -> {
-            IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
+            IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(),letter.getOpenId(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
             letterDtoList.add(letterDto);
         });
         return letterDtoList;
@@ -196,7 +205,7 @@ public class LetterServiceImpl implements LetterService {
     public IndexLetterDto getLetterById(IndexLetterVo indexLetterVo) {
         String recipientPenName = userMapper.selectPenNameByOpenId(indexLetterVo.getOpenId());
         Letter letter = letterMapper.selectLetterById(indexLetterVo.getLetterId());
-        return new IndexLetterDto(letter.getContent(), letter.getId(), letter.getPenName(), null, recipientPenName, letter.getReleaseTime());
+        return new IndexLetterDto(letter.getContent(), letter.getOpenId(),letter.getId(), letter.getPenName(), null, recipientPenName, letter.getReleaseTime());
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {

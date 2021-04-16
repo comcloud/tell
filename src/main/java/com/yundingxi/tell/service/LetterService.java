@@ -21,7 +21,7 @@ public interface LetterService {
      * @param letter 信件对象
      * @return 返回信件的送达时间
      */
-    String saveSingleLetter(Letter letter);
+    String saveSingleLetter(LetterStorageDto letterStorageDto);
 
     /**
      * 拉取用户唯独的消息
