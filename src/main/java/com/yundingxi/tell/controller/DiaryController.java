@@ -80,12 +80,8 @@ public class DiaryController {
     @Operation(description = "更新日记浏览量,传入参数为一个数组",summary = "更新日记浏览量")
     @PutMapping("/setViews")
     public Result<Object> setViews(@Parameter(description = "日记浏览量键值对json串,日记id作为键，浏览量作为值")
-                                       @RequestBody List<DiaryViewDto> viewDtoList){
-        DiaryViewDto[] viewDtos = new DiaryViewDto[viewDtoList.size()];
-        for (int i = 0; i < viewDtoList.size(); i++) {
-            viewDtos[i] = viewDtoList.get(i);
-        }
-        diaryService.setViews(viewDtos);
+                                       @RequestParam("diaryViewJson") String diaryViewJson){
+        diaryService.setViews(diaryViewJson);
         return ResultGenerator.genSuccessResult();
     }
 }
