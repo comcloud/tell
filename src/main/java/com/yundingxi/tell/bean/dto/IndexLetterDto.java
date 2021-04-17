@@ -24,6 +24,8 @@ import java.util.Date;
 public class IndexLetterDto {
     @ApiModelProperty(value = "信件的内容",required = true)
     private String content;
+    @ApiModelProperty(value = "发信者open id",required = true)
+    private String senderOpenId;
     @ApiModelProperty(value = "信件id",required = true)
     private String id;
     @ApiModelProperty(value = "发布信件的笔名",required = true)

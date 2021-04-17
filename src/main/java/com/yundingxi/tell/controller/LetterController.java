@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,14 +38,14 @@ public class LetterController {
     /**
      * 普通发送
      *
-     * @param letter 发送的信件
+     * @param letterStorageDto 发送的信件
      * @return 返回结果
      */
 
     @PostMapping(value = "/send")
     @Operation(description = "保存信件", summary = "保存信件")
-    public Result<String> saveLetter(@Parameter(description = "信件对象", required = true) Letter letter) {
-        return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letter));
+    public Result<String> saveLetter(@Parameter(description = "信件对象", required = true) LetterStorageDto letterStorageDto) {
+        return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letterStorageDto));
     }
 
     @PostMapping(value = "/reply")
@@ -56,21 +55,6 @@ public class LetterController {
         String result = letterService.replyLetter(letterReplyDto);
         return ResultGenerator.genSuccessResult(result);
     }
-
-    /**
-     * 拉去用户未读消息
-     *
-     * @param openId 用户open id
-     * @return 用户未读消息
-     */
-//    @GetMapping(value = "/putUnreadMessage")
-//    @Operation(description = "根据用户的open id获取此用户的未读消息",summary = "拉取未读消息")
-//    public Result<UnreadMessageDto> putUnreadMessage(@Parameter(description = "open id", required = true)
-//                                               @RequestParam("openId") String openId) {
-//        UnreadMessageDto messageDto = letterService.putUnreadMessage(openId);
-//        return ResultGenerator.genSuccessResult(messageDto);
-//    }
-
     /**
      * 获取三封信件
      *
