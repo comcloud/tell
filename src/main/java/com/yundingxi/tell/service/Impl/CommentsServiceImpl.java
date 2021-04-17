@@ -73,7 +73,7 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public Result<PageInfo<CommentVo>> selectAll(String id,Integer pageNum) {
-        String orderBy = "id desc";
+        String orderBy = "date asc";
         PageHelper.startPage(pageNum,5,orderBy);
         List<CommentVo> spittingGrooves = commentsMapper.selectAll(id);
         PageInfo<CommentVo> pageInfo = new PageInfo<>(spittingGrooves);
