@@ -61,16 +61,7 @@ public class UserServiceImpl implements UserService {
         String appid = openIdVo.getAppid();
         String secret = openIdVo.getSecret();
         String grantType = openIdVo.getGrantType();
-        String result = HttpUtil.get(baseUrl + "&appid=" + appid + "&secret=" + secret + "&grant_type=" + grantType);
-        String openId = JsonUtil.parseJson(result).findPath("openid").toString();
-        Date currentDate = new Date();
-        try {
-            userMapper.insertUser(new User(openId, null, null, currentDate, currentDate, 0, "", ""));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return result;
-        }
-        return result;
+        return HttpUtil.get(baseUrl + "&appid=" + appid + "&secret=" + secret + "&grant_type=" + grantType);
     }
 
     @Override

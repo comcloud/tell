@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
@@ -8,6 +9,7 @@ import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.mapper.DiaryMapper;
 import com.yundingxi.tell.service.DiaryService;
+import com.yundingxi.tell.util.JsonUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,5 +84,16 @@ public class DiaryServiceImpl implements DiaryService {
                 diaryMapper.updateDiaryNumber(diaryViewDto.getDiaryId(), diaryViewDto.getViewNum());
             }
         });
+    }
+
+    @Override
+    public void setViews(String diaryViewJson) {
+        CompletableFuture.runAsync(() -> {
+            JsonNode node = JsonUtil.parseJson(diaryViewJson);
+            System.out.println("node.findPath(\"diaryId\").toString() = " + node.findPath("diaryId").toString());
+            System.out.println("Integer.parseInt(node.findPath(\"viewNum\").toString().trim().replace(\"\\\"\",\"\")) = " + Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"", "")));
+            diaryMapper.updateDiaryNumber(node.findPath("diaryId").toString(),Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"","")));
+        });
+
     }
 }

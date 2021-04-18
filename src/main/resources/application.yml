@@ -3,7 +3,6 @@ server:
 
 ############注意这个注释不要开启，也就是ssl注释，直接使用8089上线######
 
-
 #  ssl:
 #    key-store: 5128774_rayss.host.pfx
 #    key-store-password: zY79E8qt
