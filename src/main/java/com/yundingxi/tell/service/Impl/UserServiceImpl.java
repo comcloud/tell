@@ -13,6 +13,7 @@ import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -41,10 +42,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<String> insertUser(User user) {
-        if (userMapper.insertUser(user) > 0) {
-            return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
-        } else {
-            return ResultGenerator.genFailResult("注册失败！！！");
+
+        try {
+            Integer integer = userMapper.insertUser(user);
+            if (integer>0) {
+                return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
+            } else {
+                return ResultGenerator.genFailResult("注册失败！！！");
+            }
+        }catch (DuplicateKeyException e){
+            return ResultGenerator.genSuccessResult("已经注册过了!!!!!");
         }
     }
 

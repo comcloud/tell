@@ -36,7 +36,7 @@ public interface UserMapper {
      * @param openId  用户OPenID
      * @return
      */
-    Integer updateOutDate(@Param("openID")String openId);
+    Integer updateOutDate(@Param("openId")String openId);
 
 
     /**

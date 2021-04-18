@@ -76,7 +76,7 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
         PageHelper.startPage(pageNum,10,orderBy);
         List<SpittingGroovesVo> spittingGroovesVos = spittingGroovesMapper.selectAllVo();
         PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
-        log.info("=====================> 查询数据成功 {}",pageInfo);
+        log.info("=====================> 查询数据成功 {}","");
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
