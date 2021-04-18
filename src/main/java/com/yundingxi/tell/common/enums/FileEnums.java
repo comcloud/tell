@@ -16,10 +16,6 @@ public enum FileEnums implements FileBaseEnums{
     /**
      * 美文序列化保存文件夹
      */
-//<<<<<<< HEAD
-//    SYS_BEAUTY_ARTICLE_FILE_PATH("src/main/resources/static/beautyArticle/","美文序列化对象保存文件夹"),
-//    SYS_BEAUTY_ARTICLE_FILE_DELETE_PATH("src/main/resources/static/delete/","美文序列化对象删除文件夹");
-//=======
     SYS_BEAUTY_ARTICLE_FILE_PATH("/home/tell/beautyArticle/","美文序列化对象保存文件夹"),
     SYS_BEAUTY_ARTICLE_FILE_DELETE_PATH("/home/tell/delete/","美文序列化对象删除文件夹");
 

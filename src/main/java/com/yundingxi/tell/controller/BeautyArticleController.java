@@ -42,7 +42,7 @@ public class BeautyArticleController {
     @Operation(description = "根据文章index获取美文详细内容",summary = "获取美文内容")
     @ResponseBody
     @GetMapping("get_beauty_article")
-    public Result<Object> getBeautyArticle(@Parameter(description = "文章的索引") @RequestParam String index) {
+    public Result<Object> getBeautyArticle(@Parameter(description = "文章的索引") @RequestParam String index     ) {
         Map<String, String> o = beautyArticleService.getBeautyArticle(index);
         return ResultGenerator.genSuccessResult(o);
     }

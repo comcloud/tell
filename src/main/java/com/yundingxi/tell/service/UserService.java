@@ -21,6 +21,8 @@ public interface UserService {
     String getKey(String jsCode);
 
     Result<Object> getAllUserCommentVo(String openId);
+//    Result<Object> getAllUserCommentVo(String openId,Integer pageNum);
+
     Result<Object> getCommNum(String openId);
 
     /**

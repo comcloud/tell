@@ -70,7 +70,6 @@ public class CommentsServiceImpl implements CommentsService {
         }
     }
 
-
     @Override
     public Result<PageInfo<CommentVo>> selectAll(String id,Integer pageNum) {
         String orderBy = "date asc";
@@ -80,4 +79,5 @@ public class CommentsServiceImpl implements CommentsService {
         log.info("=====================> 查询数据成功 {}",pageInfo);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
+
 }
