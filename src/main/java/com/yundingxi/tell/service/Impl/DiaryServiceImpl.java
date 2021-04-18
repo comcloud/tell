@@ -73,11 +73,15 @@ public class DiaryServiceImpl implements DiaryService {
             String orderBy = "id desc";
             PageHelper.startPage(pageNum, 10, orderBy);
             List<Diarys> diarys = diaryMapper.selectAllPublicDiary();
+            diarys.forEach(diary -> {
+                diary.setContent(diary.getContent().length() > 25 ? diary.getContent().substring(0,25):diary.getContent());
+            });
             return new PageInfo<>(diarys);
         }).get();
     }
 
     @Override
+    @Deprecated
     public void setViews(DiaryViewDto[] viewDtoList) {
         CompletableFuture.runAsync(() -> {
             for (DiaryViewDto diaryViewDto : viewDtoList) {
@@ -90,9 +94,7 @@ public class DiaryServiceImpl implements DiaryService {
     public void setViews(String diaryViewJson) {
         CompletableFuture.runAsync(() -> {
             JsonNode node = JsonUtil.parseJson(diaryViewJson);
-            System.out.println("node.findPath(\"diaryId\").toString() = " + node.findPath("diaryId").toString());
-            System.out.println("Integer.parseInt(node.findPath(\"viewNum\").toString().trim().replace(\"\\\"\",\"\")) = " + Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"", "")));
-            diaryMapper.updateDiaryNumber(node.findPath("diaryId").toString(),Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"","")));
+            diaryMapper.updateDiaryNumber(node.findPath("diaryId").toString().replace("\"",""),Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"","")));
         });
 
     }

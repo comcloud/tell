@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
-import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.LetterVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -61,12 +60,12 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public String saveSingleLetter(LetterStorageDto letterStorageDto) {
-        long start = System.nanoTime();
-        Letter letter = BeanUtil.toBean(letterStorageDto, Letter.class);
         CompletableFuture.supplyAsync(() -> {
+            Letter letter = BeanUtil.toBean(letterStorageDto, Letter.class);
             letter.setId(UUID.randomUUID().toString());
             letter.setState(1);
             letter.setReleaseTime(new Date());
+            letter.setTapIds(letterStorageDto.getTabIds());
             String tapIds = letter.getTapIds();
             String[] tabIdArr = tapIds.split(",");
             for (String tabId : tabIdArr) {
@@ -74,7 +73,6 @@ public class LetterServiceImpl implements LetterService {
             }
             return letter;
         }).thenAcceptAsync(letterMapper::insertSingleLetter);
-        System.out.println("(System.nanoTime() - start) = " + (System.nanoTime() - start));
         return JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
         //459399250
         //166799250
