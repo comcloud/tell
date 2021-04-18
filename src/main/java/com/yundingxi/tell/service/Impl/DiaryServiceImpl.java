@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -14,6 +15,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -74,7 +76,7 @@ public class DiaryServiceImpl implements DiaryService {
             PageHelper.startPage(pageNum, 10, orderBy);
             List<Diarys> diarys = diaryMapper.selectAllPublicDiary();
             diarys.forEach(diary -> {
-                diary.setContent(diary.getContent().length() > 25 ? diary.getContent().substring(0,25):diary.getContent());
+                diary.setContent(diary.getContent().length() > 25 ? diary.getContent().substring(0, 25) : diary.getContent());
             });
             return new PageInfo<>(diarys);
         }).get();
@@ -93,9 +95,27 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     public void setViews(String diaryViewJson) {
         CompletableFuture.runAsync(() -> {
-            JsonNode node = JsonUtil.parseJson(diaryViewJson);
-            diaryMapper.updateDiaryNumber(node.findPath("diaryId").toString().replace("\"",""),Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"","")));
+            char[] chars = diaryViewJson.toCharArray();
+            char[] newChar = new char[chars.length + 100];
+            for (int i = 0, j = 0; i < chars.length; i++,j++) {
+                if (chars[i] == '{') {
+                    newChar[j] = '{';
+                    j++;
+                    newChar[j] = '\"';
+                }else if(chars[i] == ','){
+                    newChar[j] = ',';
+                    j++;
+                    newChar[j] = '\"';
+                }else if(chars[i] == ':'){
+                    newChar[j] = '\"';
+                    j++;
+                    newChar[j] = ':';
+                }else{
+                    newChar[j] = chars[i];
+                }
+            }
+            List<DiaryViewDto> diaryViewDtoList = JsonUtil.parseArray(new String(newChar), DiaryViewDto[].class);
+            diaryViewDtoList.forEach(diaryViewDto -> diaryMapper.updateDiaryNumber(diaryViewDto.getDiaryId().replace("\"",""),diaryViewDto.getViewNum()));
         });
-
     }
 }

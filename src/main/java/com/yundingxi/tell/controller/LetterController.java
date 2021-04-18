@@ -1,7 +1,6 @@
 package com.yundingxi.tell.controller;
 
 import com.yundingxi.tell.bean.dto.*;
-import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
@@ -33,7 +32,7 @@ public class LetterController {
     @Autowired
     private LetterService letterService;
 
-    private Logger log = LoggerFactory.getLogger(LetterController.class);
+    private final Logger log = LoggerFactory.getLogger(LetterController.class);
 
     /**
      * 普通发送

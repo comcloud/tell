@@ -19,7 +19,8 @@ import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,9 +40,10 @@ import java.util.concurrent.TimeUnit;
  * @Datetime 2021/3/24 6:31 下午
  */
 
-@Slf4j
 @Service
 public class LetterServiceImpl implements LetterService {
+
+    private final Logger log = LoggerFactory.getLogger(LetterServiceImpl.class);
 
     private final LetterMapper letterMapper;
 
@@ -58,9 +60,10 @@ public class LetterServiceImpl implements LetterService {
         this.userMapper = userMapper;
     }
 
+    @SneakyThrows
     @Override
     public String saveSingleLetter(LetterStorageDto letterStorageDto) {
-        CompletableFuture.supplyAsync(() -> {
+        Integer result = CompletableFuture.supplyAsync(() -> {
             Letter letter = BeanUtil.toBean(letterStorageDto, Letter.class);
             letter.setId(UUID.randomUUID().toString());
             letter.setState(1);
@@ -71,29 +74,24 @@ public class LetterServiceImpl implements LetterService {
             for (String tabId : tabIdArr) {
                 letterMapper.updateLetterTap(tabId);
             }
-            return letter;
-        }).thenAcceptAsync(letterMapper::insertSingleLetter);
-        return JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString();
+            return letterMapper.insertSingleLetter(letter);
+        }).get();
+        return result == 1 ? JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString():"保存信件失败";
         //459399250
         //166799250
     }
 
+    @SneakyThrows
     @Override
     public List<UnreadMessageDto> putUnreadMessage(String openId) {
-        CompletableFuture<List<UnreadMessageDto>> future = CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             //使用redis获取
             @SuppressWarnings("unchecked") List<UnreadMessageDto> unreadMessage = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
             if (unreadMessage != null) {
                 redisUtil.del(openId + "_unread_message");
             }
             return unreadMessage;
-        });
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        }).get();
     }
 
     @SneakyThrows

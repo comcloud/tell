@@ -16,7 +16,7 @@ import java.util.List;
 
 @Mapper
 public interface LetterMapper {
-    void insertSingleLetter(@Param("letter") Letter letter);
+    int insertSingleLetter(@Param("letter") Letter letter);
 
     List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation);
 
