@@ -12,6 +12,8 @@ import com.yundingxi.tell.mapper.DiaryMapper;
 import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.util.JsonUtil;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class DiaryServiceImpl implements DiaryService {
+
+    private final Logger log = LoggerFactory.getLogger(DiaryServiceImpl.class);
 
     @Autowired
     private DiaryMapper diaryMapper;
@@ -95,26 +99,27 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     public void setViews(String diaryViewJson) {
         CompletableFuture.runAsync(() -> {
-            char[] chars = diaryViewJson.toCharArray();
-            char[] newChar = new char[chars.length + 100];
-            for (int i = 0, j = 0; i < chars.length; i++,j++) {
-                if (chars[i] == '{') {
-                    newChar[j] = '{';
-                    j++;
-                    newChar[j] = '\"';
-                }else if(chars[i] == ','){
-                    newChar[j] = ',';
-                    j++;
-                    newChar[j] = '\"';
-                }else if(chars[i] == ':'){
-                    newChar[j] = '\"';
-                    j++;
-                    newChar[j] = ':';
-                }else{
-                    newChar[j] = chars[i];
-                }
-            }
-            List<DiaryViewDto> diaryViewDtoList = JsonUtil.parseArray(new String(newChar), DiaryViewDto[].class);
+//            char[] chars = diaryViewJson.toCharArray();
+//            char[] newChar = new char[chars.length + 100];
+//            for (int i = 0, j = 0; i < chars.length; i++,j++) {
+//                if (chars[i] == '{') {
+//                    newChar[j] = '{';
+//                    j++;
+//                    newChar[j] = '\"';
+//                }else if(chars[i] == ',' && chars[i - 1] != '}'){
+//                    newChar[j] = ',';
+//                    j++;
+//                    newChar[j] = '\"';
+//                }else if(chars[i] == ':'){
+//                    newChar[j] = '\"';
+//                    j++;
+//                    newChar[j] = ':';
+//                }else{
+//                    newChar[j] = chars[i];
+//                }
+//            }
+            List<DiaryViewDto> diaryViewDtoList = JsonUtil.parseArray(diaryViewJson, DiaryViewDto[].class);
+            log.info(String.valueOf(diaryViewDtoList));
             diaryViewDtoList.forEach(diaryViewDto -> diaryMapper.updateDiaryNumber(diaryViewDto.getDiaryId().replace("\"",""),diaryViewDto.getViewNum()));
         });
     }

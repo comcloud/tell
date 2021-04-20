@@ -1,6 +1,9 @@
 package com.yundingxi.tell;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,6 +34,7 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() {
+
 
 
 //        SpittingGrooves lllll = new SpittingGrooves("00001","...0000.",new Date(),"1","s","002","","","");

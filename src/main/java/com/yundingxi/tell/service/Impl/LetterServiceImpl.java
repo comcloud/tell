@@ -29,7 +29,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +67,7 @@ public class LetterServiceImpl implements LetterService {
             letter.setId(UUID.randomUUID().toString());
             letter.setState(1);
             letter.setReleaseTime(new Date());
-            letter.setTapIds(letterStorageDto.getTabIds());
+            letter.setTapIds(letterStorageDto.getTapIds());
             String tapIds = letter.getTapIds();
             String[] tabIdArr = tapIds.split(",");
             for (String tabId : tabIdArr) {
