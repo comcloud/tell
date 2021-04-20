@@ -5,19 +5,21 @@
 
     <insert id="insertSingleDiary">
         insert into diarys
-        value (#{diarys.id},#{diarys.content},#{diarys.date},#{diarys.number},#{diarys.penName},
+            value (#{diarys.id},#{diarys.content},#{diarys.date},#{diarys.number},#{diarys.penName},
             #{diarys.weather},#{diarys.state},#{diarys.openId})
     </insert>
     <update id="updateDiaryNumber">
         update diarys
-        set number=number+#{viewNum}
-        where id=#{id}
+        set number=number + #{viewNum}
+        where id = #{id}
     </update>
     <delete id="deleteSingleDiaryById">
-        delete from diarys where id = #{id}
+        delete
+        from diarys
+        where id = #{id}
     </delete>
     <select id="selectAllDiaryByOpenId" resultType="com.yundingxi.tell.bean.entity.Diarys">
-        select id,date,number,pen_name,weather,state
+        select id, date, number, pen_name, weather, state
         from diarys
         where open_id = #{openId}
     </select>
@@ -27,8 +29,8 @@
         where id = #{id}
     </select>
     <select id="selectAllPublicDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
-        select id,date,number,pen_name,weather,state,open_id
+        select id, content, date, number, pen_name, weather, state, open_id
         from diarys
-        where state=1;
+        where state =0;
     </select>
 </mapper>

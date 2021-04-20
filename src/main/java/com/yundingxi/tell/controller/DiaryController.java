@@ -78,7 +78,7 @@ public class DiaryController {
     }
 
     @Operation(description = "更新日记浏览量,传入参数为一个数组",summary = "更新日记浏览量")
-    @PutMapping("/setViews")
+    @PostMapping("/setViews")
     public Result<Object> setViews(@Parameter(description = "日记浏览量键值对json串,日记id作为键，浏览量作为值")
                                        @RequestParam("diaryViewJson") String diaryViewJson){
         diaryService.setViews(diaryViewJson);

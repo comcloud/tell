@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
  * @Datetime 2021/4/16 8:27 下午
  */
 
-@ApiModel
+@ApiModel("保存信件实体类")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -30,5 +30,5 @@ public class LetterStorageDto {
     @ApiModelProperty(value = "邮票地址",required = true)
     private String stampUrl;
     @ApiModelProperty(value = "标签id集合,以,分隔",required = true)
-    private String tabIds;
+    private String tapIds;
 }

@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -11,9 +12,12 @@ import com.yundingxi.tell.mapper.DiaryMapper;
 import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.util.JsonUtil;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +32,8 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class DiaryServiceImpl implements DiaryService {
+
+    private final Logger log = LoggerFactory.getLogger(DiaryServiceImpl.class);
 
     @Autowired
     private DiaryMapper diaryMapper;
@@ -73,11 +79,15 @@ public class DiaryServiceImpl implements DiaryService {
             String orderBy = "id desc";
             PageHelper.startPage(pageNum, 10, orderBy);
             List<Diarys> diarys = diaryMapper.selectAllPublicDiary();
+            diarys.forEach(diary -> {
+                diary.setContent(diary.getContent().length() > 25 ? diary.getContent().substring(0, 25) : diary.getContent());
+            });
             return new PageInfo<>(diarys);
         }).get();
     }
 
     @Override
+    @Deprecated
     public void setViews(DiaryViewDto[] viewDtoList) {
         CompletableFuture.runAsync(() -> {
             for (DiaryViewDto diaryViewDto : viewDtoList) {
@@ -89,11 +99,28 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     public void setViews(String diaryViewJson) {
         CompletableFuture.runAsync(() -> {
-            JsonNode node = JsonUtil.parseJson(diaryViewJson);
-            System.out.println("node.findPath(\"diaryId\").toString() = " + node.findPath("diaryId").toString());
-            System.out.println("Integer.parseInt(node.findPath(\"viewNum\").toString().trim().replace(\"\\\"\",\"\")) = " + Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"", "")));
-            diaryMapper.updateDiaryNumber(node.findPath("diaryId").toString(),Integer.parseInt(node.findPath("viewNum").toString().trim().replace("\"","")));
+//            char[] chars = diaryViewJson.toCharArray();
+//            char[] newChar = new char[chars.length + 100];
+//            for (int i = 0, j = 0; i < chars.length; i++,j++) {
+//                if (chars[i] == '{') {
+//                    newChar[j] = '{';
+//                    j++;
+//                    newChar[j] = '\"';
+//                }else if(chars[i] == ',' && chars[i - 1] != '}'){
+//                    newChar[j] = ',';
+//                    j++;
+//                    newChar[j] = '\"';
+//                }else if(chars[i] == ':'){
+//                    newChar[j] = '\"';
+//                    j++;
+//                    newChar[j] = ':';
+//                }else{
+//                    newChar[j] = chars[i];
+//                }
+//            }
+            List<DiaryViewDto> diaryViewDtoList = JsonUtil.parseArray(diaryViewJson, DiaryViewDto[].class);
+            log.info(String.valueOf(diaryViewDtoList));
+            diaryViewDtoList.forEach(diaryViewDto -> diaryMapper.updateDiaryNumber(diaryViewDto.getDiaryId().replace("\"",""),diaryViewDto.getViewNum()));
         });
-
     }
 }
