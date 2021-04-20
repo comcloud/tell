@@ -131,7 +131,7 @@
         select  c.`content`, c.`date`,u.pen_name,u.avatar_url,c.sg_id,sg.title
         from comments  c, `user`  u ,spitting_grooves sg where  c.open_id=u.open_id  and sg.id=c.sg_id and
 
-                c.sg_id in (select id from spitting_grooves where open_id=#{openId})
+                c.sg_id in (select id from spitting_grooves where open_id=#{openId}) and u.open_id!=sg.open_id
 
         ORdER by c.date asc
     </select>
@@ -142,6 +142,11 @@
         select pen_name
         from user
         where open_id=#{openId}
+    </select>
+    <select id="getIDBySgId" resultType="java.lang.String">
+        select open_id
+        from  spitting_grooves sg
+        where id=#{sgId}
     </select>
 </mapper>
 

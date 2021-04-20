@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.vo.CommentVo;
 import com.yundingxi.tell.bean.vo.UserCommentVo;
+import com.yundingxi.tell.bean.vo.UserVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.CommentsMapper;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
@@ -48,8 +49,12 @@ public class CommentsServiceImpl implements CommentsService {
         if (state>0){
             log.info("===================> {} 数据保存成功" ,entity);
             redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
-            UserCommentVo userCommentVo = new UserCommentVo(entity.getSgId(),entity.getContent(),new Date(), spittingGroovesMapper.getConById(entity.getSgId()),userMapper.getUserVoById(entity.getOpenId()));
-            redisUtil.lSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
+            UserVo userVoo = userMapper.getUserVoById(entity.getOpenId());
+            UserCommentVo userCommentVo = new UserCommentVo(entity.getSgId(),entity.getContent(),new Date(), spittingGroovesMapper.getConById(entity.getSgId()),userVoo);
+            String idBySgId = userMapper.getIDBySgId(entity.getSgId());
+            if(!entity.getOpenId().equals(idBySgId)){
+                redisUtil.lSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
+            }
             spittingGroovesMapper.addNumber(entity.getSgId());
             return ResultGenerator.genSuccessResult("发布成功");
         }else {

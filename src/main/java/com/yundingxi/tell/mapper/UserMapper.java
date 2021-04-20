@@ -49,5 +49,7 @@ public interface UserMapper {
 
     UserVo getUserVoById(@Param("openId")String openId);
 
+    String getIDBySgId(@Param("sgId")String sgId);
+
     String selectPenNameByOpenId(@Param("openId") String openId);
 }
