@@ -128,12 +128,12 @@
     </resultMap>
     <select id="getUserCommentVos" resultMap="CommentsVoMap">
 
-        select  c.`content`, c.`date`,u.pen_name,u.avatar_url,c.sg_id,sg.title
+        select  c.`content`, c.`date`,c.sg_id,sg.title,u.pen_name,u.avatar_url
         from comments  c, `user`  u ,spitting_grooves sg where  c.open_id=u.open_id  and sg.id=c.sg_id and
 
                 c.sg_id in (select id from spitting_grooves where open_id=#{openId})
 
-        ORdER by c.date asc
+        order by c.date asc
     </select>
     <select id="getUserVoById" resultType="com.yundingxi.tell.bean.vo.UserVo">
         select pen_name ,avatar_url from `user` where  open_id=#{openId}
