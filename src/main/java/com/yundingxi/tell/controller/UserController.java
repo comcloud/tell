@@ -44,11 +44,11 @@ public class UserController {
     public Result<Object> getAllUserCommentVo(@Parameter(description = "openid") String openId,Integer pageNum) {
         return userService.getAllUserCommentVo(openId,pageNum);
     }
-    @GetMapping("/getCommNum")
-    @Operation(description = "获取收到评论未读消息个数 ",summary = "获取收到评论未读消息个数")
-    public Result<Object> getCommNum(@Parameter(description = "openid") String openId){
-        return userService.getCommNum(openId);
-    }
+//    @GetMapping("/getCommNum")
+//    @Operation(description = "获取收到评论未读消息个数 ",summary = "获取收到评论未读消息个数")
+//    public Result<Object> getCommNum(@Parameter(description = "openid") String openId){
+//        return userService.getCommNum(openId);
+//    }
 
     /**
      *

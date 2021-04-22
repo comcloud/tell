@@ -54,6 +54,7 @@ public class LetterController {
         String result = letterService.replyLetter(letterReplyDto);
         return ResultGenerator.genSuccessResult(result);
     }
+
     /**
      * 获取三封信件
      *
@@ -67,17 +68,19 @@ public class LetterController {
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 
-    @Operation(description = "获取未读回信的数量,这里设定1为回信，2为评论", summary = "获取未读信件数量")
+    @Operation(description = "获取未读回信的数量,这里设定1为回信，2为评论", summary = "获取未读信件数量与评论数量")
     @GetMapping("/getNumberOfLetter")
     public Result<Map<Integer, Integer>> getNumberOfLetter(@Parameter(description = "open id", required = true)
                                                            @RequestParam("openId") String openId) {
         return ResultGenerator.genSuccessResult(letterService.getNumberOfLetter(openId));
     }
 
-    @Operation(description = "获取所有未读信件，注意这里接口调用之后后台将会将此信件标记未已读，需要前台缓存这个数据", summary = "获取未读信件")
+    @Operation(description = "获取所有未读信件,分页获取", summary = "获取未读信件")
     @GetMapping("/getAllUnreadLetter")
-    public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id", required = true) String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId));
+    public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id", required = true) String openId
+            , @Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum) {
+
+        return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId,pageNum));
     }
 
     @Operation(description = "根据信件id获取信件具体回复信息", summary = "获取回复信件信息")
@@ -90,6 +93,6 @@ public class LetterController {
     @GetMapping("/getDetailOfLetterById")
     public Result<IndexLetterDto> getIndexLetterById(@Parameter(description = "信件id") String letterId,
                                                      @Parameter(description = "open id") String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getLetterById(new IndexLetterVo(openId,letterId)));
+        return ResultGenerator.genSuccessResult(letterService.getLetterById(new IndexLetterVo(openId, letterId)));
     }
 }

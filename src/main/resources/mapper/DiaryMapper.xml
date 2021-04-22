@@ -10,7 +10,7 @@
     </insert>
     <update id="updateDiaryNumber">
         update diarys
-        set number=number + #{viewNum}
+        set number=#{viewNum}
         where id = #{id}
     </update>
     <delete id="deleteSingleDiaryById">

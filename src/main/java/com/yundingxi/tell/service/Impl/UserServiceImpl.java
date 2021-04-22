@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
     public Result<String> insertUser(User user) {
 
         try {
+            user.setRegistrationTime(new Date());
             Integer integer = userMapper.insertUser(user);
             if (integer>0) {
                 return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
