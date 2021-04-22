@@ -1,7 +1,6 @@
 package com.yundingxi.tell.service;
 
 import com.yundingxi.tell.bean.dto.*;
-import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 
@@ -48,7 +47,7 @@ public interface LetterService {
 
     Map<Integer,Integer> getNumberOfLetter(String openId);
 
-    List<UnreadMessageDto> getAllUnreadLetter(String openId);
+    List<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum);
 
     @Deprecated
     LetterDto getLetterById(String letterId);

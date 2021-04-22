@@ -19,6 +19,7 @@
     <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter
+        where open_id!=#{openId}
         limit #{letterCountLocation}, 3;
     </select>
     <select id="selectLetterById" resultType="com.yundingxi.tell.bean.entity.Letter">

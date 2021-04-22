@@ -18,7 +18,9 @@ import java.util.List;
 public interface LetterMapper {
     int insertSingleLetter(@Param("letter") Letter letter);
 
-    List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation);
+    List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation
+            ,@Param("openId") String openId);
+
 
     void insertReply(@Param("reply") Reply reply);
 
