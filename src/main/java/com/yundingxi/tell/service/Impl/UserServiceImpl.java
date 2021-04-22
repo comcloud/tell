@@ -1,9 +1,12 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.http.HttpUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.HistoryNumVo;
 import com.yundingxi.tell.bean.vo.OpenIdVo;
+import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
 import com.yundingxi.tell.bean.vo.UserCommentVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.IntFunction;
 
 /**
  * @author hds
@@ -68,15 +72,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<Object> getAllUserCommentVo(String openId) {
-        List<Object> objects = redisUtil.lGet("comm:" + openId + ":info", 0, -1);
+    public Result<Object> getAllUserCommentVo(String openId,Integer pageNum) {
+        int size = 5;
+        int size1 = redisUtil.lGet("comm:" + openId + ":info", 0, -1).size();
+        int pageNumMax=size1/size+1;
+        if (pageNum>pageNumMax){
+            return ResultGenerator.genSuccessResult();
+        }
+        List<Object> objects = redisUtil.lGet("comm:" + openId + ":info", (pageNum-1)*size, pageNum*size-1);
         redisUtil.del("comm:" + openId + ":count");
         if (objects.isEmpty()) {
             List<UserCommentVo> userCommentVos = userMapper.getUserCommentVos(openId);
             for (UserCommentVo userCommentVo : userCommentVos) {
                 redisUtil.lSet("comm:" + openId + ":info", userCommentVo);
             }
-            return ResultGenerator.genSuccessResult(userCommentVos);
+            List<Object> objects1 = redisUtil.lGet("comm:" + openId + ":info", (pageNum-1)*size, pageNum*size-1);
+            return ResultGenerator.genSuccessResult(objects1);
         }
         return ResultGenerator.genSuccessResult(objects);
     }
