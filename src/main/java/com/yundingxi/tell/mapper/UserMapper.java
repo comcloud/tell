@@ -52,4 +52,10 @@ public interface UserMapper {
     String getIDBySgId(@Param("sgId")String sgId);
 
     String selectPenNameByOpenId(@Param("openId") String openId);
+
+    int selectNumberOfLetterByOpenId(@Param("openId") String openId);
+
+    int selectNumberOfDiaryByOpenId(@Param("openId") String openId);
+
+    int selectNumberOfLetSpitByOpenId(@Param("openId") String openId);
 }

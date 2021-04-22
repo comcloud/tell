@@ -1,5 +1,6 @@
 package com.yundingxi.tell.service;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.HistoryNumVo;
 import com.yundingxi.tell.bean.vo.UserCommentVo;
 import com.yundingxi.tell.util.Result;
 import org.apache.ibatis.annotations.Param;
@@ -39,4 +40,5 @@ public interface UserService {
      */
     Result<String> updateOutDate(String openId);
 
+    Result<List<HistoryNumVo>> getNumOfHistory(String openId);
 }
