@@ -69,12 +69,14 @@ public class UserServiceImpl implements UserService {
         return HttpUtil.get(baseUrl + "&appid=" + appid + "&secret=" + secret + "&grant_type=" + grantType);
     }
 
-    @Override
+    @Override 
     public Result<Object> getAllUserCommentVo(String openId,Integer pageNum) {
         int size = 5;
         int size1 = redisUtil.lGet("comm:" + openId + ":info", 0, -1).size();
-        int pageNumMax=size1/size+1;
-        if (pageNum>pageNumMax){
+        int pageNumMax=size1/size;
+        int  a=size1%size;
+        pageNumMax = a==0? pageNumMax:pageNumMax+1;
+        if (pageNum>pageNumMax&&size1!=0){
             return ResultGenerator.genSuccessResult();
         }
         List<Object> objects = redisUtil.lGet("comm:" + openId + ":info", (pageNum-1)*size, pageNum*size-1);
