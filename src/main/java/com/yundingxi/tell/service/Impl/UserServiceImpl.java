@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.HistoryNumVo;
 import com.yundingxi.tell.bean.vo.OpenIdVo;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
 import com.yundingxi.tell.bean.vo.UserCommentVo;
@@ -20,6 +21,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -115,5 +117,17 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResultGenerator.genFailResult("最后登录时间记录失败!!!!!");
+    }
+
+    @Override
+    public Result<List<HistoryNumVo>> getNumOfHistory(String openId) {
+        int numOfLetter = userMapper.selectNumberOfLetterByOpenId(openId);
+        int numOfDiary = userMapper.selectNumberOfDiaryByOpenId(openId);
+        int numOfSpit = userMapper.selectNumberOfLetSpitByOpenId(openId);
+        List<HistoryNumVo> historyNumVos = new ArrayList<>();
+        historyNumVos.add(new HistoryNumVo("解忧",numOfLetter));
+        historyNumVos.add(new HistoryNumVo("日记",numOfDiary));
+        historyNumVos.add(new HistoryNumVo("吐槽",numOfSpit));
+        return ResultGenerator.genSuccessResult(historyNumVos);
     }
 }

@@ -148,5 +148,20 @@
         from  spitting_grooves sg
         where id=#{sgId}
     </select>
+    <select id="selectNumberOfLetterByOpenId" resultType="java.lang.Integer">
+        select count(*)
+        from letter
+        where open_id=#{openId}
+    </select>
+    <select id="selectNumberOfDiaryByOpenId" resultType="java.lang.Integer">
+        select count(*)
+        from diarys
+        where open_id = #{openId}
+    </select>
+    <select id="selectNumberOfLetSpitByOpenId" resultType="java.lang.Integer">
+        select count(*)
+        from spitting_grooves
+        where open_id = #{openId}
+    </select>
 </mapper>
 
