@@ -58,4 +58,6 @@ public interface UserMapper {
     int selectNumberOfDiaryByOpenId(@Param("openId") String openId);
 
     int selectNumberOfLetSpitByOpenId(@Param("openId") String openId);
+
+    User selectNameAndUrlByOpenId(@Param("openId") String openId);
 }

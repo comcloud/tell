@@ -1,8 +1,7 @@
 package com.yundingxi.tell.controller;
 
-import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.bean.vo.HistoryNumVo;
+import com.yundingxi.tell.bean.vo.ProfileVo;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -76,9 +75,9 @@ public class UserController {
         return userService.updateOutDate(openId);
     }
 
-    @GetMapping("/getNumOfHistory")
+    @GetMapping("/getProfile")
     @Operation(description = "获取历史数量信息，包括：解忧、日记、吐槽数量",summary = "获取历史发布数量")
-    public Result<List<HistoryNumVo>> getNumOfHistory(@Parameter(description = "open id",required = true) String openId){
-        return userService.getNumOfHistory(openId);
+    public Result<ProfileVo> getProfile(@Parameter(description = "open id",required = true) String openId){
+        return userService.getProfile(openId);
     }
 }

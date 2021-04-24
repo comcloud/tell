@@ -163,5 +163,10 @@
         from spitting_grooves
         where open_id = #{openId}
     </select>
+    <select id="selectNameAndUrlByOpenId" resultType="com.yundingxi.tell.bean.entity.User">
+        select pen_name,avatar_url
+        from user
+        where open_id=#{openId}
+    </select>
 </mapper>
 
