@@ -48,11 +48,12 @@ public class CommentsServiceImpl implements CommentsService {
         int state = commentsMapper.insert(entity);
         if (state>0){
             log.info("===================> {} 数据保存成功" ,entity);
-            redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
+            //未读消息+1
             UserVo userVoo = userMapper.getUserVoById(entity.getOpenId());
             UserCommentVo userCommentVo = new UserCommentVo(entity.getSgId(),entity.getContent(),new Date(), spittingGroovesMapper.getConById(entity.getSgId()),userVoo);
             String idBySgId = userMapper.getIDBySgId(entity.getSgId());
             if(!entity.getOpenId().equals(idBySgId)){
+                redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
                 redisUtil.lSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
             }
             spittingGroovesMapper.addNumber(entity.getSgId());
@@ -77,7 +78,7 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public Result<PageInfo<CommentVo>> selectAll(String id,Integer pageNum) {
-        String orderBy = "date desc";
+        String orderBy = "date asc";
         PageHelper.startPage(pageNum,5,orderBy);
         List<CommentVo> spittingGrooves = commentsMapper.selectAll(id);
         PageInfo<CommentVo> pageInfo = new PageInfo<>(spittingGrooves);
