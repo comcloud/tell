@@ -26,4 +26,6 @@ public interface DiaryMapper {
     List<Diarys> selectAllPublicDiary();
 
     void updateDiaryNumber(@Param("id") String id, @Param("viewNum") Integer viewNum);
+
+    List<String> selectAllDiaryContentByOpenId(@Param("openId") String openId);
 }

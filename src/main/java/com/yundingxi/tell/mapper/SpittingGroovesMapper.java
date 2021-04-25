@@ -61,4 +61,5 @@ public interface SpittingGroovesMapper {
 
     int addNumber(@Param("id")String id);
 
+    List<String> selectAllSpitContentByOpenId(@Param("openId") String openId);
 }

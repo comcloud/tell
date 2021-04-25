@@ -31,4 +31,14 @@ public interface LetterMapper {
     String selectPenNameByOpenId(@Param("openId") String openId);
 
     String selectContentByLetterId(@Param("letterId") String letterId);
+
+    /**
+     * @param openId open id
+     * @param period 时间间隔，表示多少个时间段，比如0～7，7 ～ 14
+     * @param interval 选用的时间段为多少，就是上面的7，7表示一周，给7的话代表获取某一周，具体哪一周由period参数决定
+     * @return 数量
+     */
+    Integer selectWeeklyQuantityThroughOpenId(@Param("openId") String openId,@Param("tableName") String tableName,@Param("period") Integer period,@Param("interval") Integer interval);
+
+    List<String> selectAllLetterContentByOpenId(@Param("openId") String openId);
 }

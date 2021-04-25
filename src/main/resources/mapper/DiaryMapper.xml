@@ -33,4 +33,9 @@
         from diarys
         where state =0;
     </select>
+    <select id="selectAllDiaryContentByOpenId" resultType="java.lang.String">
+        select content
+        from diarys
+        where open_id = #{openId}
+    </select>
 </mapper>
