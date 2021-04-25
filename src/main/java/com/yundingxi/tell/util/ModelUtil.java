@@ -26,4 +26,12 @@ public class ModelUtil<T,R> {
         this.lastValue = lastValue;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "ModelUtil{" +
+                "firstValue=" + firstValue +
+                ", lastValue=" + lastValue +
+                '}';
+    }
 }

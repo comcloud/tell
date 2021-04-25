@@ -5,36 +5,59 @@
 
     <insert id="insertSingleLetter">
         insert into letter
-        value(#{letter.id},#{letter.stampUrl},#{letter.openId},#{letter.content},#{letter.state},
+            value (#{letter.id},#{letter.stampUrl},#{letter.openId},#{letter.content},#{letter.state},
             #{letter.penName},#{letter.tapIds},#{letter.releaseTime})
     </insert>
     <insert id="insertReply">
         insert into reply
-        value(#{reply.id},#{reply.letterId},#{reply.replyTime},#{reply.content},#{reply.openId},#{reply.penName})
+            value (#{reply.id},#{reply.letterId},#{reply.replyTime},#{reply.content},#{reply.openId},#{reply.penName})
     </insert>
     <update id="updateLetterTap">
         update letter_tap
-        set count=count+1 where id=#{tabId}
+        set count=count + 1
+        where id = #{tabId}
     </update>
     <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter
         where open_id!=#{openId}
-        limit #{letterCountLocation}, 3;
+            limit #{letterCountLocation}
+            , 3;
     </select>
     <select id="selectLetterById" resultType="com.yundingxi.tell.bean.entity.Letter">
-        select * from
-        letter
-        where id=#{letterId}
+        select *
+        from letter
+        where id = #{letterId}
     </select>
     <select id="selectPenNameByOpenId" resultType="java.lang.String">
         select pen_name
         from letter
-        where open_id=#{openId}
+        where open_id = #{openId}
     </select>
     <select id="selectContentByLetterId" resultType="java.lang.String">
         select content
         from letter
-        where id=#{letterId}
+        where id = #{letterId}
+    </select>
+    <select id="selectWeeklyQuantityThroughOpenId" resultType="java.lang.Integer">
+        select count(*)
+        from ${tableName}
+        where open_id = #{openId}
+        <choose>
+            <when test="tableName == 'letter'">
+                and (to_days(now()) - #{interval} * #{period}) - to_days(release_time) &lt;= #{interval} * (#{period} +
+                1)
+                and #{interval} * #{period} &gt;= (to_days(now()) - #{interval} * #{period}) - to_days(release_time);
+            </when>
+            <otherwise>
+                and (to_days(now()) - #{interval} * #{period}) - to_days(date) &lt;= #{interval} * (#{period} + 1)
+                and #{interval} * #{period} &gt;= (to_days(now()) - #{interval} * #{period}) - to_days(date);
+            </otherwise>
+        </choose>
+    </select>
+    <select id="selectAllLetterContentByOpenId" resultType="java.lang.String">
+        select content
+        from letter
+        where open_id = #{openId}
     </select>
 </mapper>

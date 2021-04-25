@@ -1,11 +1,15 @@
 package com.yundingxi.tell.bean.vo;
 
+import com.yundingxi.tell.util.ModelUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @version v1.0
@@ -18,10 +22,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("历史数量实体类")
-public class HistoryNumVo {
-    @ApiModelProperty("类别名")
-    private String name;
-    @ApiModelProperty("数量")
-    private int value;
+@ApiModel("个人用户内容实体类")
+public class ProfileVo {
+    @ApiModelProperty("昵称")
+    private String nickname;
+    @ApiModelProperty("头像")
+    private String avatarUrl;
+    @ApiModelProperty("内容数量")
+    private List<ProfileNumVo> models;
 }

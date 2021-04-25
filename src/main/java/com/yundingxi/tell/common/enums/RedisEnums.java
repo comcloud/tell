@@ -23,7 +23,9 @@ public enum RedisEnums implements RedisEaseEnums {
     SYS_BEAUTYWEN_HOME_IMG_URL_INDEX(2,"system:beautyWen:home:img:url:index"),
     SYS_ERROR_BEAUTYWEN_JSONS(2,"system:error:beautyWen:JSONS"),
     USER_SPITTINGGROOVES_JSON(1,"user:spittinggrooves:json"),
-    SYS_PMW_INDEX(2,"user:spittinggrooves:count");
+    SYS_PMW_INDEX(2,"user:spittinggrooves:count"),
+
+    USER_DATA_ANALYSIS_MODEL(1,"user:data_analysis_model");
 
     @Setter
     private int dbIndex;

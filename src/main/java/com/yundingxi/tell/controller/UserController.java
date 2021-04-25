@@ -1,9 +1,10 @@
 package com.yundingxi.tell.controller;
 
-import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.bean.vo.HistoryNumVo;
+import com.yundingxi.tell.bean.vo.ProfileNumVo;
+import com.yundingxi.tell.bean.vo.ProfileVo;
 import com.yundingxi.tell.service.UserService;
+import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hds
@@ -76,9 +78,15 @@ public class UserController {
         return userService.updateOutDate(openId);
     }
 
-    @GetMapping("/getNumOfHistory")
+    @GetMapping("/getProfile")
     @Operation(description = "获取历史数量信息，包括：解忧、日记、吐槽数量",summary = "获取历史发布数量")
-    public Result<List<HistoryNumVo>> getNumOfHistory(@Parameter(description = "open id",required = true) String openId){
-        return userService.getNumOfHistory(openId);
+    public Result<ProfileVo> getProfile(@Parameter(description = "open id",required = true) String openId){
+        return userService.getProfile(openId);
+    }
+
+    @GetMapping("/getDataAnalysis")
+    @Operation(description = "获取个人数据分析内容",summary = "获取个人数据分析内容")
+    public Result<ModelUtil<List<List<String>>,Map<String,List<ProfileNumVo>>>> getDataAnalysis(@Parameter(description = "open id",required = true) String openId){
+        return userService.getDataAnalysis(openId);
     }
 }

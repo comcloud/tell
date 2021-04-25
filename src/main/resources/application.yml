@@ -92,3 +92,4 @@ wechat:
   appid: "wx45847f8c326518ee"
   secret: "39b3662386b4bc8ec624f814369bf205"
   grantType: "authorization_code"
+
