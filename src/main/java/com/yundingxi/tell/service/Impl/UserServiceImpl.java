@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         if (objects.isEmpty()) {
             List<UserCommentVo> userCommentVos = userMapper.getUserCommentVos(openId);
             for (UserCommentVo userCommentVo : userCommentVos) {
-                redisUtil.lSet("comm:" + openId + ":info", userCommentVo);
+                redisUtil.rSet("comm:" + openId + ":info", userCommentVo);
             }
             List<Object> objects1 = redisUtil.lGet("comm:" + openId + ":info", (pageNum - 1) * size, pageNum * size - 1);
             return ResultGenerator.genSuccessResult(objects1);

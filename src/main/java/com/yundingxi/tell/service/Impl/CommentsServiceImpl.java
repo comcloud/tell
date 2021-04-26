@@ -54,7 +54,7 @@ public class CommentsServiceImpl implements CommentsService {
             String idBySgId = userMapper.getIDBySgId(entity.getSgId());
             if(!entity.getOpenId().equals(idBySgId)){
                 redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
-                redisUtil.lSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
+                redisUtil.rSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
             }
             spittingGroovesMapper.addNumber(entity.getSgId());
             return ResultGenerator.genSuccessResult("发布成功");

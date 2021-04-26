@@ -1,8 +1,6 @@
 package com.yundingxi.tell.util.baidu;
 
 import com.baidu.aip.nlp.AipNlp;
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * @version v1.0
  * @ClassName NlpClient
