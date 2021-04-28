@@ -36,6 +36,7 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     private RedisUtil redisUtil;
     @Override
     public Result<String> insert(SpittingGrooves entity) {
+        entity.subStringTitle();
         int state = spittingGroovesMapper.insert(entity);
         if (state>0){
             log.info("===================> {} 数据保存成功" ,entity);
@@ -72,7 +73,7 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
 
     @Override
     public Result<PageInfo<SpittingGroovesVo>> selectAllVo(Integer pageNum) {
-        String orderBy = "date asc";
+        String orderBy = "sg.date asc";
         PageHelper.startPage(pageNum,10,orderBy);
         List<SpittingGroovesVo> spittingGroovesVos = spittingGroovesMapper.selectAllVo();
         PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
