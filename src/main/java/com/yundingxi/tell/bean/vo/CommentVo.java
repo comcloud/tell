@@ -26,4 +26,6 @@ public class CommentVo {
     private Date date;
     @ApiModelProperty(value = "评论USerVo")
     private UserVo userVo;
+    @ApiModelProperty(value = "评论数量")
+    private Integer number;
 }

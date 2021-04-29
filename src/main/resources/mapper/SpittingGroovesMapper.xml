@@ -140,13 +140,15 @@
         <id column="id" jdbcType="VARCHAR"  property="id"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
-        <result column="number" jdbcType="VARCHAR" property="number"/>
+<!--        <result column="number" jdbcType="VARCHAR" property="number"/>-->
         <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <result column="count(*)" property="number"/>
     </resultMap>
     <select id="selectAllVo" resultMap="SpittingGroovesVoMap">
-        select id,title,avatar_url,pen_name,`number`
-        from spitting_grooves
-        where `state`=0
+				        select sg.id,sg.title,sg.avatar_url,sg.pen_name,count(*)
+        from spitting_grooves sg, comments c
+				where  sg.id=c.sg_id and sg.`state`=0
+        group by sg.id
     </select>
 
     <select id="selectDetailsById" parameterType="java.lang.String" resultMap="SpittingGroovesMap">

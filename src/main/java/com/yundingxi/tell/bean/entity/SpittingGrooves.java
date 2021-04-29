@@ -17,12 +17,14 @@ import java.util.UUID;
  * @since 2021-03-30
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="SpittingGrooves对象", description="吐槽")
 public class SpittingGrooves implements Serializable {
+    private final Integer INDEX=20;
+    private final Integer END=30;
 
     private static final long serialVersionUID = 1L;
 
@@ -50,5 +52,14 @@ public class SpittingGrooves implements Serializable {
     @ApiModelProperty(value = "发布者笔名")
     private String penName;
 
+
+    public void subStringTitle(){
+        int i = this.content.indexOf("。", INDEX);
+        if (i>INDEX&&i<=END){
+            this.title= content.substring(0,i);
+        }else {
+            this.title=content.substring(0, 25);
+        }
+    }
 
 }

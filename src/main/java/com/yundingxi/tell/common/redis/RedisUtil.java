@@ -569,6 +569,7 @@ public final class RedisUtil {
         }
     }
 
+
     /**
      * 获取list缓存的长度
      *
@@ -616,7 +617,27 @@ public final class RedisUtil {
      */
     public boolean lSet(String key, Object value) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
+            return true;
+        } catch (Exception e) {
+            log.error(key, e);
+            return false;
+        }
+    }
+    /**
+     * 将list放入缓存
+     *
+     * @param key
+     *            键
+     * @param value
+     *            值
+     * @param time
+     *            时间(秒)
+     * @return
+     */
+    public boolean rSet(String key, Object value) {
+        try {
+            redisTemplate.opsForList().leftPush(key, value);
             return true;
         } catch (Exception e) {
             log.error(key, e);
