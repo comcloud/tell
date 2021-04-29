@@ -143,15 +143,9 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public String replyLetter(LetterReplyDto letterReplyDto) {
         CompletableFuture.runAsync(() -> {
-            Reply reply = new Reply();
             String replyId = UUID.randomUUID().toString();
+            Reply reply = new Reply(replyId,letterReplyDto.getLetterId(),new Date(),letterReplyDto.getMessage(),letterReplyDto.getSender(),letterReplyDto.getSenderPenName());
             String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            reply.setId(replyId);
-            reply.setContent(letterReplyDto.getMessage());
-            reply.setReplyTime(new Date());
-            reply.setOpenId(letterReplyDto.getSender());
-            reply.setLetterId(letterReplyDto.getLetterId());
-            reply.setPenName(letterReplyDto.getSenderPenName());
             letterMapper.insertReply(reply);
             @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
             UnreadMessageDto messageDto = new UnreadMessageDto(letterReplyDto.getSender()
@@ -196,15 +190,16 @@ public class LetterServiceImpl implements LetterService {
 
     @SneakyThrows
     @Override
-    public List<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum) {
+    public PageInfo<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum) {
         return CompletableFuture.supplyAsync(() -> {
             @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + openId + ":unread_message");
-
+            String orderBy = "senderTime desc";
+            PageHelper.startPage(pageNum,10,orderBy);
             //  delete the key
             if (messageDtoList != null) {
                 redisUtil.del("letter:" + openId + ":unread_message");
             }
-            return messageDtoList;
+            return new PageInfo<>(messageDtoList != null ? messageDtoList : new ArrayList<>());
         }).get();
     }
 

@@ -49,7 +49,7 @@ public interface LetterService {
 
     Map<Integer,Integer> getNumberOfLetter(String openId);
 
-    List<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum);
+    PageInfo<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum);
 
     @Deprecated
     LetterDto getLetterById(String letterId);
