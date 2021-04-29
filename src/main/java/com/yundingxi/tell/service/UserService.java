@@ -48,5 +48,5 @@ public interface UserService {
      * @param openId open Id
      * @return 返回样式内容，包含两块内容，所以使用了ModelUtil作为容器，第一个值是一个二维数组，这里使用集合表示，第二个是键值对
      */
-    Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId);
+    Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId,Long currentTimeStamp);
 }

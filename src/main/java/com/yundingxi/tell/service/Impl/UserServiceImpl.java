@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -146,16 +147,17 @@ public class UserServiceImpl implements UserService {
 
     @SneakyThrows
     @Override
-    public Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId) {
+    public Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId,Long currentTimeStamp) {
         @SuppressWarnings("unchecked") ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> model
-                = (ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>) redisUtil.get(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + ":data");
+                = (ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>) redisUtil.get(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + "_" + currentTimeStamp + ":data");
         if (model == null) {
             ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> result = new ModelUtil<>();
+            Date currentDate = new Date(currentTimeStamp);
             CompletableFuture
-                    .runAsync(() -> result.setFirstValue(configureReview(openId)))
-                    .thenRunAsync(() -> result.setLastValue(configureDataAnalysis(openId)))
+                    .runAsync(() -> result.setFirstValue(configureReview(openId,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentDate))))
+                    .thenRunAsync(() -> result.setLastValue(configureDataAnalysis(openId,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentDate))))
                     .get();
-            redisUtil.set(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + ":data", result, TimeUnit.HOURS.toSeconds(24));
+            redisUtil.set(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + "_" + currentTimeStamp +  ":data", result, TimeUnit.DAYS.toSeconds(30));
             return ResultGenerator.genSuccessResult(result);
         } else {
             return ResultGenerator.genSuccessResult(model);
@@ -165,14 +167,15 @@ public class UserServiceImpl implements UserService {
     /**
      * 配置历史发布
      */
-    private List<List<String>> configureReview(String openId) {
+    private List<List<String>> configureReview(String openId,String currentTime) {
         List<List<String>> review = new ArrayList<>();
         review.add(Arrays.asList("发布数量", "解忧", "日记", "吐槽"));
         for (int i = 0; i < 4; i++) {
             review.add(Arrays.asList("第" + (i + 1) + "周"
-                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, "letter", i, 7) + ""
-                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, "diarys", i, 7) + ""
-                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, "spitting_grooves", i, 7) + ""));
+                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, currentTime,"letter", i, 7) + ""
+                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, currentTime,"diarys", i, 7) + ""
+                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, currentTime,"spitting_grooves", i, 7) + "")
+            );
         }
         return review;
     }
@@ -181,12 +184,12 @@ public class UserServiceImpl implements UserService {
      * 配置数据分析内容
      */
     @SneakyThrows
-    private Map<String, List<ProfileNumVo>> configureDataAnalysis(String openId) {
+    private Map<String, List<ProfileNumVo>> configureDataAnalysis(String openId,String currentTime) {
         Map<String, List<ProfileNumVo>> analysis = new HashMap<>(3);
 
-        List<String> letterContentList = letterMapper.selectAllLetterContentByOpenId(openId);
-        List<String> diaryContentList = diaryMapper.selectAllDiaryContentByOpenId(openId);
-        List<String> spittingGroovesContentList = spittingGroovesMapper.selectAllSpitContentByOpenId(openId);
+        List<String> letterContentList = letterMapper.selectAllLetterContentByOpenId(openId,currentTime);
+        List<String> diaryContentList = diaryMapper.selectAllDiaryContentByOpenId(openId,currentTime);
+        List<String> spittingGroovesContentList = spittingGroovesMapper.selectAllSpitContentByOpenId(openId,currentTime);
         CompletableFuture
                 .runAsync(() -> analysis.put("letter", singleAnalysis(letterContentList)))
                 .thenRunAsync(() -> analysis.put("diary", singleAnalysis(diaryContentList)))

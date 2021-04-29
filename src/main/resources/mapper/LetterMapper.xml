@@ -45,13 +45,12 @@
         where open_id = #{openId}
         <choose>
             <when test="tableName == 'letter'">
-                and (to_days(now()) - #{interval} * #{period}) - to_days(release_time) &lt;= #{interval} * (#{period} +
-                1)
-                and #{interval} * #{period} &gt;= (to_days(now()) - #{interval} * #{period}) - to_days(release_time);
+                and (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(release_time) &lt;= #{interval} * (#{period} + 1)
+                and 0 &lt;= (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(release_time);
             </when>
             <otherwise>
-                and (to_days(now()) - #{interval} * #{period}) - to_days(date) &lt;= #{interval} * (#{period} + 1)
-                and #{interval} * #{period} &gt;= (to_days(now()) - #{interval} * #{period}) - to_days(date);
+                and (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(date) &lt;= #{interval} * (#{period} + 1)
+                and 0 &lt;= (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(date);
             </otherwise>
         </choose>
     </select>
@@ -59,5 +58,6 @@
         select content
         from letter
         where open_id = #{openId}
+            and to_days(#{currentTime}) &gt;= to_days(release_time)
     </select>
 </mapper>

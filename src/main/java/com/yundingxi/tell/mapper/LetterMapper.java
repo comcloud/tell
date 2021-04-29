@@ -19,7 +19,7 @@ public interface LetterMapper {
     int insertSingleLetter(@Param("letter") Letter letter);
 
     List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation
-            ,@Param("openId") String openId);
+            , @Param("openId") String openId);
 
 
     void insertReply(@Param("reply") Reply reply);
@@ -33,12 +33,13 @@ public interface LetterMapper {
     String selectContentByLetterId(@Param("letterId") String letterId);
 
     /**
-     * @param openId open id
-     * @param period 时间间隔，表示多少个时间段，比如0～7，7 ～ 14
+     * @param openId   open id
+     * @param period   时间间隔，表示多少个时间段，比如0～7，7 ～ 14
      * @param interval 选用的时间段为多少，就是上面的7，7表示一周，给7的话代表获取某一周，具体哪一周由period参数决定
+     * @param currentTime 指定的当前时间
      * @return 数量
      */
-    Integer selectWeeklyQuantityThroughOpenId(@Param("openId") String openId,@Param("tableName") String tableName,@Param("period") Integer period,@Param("interval") Integer interval);
+    Integer selectWeeklyQuantityThroughOpenId(@Param("openId") String openId, @Param("currentTime") String currentTime, @Param("tableName") String tableName, @Param("period") Integer period, @Param("interval") Integer interval);
 
-    List<String> selectAllLetterContentByOpenId(@Param("openId") String openId);
+    List<String> selectAllLetterContentByOpenId(@Param("openId") String openId,@Param("currentTime") String currentTime);
 }

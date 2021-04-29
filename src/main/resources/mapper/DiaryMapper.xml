@@ -37,5 +37,6 @@
         select content
         from diarys
         where open_id = #{openId}
+          and to_days(#{currentTime}) &gt;= to_days(date)
     </select>
 </mapper>
