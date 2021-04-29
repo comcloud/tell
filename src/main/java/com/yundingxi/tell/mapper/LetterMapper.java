@@ -42,4 +42,6 @@ public interface LetterMapper {
     Integer selectWeeklyQuantityThroughOpenId(@Param("openId") String openId, @Param("currentTime") String currentTime, @Param("tableName") String tableName, @Param("period") Integer period, @Param("interval") Integer interval);
 
     List<String> selectAllLetterContentByOpenId(@Param("openId") String openId,@Param("currentTime") String currentTime);
+
+    String selectPenNameById(@Param("letterId") String letterId);
 }

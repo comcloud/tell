@@ -1,5 +1,6 @@
 package com.yundingxi.tell.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.service.LetterService;
@@ -94,5 +95,12 @@ public class LetterController {
     public Result<IndexLetterDto> getIndexLetterById(@Parameter(description = "信件id") String letterId,
                                                      @Parameter(description = "open id") String openId) {
         return ResultGenerator.genSuccessResult(letterService.getLetterById(new IndexLetterVo(openId, letterId)));
+    }
+
+    @GetMapping("/getLetterOfHistory")
+    @Operation(description = "获取历史别人给我回复的信件",summary = "获取历史回信")
+    public Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(@Parameter(description = "open id", required = true) String openId
+            , @Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum){
+        return letterService.getLetterOfHistory(openId,pageNum);
     }
 }

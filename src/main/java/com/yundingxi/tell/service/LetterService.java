@@ -1,8 +1,10 @@
 package com.yundingxi.tell.service;
 
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
+import com.yundingxi.tell.util.Result;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,7 @@ import java.util.Map;
 public interface LetterService {
     /**
      * 保存单封信件到数据库，返回信件的送达时间
-     * @param letter 信件对象
+     * @param letterStorageDto 信件对象
      * @return 返回信件的送达时间
      */
     String saveSingleLetter(LetterStorageDto letterStorageDto);
@@ -57,4 +59,6 @@ public interface LetterService {
     LetterDto getLetterById(ReplyInfoDto replyInfoDto);
 
     IndexLetterDto getLetterById(IndexLetterVo indexLetterVo);
+
+    Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(String openId, Integer pageNum);
 }
