@@ -87,9 +87,9 @@ public class LetterServiceImpl implements LetterService {
     public List<UnreadMessageDto> putUnreadMessage(String openId) {
         return CompletableFuture.supplyAsync(() -> {
             //使用redis获取
-            @SuppressWarnings("unchecked") List<UnreadMessageDto> unreadMessage = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> unreadMessage = (List<UnreadMessageDto>) redisUtil.get("letter:" + openId + ":unread_message");
             if (unreadMessage != null) {
-                redisUtil.del(openId + "_unread_message");
+                redisUtil.del("letter:" + openId + ":unread_message");
             }
             return unreadMessage;
         }).get();
@@ -99,20 +99,26 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public List<IndexLetterDto> getLettersByOpenId(String openId) {
         return CompletableFuture.supplyAsync(() -> {
-            Object o = redisUtil.get(openId + "_letter_info");
+            Object o = redisUtil.get("letter:" + openId + ":letter_info");
             if (o == null) {
                 setLetterInitInfoByOpenId(openId);
             }
-            JsonNode letterInfo = JsonUtil.parseJson((String) redisUtil.get(openId + "_letter_info"));
-            String date = letterInfo.findPath("date").toString().replace("\"", "");
-            int letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
+            Object obj =  redisUtil.get("letter:" + openId + ":letter_info");
             String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            if (!currentDate.equals(date)) {
-                letterCountLocation = letterCountLocation + 3;
+            int letterCountLocation = 0;
+            if (obj != null) {
+                JsonNode letterInfo = JsonUtil.parseJson((String) obj);
+                String date = letterInfo.findPath("date").toString().replace("\"", "");
+                letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
+                if (!currentDate.equals(date)) {
+                    letterCountLocation = letterCountLocation + 3;
+                }
+            }
+            if(letterCountLocation != 0 || obj == null){
                 ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
                 newValue.put("date", currentDate);
                 newValue.put("letter_count_location", letterCountLocation);
-                redisUtil.set(openId + "_letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
+                redisUtil.set("letter:" + openId + ":letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
             }
             List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId);
             List<IndexLetterDto> letterDtoList = new ArrayList<>();
@@ -142,7 +148,7 @@ public class LetterServiceImpl implements LetterService {
             reply.setLetterId(letterReplyDto.getLetterId());
             reply.setPenName(letterReplyDto.getSenderPenName());
             letterMapper.insertReply(reply);
-            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(letterReplyDto.getRecipient() + "_unread_message");
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
             UnreadMessageDto messageDto = new UnreadMessageDto(letterReplyDto.getSender()
                     , letterReplyDto.getRecipient()
                     , letterReplyDto.getMessage()
@@ -152,10 +158,10 @@ public class LetterServiceImpl implements LetterService {
             if (messageDtoList == null) {
                 List<UnreadMessageDto> list = new ArrayList<>();
                 list.add(messageDto);
-                redisUtil.set(letterReplyDto.getRecipient() + "_unread_message", list);
+                redisUtil.set("letter:" + letterReplyDto.getRecipient() + ":unread_message", list);
             } else {
                 messageDtoList.add(messageDto);
-                redisUtil.set(letterReplyDto.getRecipient() + "_unread_message", messageDtoList);
+                redisUtil.set("letter:" + letterReplyDto.getRecipient() + ":unread_message", messageDtoList);
             }
         });
 
@@ -166,7 +172,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public Map<Integer, Integer> getNumberOfLetter(String openId) {
         return CompletableFuture.supplyAsync(() -> {
-            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + openId + ":unread_message");
             Map<Integer, Integer> map = new HashMap<>(10);
             map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
             Object commCount = redisUtil.get("comm:" + openId + ":count");
@@ -179,10 +185,10 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public List<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum) {
         return CompletableFuture.supplyAsync(() -> {
-            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get(openId + "_unread_message");
+            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + openId + ":unread_message");
             //  delete the key
             if (messageDtoList != null) {
-                redisUtil.del(openId + "_unread_message");
+                redisUtil.del("letter:" + openId + ":unread_message");
             }
             return messageDtoList;
         }).get();
@@ -198,7 +204,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public void setLetterInitInfoByOpenId(String openId) {
         CompletableFuture.runAsync(() -> {
-            Object o = redisUtil.get(openId + "_letter_info");
+            Object o = redisUtil.get("letter:" + openId + ":letter_info");
             if (o != null) {
                 return;
             }
@@ -206,7 +212,7 @@ public class LetterServiceImpl implements LetterService {
             String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             letterInfo.put("date", date);
             letterInfo.put("letter_count_location", 1);
-            redisUtil.set(openId + "_letter_info", letterInfo.toPrettyString());
+            redisUtil.set("letter:" + openId + ":letter_info", letterInfo.toPrettyString());
         });
     }
 

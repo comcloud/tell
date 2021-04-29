@@ -1,6 +1,10 @@
 package com.yundingxi.tell.util;
 
+import com.yundingxi.tell.bean.vo.ProfileVo;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 响应结果生成工具
@@ -11,6 +15,7 @@ public class ResultGenerator {
     private static final String DEFAULT_FAIL_MESSAGE = "FAIL";
     private static final int RESULT_CODE_SUCCESS = 200;
     private static final int RESULT_CODE_SERVER_ERROR = 500;
+    private static final int RESULT_CODE_CLIENT_ERROR = 400;
 
     /**
      * 无参数 获取成功结果
@@ -72,6 +77,17 @@ public class ResultGenerator {
         Result<Object> result = new Result<>();
         result.setResultCode(code);
         result.setMessage(message);
+        return result;
+    }
+
+    public static <T> Result<T> genFailResult(T obj) {
+        Result<T> result = new Result<>();
+        result.setResultCode(RESULT_CODE_CLIENT_ERROR);
+        if (Objects.isNull(obj)) {
+            result.setMessage(DEFAULT_FAIL_MESSAGE);
+        } else {
+            result.setMessage(obj.toString());
+        }
         return result;
     }
 }

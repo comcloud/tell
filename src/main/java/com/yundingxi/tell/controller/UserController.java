@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @GetMapping("/getProfile")
-    @Operation(description = "获取历史数量信息，包括：解忧、日记、吐槽数量",summary = "获取历史发布数量")
+    @Operation(description = "获取历史数量信息，包括：解忧、日记、吐槽数量，同时也包含用户昵称与用户头像",summary = "获取个人信息")
     public Result<ProfileVo> getProfile(@Parameter(description = "open id",required = true) String openId){
         return userService.getProfile(openId);
     }

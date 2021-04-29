@@ -131,6 +131,9 @@ public class UserServiceImpl implements UserService {
         int numOfDiary = userMapper.selectNumberOfDiaryByOpenId(openId);
         int numOfSpit = userMapper.selectNumberOfLetSpitByOpenId(openId);
         User user = userMapper.selectNameAndUrlByOpenId(openId);
+        if(user == null){
+            return ResultGenerator.genFailResult(new ProfileVo("用户不存在",null,null));
+        }
 
         List<ProfileNumVo> numVos = new ArrayList<>();
         numVos.add(new ProfileNumVo("解忧", numOfLetter));
