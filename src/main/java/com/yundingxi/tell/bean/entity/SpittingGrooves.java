@@ -54,6 +54,7 @@ public class SpittingGrooves implements Serializable {
 
 
     public void subStringTitle(){
+        this.date=new Date();
         int i = this.content.indexOf("。", INDEX);
         if (i>INDEX&&i<=END){
             this.title= content.substring(0,i);

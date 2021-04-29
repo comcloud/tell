@@ -6,7 +6,6 @@ import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
 import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
-import com.yundingxi.tell.service.CommentsService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
