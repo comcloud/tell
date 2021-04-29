@@ -57,6 +57,8 @@ public class JsonUtil {
 //        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
         // 取消对非ASCII字符的转码
         objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
+        //
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /**

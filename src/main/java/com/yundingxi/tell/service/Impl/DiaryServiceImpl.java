@@ -76,7 +76,7 @@ public class DiaryServiceImpl implements DiaryService {
     @Override
     public PageInfo<Diarys> getAllPublicDiary(Integer pageNum) {
         return CompletableFuture.supplyAsync(() -> {
-            String orderBy = "id desc";
+            String orderBy = "date desc";
             PageHelper.startPage(pageNum, 10, orderBy);
             List<Diarys> diarys = diaryMapper.selectAllPublicDiary();
             diarys.forEach(diary -> {
