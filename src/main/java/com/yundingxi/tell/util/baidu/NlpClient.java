@@ -1,7 +1,14 @@
 package com.yundingxi.tell.util.baidu;
 
+import com.baidu.aip.client.BaseClient;
 import com.baidu.aip.contentcensor.AipContentCensor;
 import com.baidu.aip.nlp.AipNlp;
+import lombok.SneakyThrows;
+
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @version v1.0
  * @ClassName NlpClient
@@ -15,19 +22,36 @@ public class NlpClient {
     private static final String API_KEY = "Y0dsQ43da22joPf4PTLHu5o3";
     private static final String SECRET_KEY = "siQgyddmyqXIKUKYEsvHYr3ZQHWFgPo3";
 
-    public static AipNlp getNlpClient(){
-        AipNlp client = new AipNlp(APP_ID,API_KEY,SECRET_KEY);
-
-        client.setConnectionTimeoutInMillis(2000);
-        client.setSocketTimeoutInMillis(60000);
-        return client;
+    public static AipNlp getNlpClient() {
+        return getClient(AipNlp.class);
     }
 
-    public static AipContentCensor getContentCensorClient(){
-        AipContentCensor client = new AipContentCensor(APP_ID, API_KEY, SECRET_KEY);
+    public static AipContentCensor getContentCensorClient() {
+        return getClient(AipContentCensor.class);
+    }
 
-        client.setConnectionTimeoutInMillis(2000);
-        client.setSocketTimeoutInMillis(60000);
-        return client;
+    private static <T> T getClient(Class<? extends BaseClient> c){
+        Map<String, Integer> options = new HashMap<>(2);
+        options.put("connectionTimeout",20000);
+        options.put("socketTimeout",60000);
+        return getClient(c,options);
+    }
+
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    private static <T> T getClient(Class<? extends BaseClient> c, Map<String, Integer> options) {
+        BaseClient clazz;
+        Constructor<?> constructor = c.getDeclaredConstructor(String.class, String.class, String.class);
+        constructor.setAccessible(true);
+        Object obj = constructor.newInstance(APP_ID, API_KEY, SECRET_KEY);
+        if (obj instanceof BaseClient) {
+            clazz = (BaseClient) obj;
+        } else {
+            throw new IllegalArgumentException("不可以使用BaseClient之外的类");
+        }
+        clazz.setConnectionTimeoutInMillis(options.get("connectionTimeout"));
+        clazz.setSocketTimeoutInMillis(options.get("socketTimeout"));
+
+        return (T) clazz;
     }
 }
