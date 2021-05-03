@@ -1,5 +1,6 @@
 package com.yundingxi.tell.util.baidu;
 
+import com.baidu.aip.contentcensor.AipContentCensor;
 import com.baidu.aip.nlp.AipNlp;
 /**
  * @version v1.0
@@ -14,8 +15,16 @@ public class NlpClient {
     private static final String API_KEY = "Y0dsQ43da22joPf4PTLHu5o3";
     private static final String SECRET_KEY = "siQgyddmyqXIKUKYEsvHYr3ZQHWFgPo3";
 
-    public static AipNlp getClient(){
+    public static AipNlp getNlpClient(){
         AipNlp client = new AipNlp(APP_ID,API_KEY,SECRET_KEY);
+
+        client.setConnectionTimeoutInMillis(2000);
+        client.setSocketTimeoutInMillis(60000);
+        return client;
+    }
+
+    public static AipContentCensor getContentCensorClient(){
+        AipContentCensor client = new AipContentCensor(APP_ID, API_KEY, SECRET_KEY);
 
         client.setConnectionTimeoutInMillis(2000);
         client.setSocketTimeoutInMillis(60000);

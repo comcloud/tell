@@ -16,6 +16,7 @@ import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.util.FileUtil;
 import com.yundingxi.tell.util.JsonUtil;
+import com.yundingxi.tell.util.NaturalLanguageUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,20 +35,20 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() {
-
-
-
-//        SpittingGrooves lllll = new SpittingGrooves("00001","...0000.",new Date(),"1","s","002","","","");
-//        service.insert(lllll);
-//        s.insert(lllll);
-//        s.updateById(lllll);
-//            s.deleteById("001");
-//        System.out.println(s.selectDetailsById("001"));
-//        System.out.println(a.selectAll("ab30fc9c-aabd-48f5-8e98-2a701052bffc"));
-//        for (int i = 0; i < 20; i++) {
-//            DiaryDto diaryDto = new DiaryDto("System.out.println(a.selectAll(\"ab30fc9c-aabd-48f5-8e98-2a701052bffc\"));", "小布丁", "阴天", "vx002", (i % 2) + "");
-//            diaryService.saveDiary(diaryDto);
+//        if (NaturalLanguageUtil.isTextLegal("非常难受")) {
+//            System.out.println("合规");
+//        } else {
+//            System.out.println("不合规");
 //        }
+        String jsonTest = "{\n" +
+                "  \"conclusion\" : \"合规\",\n" +
+                "  \"log_id\" : 16200325547424838,\n" +
+                "  \"isHitMd5\" : false,\n" +
+                "  \"conclusionType\" : 1\n" +
+                "}";
+
+        System.out.println(JsonUtil.parseJson(jsonTest).findPath("error").toString().equals(""));
+
     }
 
 
