@@ -1,14 +1,17 @@
 package com.yundingxi.tell.util;
 
+import com.baidu.aip.client.BaseClient;
 import com.baidu.aip.contentcensor.AipContentCensor;
 import com.baidu.aip.nlp.AipNlp;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.yundingxi.tell.util.baidu.NlpClient;
+import lombok.SneakyThrows;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 自然语言分析工具类
@@ -43,8 +46,6 @@ public class NaturalLanguageUtil {
      * 积极性阈值[0-1]
      */
     private static final double POSITIVE_THRESHOLD = 0.2;
-
-//    private static final AipNlp NLP_CLIENT = NlpClient.getNlpClient();
 
 
     /**
@@ -102,5 +103,67 @@ public class NaturalLanguageUtil {
         log.info(parseJson.toPrettyString());
         JsonNode conclusionType = parseJson.findPath("conclusionType");
         return "".equals(conclusionType.toString()) ? 4 : conclusionType.asInt();
+    }
+
+
+    /**
+     * 百度NLP客户端内部类
+     */
+    static class NlpClient {
+
+        private static final String APP_ID = "24055538";
+        private static final String API_KEY = "Y0dsQ43da22joPf4PTLHu5o3";
+        private static final String SECRET_KEY = "siQgyddmyqXIKUKYEsvHYr3ZQHWFgPo3";
+
+        private static final Map<Class<? extends BaseClient>, BaseClient> AIP_MAP = new HashMap<>();
+
+        /**
+         * @return 获取AipNlp客户端
+         */
+        public static AipNlp getNlpClient() {
+            //lazy load
+            BaseClient baseClient = AIP_MAP.get(AipNlp.class);
+            if (baseClient == null) {
+                AIP_MAP.put(AipNlp.class, getClient(AipNlp.class));
+            }
+            return (AipNlp) baseClient;
+        }
+
+        /**
+         * @return 获取AipContentCensor客户端
+         */
+        public static AipContentCensor getContentCensorClient() {
+            //lazy load
+            BaseClient baseClient = AIP_MAP.get(AipContentCensor.class);
+            if (baseClient == null) {
+                AIP_MAP.put(AipContentCensor.class, getClient(AipContentCensor.class));
+            }
+            return (AipContentCensor) baseClient;
+        }
+
+        private static <T> T getClient(Class<? extends BaseClient> c) {
+            Map<String, Integer> options = new HashMap<>(2);
+            options.put("connectionTimeout", 20000);
+            options.put("socketTimeout", 60000);
+            return getClient(c, options);
+        }
+
+        @SneakyThrows
+        @SuppressWarnings("unchecked")
+        private static <T> T getClient(Class<? extends BaseClient> c, Map<String, Integer> options) {
+            BaseClient clazz;
+            Constructor<?> constructor = c.getDeclaredConstructor(String.class, String.class, String.class);
+            constructor.setAccessible(true);
+            Object obj = constructor.newInstance(APP_ID, API_KEY, SECRET_KEY);
+            if (obj instanceof BaseClient) {
+                clazz = (BaseClient) obj;
+            } else {
+                throw new IllegalArgumentException("不可以使用BaseClient之外的类");
+            }
+            clazz.setConnectionTimeoutInMillis(options.get("connectionTimeout"));
+            clazz.setSocketTimeoutInMillis(options.get("socketTimeout"));
+
+            return (T) clazz;
+        }
     }
 }
