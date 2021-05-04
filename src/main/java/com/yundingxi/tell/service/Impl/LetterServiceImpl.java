@@ -68,11 +68,13 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public String saveSingleLetter(LetterStorageDto letterStorageDto) {
         Integer result = CompletableFuture.supplyAsync(() -> {
-            Letter letter = BeanUtil.toBean(letterStorageDto, Letter.class);
-            letter.setId(UUID.randomUUID().toString());
-            letter.setState(1);
-            letter.setReleaseTime(new Date());
-            letter.setTapIds(letterStorageDto.getTapIds());
+            Letter letter = new Letter(UUID.randomUUID().toString()
+                    , letterStorageDto.getStampUrl()
+                    , letterStorageDto.getOpenId()
+                    , letterStorageDto.getContent()
+                    , letterStorageDto.getState()
+                    , letterStorageDto.getPenName()
+                    , letterStorageDto.getTapIds(), new Date());
             String tapIds = letter.getTapIds();
             String[] tabIdArr = tapIds.split(",");
             for (String tabId : tabIdArr) {
@@ -144,7 +146,7 @@ public class LetterServiceImpl implements LetterService {
     public String replyLetter(LetterReplyDto letterReplyDto) {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
-            Reply reply = new Reply(replyId,letterReplyDto.getLetterId(),new Date(),letterReplyDto.getMessage(),letterReplyDto.getSender(),letterReplyDto.getSenderPenName());
+            Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
             String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             letterMapper.insertReply(reply);
             @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
@@ -190,16 +192,14 @@ public class LetterServiceImpl implements LetterService {
 
     @SneakyThrows
     @Override
-    public PageInfo<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum) {
+    public List<UnreadMessageDto> getAllUnreadLetter(String openId, Integer pageNum) {
         return CompletableFuture.supplyAsync(() -> {
             @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + openId + ":unread_message");
-            String orderBy = "senderTime desc";
-            PageHelper.startPage(pageNum,10,orderBy);
             //  delete the key
             if (messageDtoList != null) {
                 redisUtil.del("letter:" + openId + ":unread_message");
             }
-            return new PageInfo<>(messageDtoList != null ? messageDtoList : new ArrayList<>());
+            return messageDtoList != null ? messageDtoList : new ArrayList<UnreadMessageDto>();
         }).get();
     }
 
