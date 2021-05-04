@@ -87,4 +87,20 @@ public class NaturalLanguageUtil {
         JsonNode conclusionType = parseJson.findPath("conclusionType");
         return !"".equals(conclusionType.toString()) && conclusionType.asInt() == 1;
     }
+
+    /**
+     * 结果类型，1.合规，2.不合规，3.疑似，4.审核失败
+     *
+     * @param content 文本内容
+     * @return 返回文本违规与否判断信息
+     */
+    public static Integer getTextLegalType(String content) {
+        AipContentCensor client = NlpClient.getContentCensorClient();
+
+        JSONObject userDefined = client.textCensorUserDefined(content);
+        JsonNode parseJson = JsonUtil.parseJson(userDefined.toString());
+        log.info(parseJson.toPrettyString());
+        JsonNode conclusionType = parseJson.findPath("conclusionType");
+        return "".equals(conclusionType.toString()) ? 4 : conclusionType.asInt();
+    }
 }

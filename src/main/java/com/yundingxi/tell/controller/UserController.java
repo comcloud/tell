@@ -91,4 +91,10 @@ public class UserController {
             , @Parameter(description = "给定的需要计算的时间的时间戳", required = true) Long currentTimeStamp) {
         return userService.getDataAnalysis(openId, currentTimeStamp);
     }
+
+    @GetMapping("/isTextLegal")
+    @Operation(description = "判断文字内容是否属于违规语言,结果类型，1.合规，2.不合规，3.疑似，4.审核失败",summary = "文字违规判断")
+    public Result<Integer> textLegal(@Parameter(description = "文字内容") @RequestParam(value = "textContent") String textContent){
+        return userService.isTextLegal(textContent);
+    }
 }

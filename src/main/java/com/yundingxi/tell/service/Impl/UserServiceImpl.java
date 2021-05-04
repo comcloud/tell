@@ -18,10 +18,15 @@ import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.SneakyThrows;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -164,6 +169,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Result<Integer> isTextLegal(String textContent) {
+        Integer conclusionType = NaturalLanguageUtil.getTextLegalType(textContent);
+        return ResultGenerator.genSuccessResult(conclusionType);
+    }
+
     /**
      * 配置历史发布
      */
@@ -218,4 +229,6 @@ public class UserServiceImpl implements UserService {
         }
         return universalList;
     }
+
+
 }
