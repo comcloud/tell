@@ -22,19 +22,31 @@ public class NlpClient {
     private static final String API_KEY = "Y0dsQ43da22joPf4PTLHu5o3";
     private static final String SECRET_KEY = "siQgyddmyqXIKUKYEsvHYr3ZQHWFgPo3";
 
+    private static final Map<Class<? extends BaseClient>, BaseClient> AIP_MAP = new HashMap<>();
+
     public static AipNlp getNlpClient() {
-        return getClient(AipNlp.class);
+        //lazy load
+        BaseClient baseClient = AIP_MAP.get(AipNlp.class);
+        if (baseClient == null) {
+            AIP_MAP.put(AipNlp.class, getClient(AipNlp.class));
+        }
+        return (AipNlp) baseClient;
     }
 
     public static AipContentCensor getContentCensorClient() {
-        return getClient(AipContentCensor.class);
+        //lazy load
+        BaseClient baseClient = AIP_MAP.get(AipContentCensor.class);
+        if (baseClient == null) {
+            AIP_MAP.put(AipContentCensor.class, getClient(AipContentCensor.class));
+        }
+        return (AipContentCensor) baseClient;
     }
 
-    private static <T> T getClient(Class<? extends BaseClient> c){
+    private static <T> T getClient(Class<? extends BaseClient> c) {
         Map<String, Integer> options = new HashMap<>(2);
-        options.put("connectionTimeout",20000);
-        options.put("socketTimeout",60000);
-        return getClient(c,options);
+        options.put("connectionTimeout", 20000);
+        options.put("socketTimeout", 60000);
+        return getClient(c, options);
     }
 
     @SneakyThrows
