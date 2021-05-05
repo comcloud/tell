@@ -260,6 +260,11 @@ public class LetterServiceImpl implements LetterService {
         return ResultGenerator.genSuccessResult(new PageInfo<>(reserveReply == null ? new ArrayList<>() : reserveReply));
     }
 
+    @Override
+    public int changeLetterState(String id, int state) {
+        return letterMapper.updateLetterState(id,state);
+    }
+
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int nextInt = random.nextInt(2, 7);

@@ -81,7 +81,7 @@ public class LetterController {
     public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id", required = true) String openId
             , @Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum) {
 
-        return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId,pageNum));
+        return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId, pageNum));
     }
 
     @Operation(description = "根据信件id获取信件具体回复信息", summary = "获取回复信件信息")
@@ -98,9 +98,15 @@ public class LetterController {
     }
 
     @GetMapping("/getLetterOfHistory")
-    @Operation(description = "获取历史别人给我回复的信件",summary = "获取历史回信")
+    @Operation(description = "获取历史别人给我回复的信件", summary = "获取历史回信")
     public Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(@Parameter(description = "open id", required = true) String openId
-            , @Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum){
-        return letterService.getLetterOfHistory(openId,pageNum);
+            , @Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum) {
+        return letterService.getLetterOfHistory(openId, pageNum);
+    }
+
+    @PutMapping("/changeLetterStateToDeleteById")
+    @Operation(description = "更改信件状态为删除状态，起到删除的作用", summary = "删除信件")
+    public Result<String> changeLetterStateToDeleteById(@Parameter(description = "要更改的日记id") @RequestParam String id) {
+        return letterService.changeLetterState(id, 1) == 1 ? ResultGenerator.genSuccessResult("更改成功") : ResultGenerator.genFailResult("更改失败");
     }
 }

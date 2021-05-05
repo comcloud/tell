@@ -46,4 +46,6 @@ public interface LetterMapper {
     String selectPenNameById(@Param("letterId") String letterId);
 
     List<Letter> selectAllLetterByOpenId(@Param("openId") String openId);
+
+    int updateLetterState(@Param("id") String id, @Param("state") int state);
 }

@@ -123,4 +123,9 @@ public class DiaryServiceImpl implements DiaryService {
             diaryViewDtoList.forEach(diaryViewDto -> diaryMapper.updateDiaryNumber(diaryViewDto.getDiaryId().replace("\"",""),diaryViewDto.getViewNum()));
         });
     }
+
+    @Override
+    public int changeDiaryState(String id, int state) {
+        return diaryMapper.updateDiaryState(id,state);
+    }
 }
