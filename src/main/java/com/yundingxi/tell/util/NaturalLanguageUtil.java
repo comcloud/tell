@@ -98,7 +98,7 @@ public class NaturalLanguageUtil {
     public static Integer getTextLegalType(String content) {
         AipContentCensor client = NlpClient.getContentCensorClient();
 
-        JSONObject userDefined = client.textCensorUserDefined(content);
+         JSONObject userDefined = client.textCensorUserDefined(content);
         JsonNode parseJson = JsonUtil.parseJson(userDefined.toString());
         log.info(parseJson.toPrettyString());
         JsonNode conclusionType = parseJson.findPath("conclusionType");

@@ -1,5 +1,6 @@
 package com.yundingxi.tell.service;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
 import com.yundingxi.tell.bean.vo.ProfileVo;
 import com.yundingxi.tell.util.ModelUtil;
@@ -51,4 +52,6 @@ public interface UserService {
     Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId,Long currentTimeStamp);
 
     Result<Integer> isTextLegal(String textContent);
+
+    Result<HistoryDataVo> getDataOfHistory(String openId);
 }

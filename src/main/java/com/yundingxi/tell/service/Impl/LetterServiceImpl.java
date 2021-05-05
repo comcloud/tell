@@ -17,6 +17,7 @@ import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.ReplyMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
+import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -127,12 +128,7 @@ public class LetterServiceImpl implements LetterService {
                 redisUtil.set("letter:" + openId + ":letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
             }
             List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId);
-            List<IndexLetterDto> letterDtoList = new ArrayList<>();
-            letters.forEach(letter -> {
-                IndexLetterDto letterDto = new IndexLetterDto(letter.getContent(), letter.getOpenId(), letter.getId(), letter.getPenName(), letter.getStampUrl(), userMapper.selectPenNameByOpenId(openId), letter.getReleaseTime());
-                letterDtoList.add(letterDto);
-            });
-            return letterDtoList;
+            return GeneralDataProcessUtil.configLetterDataFromList(letters,openId);
         }).get();
     }
 

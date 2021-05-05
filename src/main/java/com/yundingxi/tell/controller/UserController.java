@@ -1,6 +1,7 @@
 package com.yundingxi.tell.controller;
 
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
 import com.yundingxi.tell.bean.vo.ProfileVo;
 import com.yundingxi.tell.service.UserService;
@@ -96,5 +97,11 @@ public class UserController {
     @Operation(description = "判断文字内容是否属于违规语言,结果类型，1.合规，2.不合规，3.疑似，4.审核失败",summary = "文字违规判断")
     public Result<Integer> textLegal(@Parameter(description = "文字内容") @RequestParam(value = "textContent") String textContent){
         return userService.isTextLegal(textContent);
+    }
+
+    @GetMapping("/getDataOfHistory")
+    @Operation(description = "获取所有历史发布内容，包括信件，日记，吐槽",summary = "获取历史发布内容")
+    public Result<HistoryDataVo> getDataOfHistory(@Parameter(description = "open id") @RequestParam("open id") String openId){
+        return userService.getDataOfHistory(openId);
     }
 }

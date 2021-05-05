@@ -172,5 +172,10 @@
         where open_id = #{openId}
           and to_days(#{currentTime}) &gt;= to_days(date)
     </select>
+    <select id="selectAllSpitByOpenId" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+        select *
+        from spitting_grooves
+        where open_id=#{openId}
+    </select>
 
 </mapper>

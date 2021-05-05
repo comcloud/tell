@@ -67,4 +67,9 @@
         from letter
         where id = #{letterId}
     </select>
+    <select id="selectAllLetterByOpenId" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        where open_id=#{openId}
+    </select>
 </mapper>

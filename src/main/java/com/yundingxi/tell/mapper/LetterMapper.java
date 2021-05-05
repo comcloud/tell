@@ -44,4 +44,6 @@ public interface LetterMapper {
     List<String> selectAllLetterContentByOpenId(@Param("openId") String openId,@Param("currentTime") String currentTime);
 
     String selectPenNameById(@Param("letterId") String letterId);
+
+    List<Letter> selectAllLetterByOpenId(@Param("openId") String openId);
 }

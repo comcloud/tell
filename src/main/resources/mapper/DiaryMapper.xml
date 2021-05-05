@@ -19,7 +19,7 @@
         where id = #{id}
     </delete>
     <select id="selectAllDiaryByOpenId" resultType="com.yundingxi.tell.bean.entity.Diarys">
-        select id, date, number, pen_name, weather, state
+        select id, content, date, number, pen_name, weather, state,open_id
         from diarys
         where open_id = #{openId}
     </select>
