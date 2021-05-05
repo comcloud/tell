@@ -36,4 +36,5 @@ public interface DiaryService {
 
     void setViews(String diaryViewJson);
 
+    int changeDiaryState(String id, int state);
 }

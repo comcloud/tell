@@ -28,4 +28,6 @@ public interface DiaryMapper {
     void updateDiaryNumber(@Param("id") String id, @Param("viewNum") Integer viewNum);
 
     List<String> selectAllDiaryContentByOpenId(@Param("openId") String openId,@Param("currentTime") String currentTime);
+
+    int updateDiaryState(@Param("id") String id, @Param("state") int state);
 }

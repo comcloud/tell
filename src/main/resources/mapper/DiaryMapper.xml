@@ -13,6 +13,11 @@
         set number=#{viewNum}
         where id = #{id}
     </update>
+    <update id="updateDiaryState">
+        update diarys
+        set state=#{state}
+        where id=#{id}
+    </update>
     <delete id="deleteSingleDiaryById">
         delete
         from diarys

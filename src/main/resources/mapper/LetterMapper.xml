@@ -17,6 +17,11 @@
         set count=count + 1
         where id = #{tabId}
     </update>
+    <update id="updateLetterState">
+        update letter
+        set state=#{state}
+        where id=#{id}
+    </update>
     <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter

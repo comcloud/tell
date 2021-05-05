@@ -61,4 +61,6 @@ public interface LetterService {
     IndexLetterDto getLetterById(IndexLetterVo indexLetterVo);
 
     Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(String openId, Integer pageNum);
+
+    int changeLetterState(String id, int state);
 }
