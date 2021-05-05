@@ -1,5 +1,6 @@
 package com.yundingxi.tell;
 
+import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.CommentsMapper;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
 import com.yundingxi.tell.service.DiaryService;
@@ -20,8 +21,11 @@ class TellApplicationTests {
     @Autowired
     private DiaryService diaryService;
 
+    @Autowired
+    private RedisUtil redisUtil;
     @Test
     void contextLoads() throws IllegalAccessException {
+        redisUtil.del();
     }
 
 

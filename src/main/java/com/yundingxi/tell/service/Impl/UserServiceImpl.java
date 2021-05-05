@@ -144,8 +144,11 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     @Override
     public Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId, Long currentTimeStamp) {
+        if (openId == null || "".equals(openId)) {
+            return ResultGenerator.genSuccessResult(new ModelUtil<>());
+        }
         @SuppressWarnings("unchecked") ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> model
-                = (ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>) redisUtil.get(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + "_" + currentTimeStamp + ":data");
+                = (ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>) redisUtil.get(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + ":data");
         if (model == null) {
             ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> result = new ModelUtil<>();
             Date currentDate = new Date(currentTimeStamp);
@@ -153,11 +156,10 @@ public class UserServiceImpl implements UserService {
                     .runAsync(() -> result.setFirstValue(configureReview(openId, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentDate))))
                     .thenRunAsync(() -> result.setLastValue(configureDataAnalysis(openId, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentDate))))
                     .get();
-            redisUtil.set(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + "_" + currentTimeStamp + ":data", result, TimeUnit.DAYS.toSeconds(30));
+            redisUtil.set(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + ":data", result, TimeUnit.DAYS.toSeconds(30));
             return ResultGenerator.genSuccessResult(result);
-        } else {
-            return ResultGenerator.genSuccessResult(model);
         }
+        return ResultGenerator.genSuccessResult(model);
     }
 
     @Override
