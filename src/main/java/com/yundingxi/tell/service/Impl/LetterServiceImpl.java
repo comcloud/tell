@@ -143,7 +143,7 @@ public class LetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
-            String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             letterMapper.insertReply(reply);
             @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
             UnreadMessageDto messageDto = new UnreadMessageDto(letterReplyDto.getSender()
