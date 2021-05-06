@@ -1,6 +1,5 @@
 package com.yundingxi.tell.util;
 
-import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.dto.IndexLetterDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
@@ -9,11 +8,9 @@ import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
 import com.yundingxi.tell.mapper.UserMapper;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -68,7 +65,14 @@ public class GeneralDataProcessUtil {
                     declaredField.setAccessible(true);
                     Object obj = declaredField.get(data);
                     field.setAccessible(true);
-                    if (Modifier.isFinal(field.getModifiers())){
+                    if (Modifier.isFinal(field.getModifiers())) {
+                        continue;
+                    }
+                    if ("content".equals(declaredField.getName()) && paramType == Diarys.class) {
+                        configReasonableString(obj,field,r);
+                        continue;
+                    } else if ("content".equals(declaredField.getName()) && paramType == Letter.class) {
+                        configReasonableString(obj,field,r);
                         continue;
                     }
                     field.set(r, obj);
@@ -79,5 +83,15 @@ public class GeneralDataProcessUtil {
             }
         });
         return resultList;
+    }
+
+    private static <R> void configReasonableString(Object obj, Field field, R r) throws IllegalAccessException {
+        String str = (String) obj;
+        int indexOf = str.indexOf("。");
+        if (indexOf > 40 && indexOf <= 50) {
+            field.set(r, str.substring(0, indexOf));
+        } else {
+            field.set(r, str.substring(0, 45));
+        }
     }
 }
