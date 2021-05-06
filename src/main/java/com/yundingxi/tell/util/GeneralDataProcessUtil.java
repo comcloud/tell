@@ -69,10 +69,10 @@ public class GeneralDataProcessUtil {
                         continue;
                     }
                     if ("content".equals(declaredField.getName()) && paramType == Diarys.class) {
-                        configReasonableString(obj,field,r);
+                        configReasonableString(obj, field, r);
                         continue;
                     } else if ("content".equals(declaredField.getName()) && paramType == Letter.class) {
-                        configReasonableString(obj,field,r);
+                        configReasonableString(obj, field, r);
                         continue;
                     }
                     field.set(r, obj);
@@ -85,13 +85,28 @@ public class GeneralDataProcessUtil {
         return resultList;
     }
 
-    private static <R> void configReasonableString(Object obj, Field field, R r) throws IllegalAccessException {
+    /**
+     * @param obj 给定字符串
+     * @param field 要设置的域对象
+     * @param e 要给设置的对象
+     * @param <E> 元素范型
+     * @throws IllegalAccessException 不合法访问异常
+     */
+    private static <E> void configReasonableString(Object obj, Field field, E e) throws IllegalAccessException {
+        int substringThreshold = 45;
+        if (!(obj instanceof String)) {
+            throw new IllegalArgumentException("参数obj应该为String类型，而给定不是");
+        } else if (((String) obj).length() <= substringThreshold) {
+            field.set(e, obj);
+            return;
+        }
         String str = (String) obj;
         int indexOf = str.indexOf("。");
-        if (indexOf > 40 && indexOf <= 50) {
-            field.set(r, str.substring(0, indexOf));
+        int minIndex = 40, maxIndex = 50;
+        if (indexOf > minIndex && indexOf <= maxIndex) {
+            field.set(e, str.substring(0, indexOf));
         } else {
-            field.set(r, str.substring(0, 45));
+            field.set(e, str.substring(0, 45));
         }
     }
 }

@@ -216,7 +216,7 @@ public class LetterServiceImpl implements LetterService {
             ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
             String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             letterInfo.put("date", date);
-            letterInfo.put("letter_count_location", 1);
+            letterInfo.put("letter_count_location", 0);
             redisUtil.set("letter:" + openId + ":letter_info", letterInfo.toPrettyString());
         });
     }
