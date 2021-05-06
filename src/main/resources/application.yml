@@ -89,7 +89,7 @@ time:
 
 wechat:
   baseUrl: "https://api.weixin.qq.com/sns/jscode2session?js_code="
-  appid: "wx45847f8c326518ee"
-  secret: "39b3662386b4bc8ec624f814369bf205"
+  appid: "wxdfdc52e8d8e3bc70"
+  secret: "1095a2e2ecc12767b1f7920aa526a7dd"
   grantType: "authorization_code"
 

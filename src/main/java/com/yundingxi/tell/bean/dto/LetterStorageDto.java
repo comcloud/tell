@@ -29,6 +29,8 @@ public class LetterStorageDto {
     private String penName;
     @ApiModelProperty(value = "邮票地址",required = true)
     private String stampUrl;
+    @ApiModelProperty(value = "信件状态",required = true)
+    private Integer state;
     @ApiModelProperty(value = "标签id集合,以,分隔",required = true)
     private String tapIds;
 }

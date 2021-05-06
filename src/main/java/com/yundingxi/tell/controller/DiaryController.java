@@ -43,12 +43,10 @@ public class DiaryController {
         return ResultGenerator.genSuccessResult();
     }
 
-    @Operation(description = "删除日记" , summary = "删除日记")
-    @DeleteMapping("/removeDiaryById")
-    @CacheEvict("diary_detail")
-    public Result<Object> removeDiaryById(@Parameter(description = "要删除的日记id") @RequestParam String id){
-        diaryService.removeDiaryById(id);
-        return ResultGenerator.genSuccessResult();
+    @Operation(description = "更改日记状态为删除状态，起到删除的作用" , summary = "删除日记")
+    @PutMapping("/changeDiaryStateToDeleteById")
+    public Result<String> changeDiaryStateToDeleteById(@Parameter(description = "要更改的日记id") @RequestParam String id){
+        return diaryService.changeDiaryState(id,1) == 1 ? ResultGenerator.genSuccessResult("更改成功") : ResultGenerator.genFailResult("更改失败");
     }
 
     /**

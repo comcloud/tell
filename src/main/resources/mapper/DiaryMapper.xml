@@ -13,13 +13,18 @@
         set number=#{viewNum}
         where id = #{id}
     </update>
+    <update id="updateDiaryState">
+        update diarys
+        set state=#{state}
+        where id=#{id}
+    </update>
     <delete id="deleteSingleDiaryById">
         delete
         from diarys
         where id = #{id}
     </delete>
     <select id="selectAllDiaryByOpenId" resultType="com.yundingxi.tell.bean.entity.Diarys">
-        select id, date, number, pen_name, weather, state
+        select id, content, date, number, pen_name, weather, state,open_id
         from diarys
         where open_id = #{openId}
     </select>
@@ -37,5 +42,6 @@
         select content
         from diarys
         where open_id = #{openId}
+          and to_days(#{currentTime}) &gt;= to_days(date)
     </select>
 </mapper>
