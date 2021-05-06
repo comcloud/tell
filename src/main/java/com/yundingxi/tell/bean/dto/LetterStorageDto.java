@@ -29,7 +29,7 @@ public class LetterStorageDto {
     private String penName;
     @ApiModelProperty(value = "邮票地址",required = true)
     private String stampUrl;
-    @ApiModelProperty(value = "信件状态",required = true)
+    @ApiModelProperty(value = "状态 ： 1正常 2 未通过 3 待审核 4 删除",required = true)
     private Integer state;
     @ApiModelProperty(value = "标签id集合,以,分隔",required = true)
     private String tapIds;
