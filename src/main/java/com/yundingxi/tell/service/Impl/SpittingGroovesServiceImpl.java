@@ -44,6 +44,7 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
         if (state>0){
             Comments comments = new Comments();
             comments.setSgId(entity.getId());
+            comments.setOpenId(entity.getOpenId());
             commentsService.insert(comments);
             log.info("===================> {} 数据保存成功" ,entity);
             return ResultGenerator.genSuccessResult("发布成功");
