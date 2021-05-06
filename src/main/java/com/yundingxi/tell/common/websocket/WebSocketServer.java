@@ -1,7 +1,5 @@
 package com.yundingxi.tell.common.websocket;
 
-import com.yundingxi.tell.bean.vo.LetterVo;
-import com.yundingxi.tell.util.message.SendMailUtil;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

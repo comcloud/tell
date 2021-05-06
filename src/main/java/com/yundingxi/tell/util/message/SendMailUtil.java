@@ -3,7 +3,7 @@ package com.yundingxi.tell.util.message;
 import cn.hutool.core.bean.BeanUtil;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Reply;
-import com.yundingxi.tell.bean.vo.LetterVo;
+import com.yundingxi.tell.bean.vo.LetterWebsocketVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.service.LetterService;
@@ -38,7 +38,7 @@ public class SendMailUtil {
      * 每次的数据会暂时放入到这个队列存放，等具有来5封或者等待时间已经到来10_000ms采取弹出然后发送
      */
     @Getter
-    private static final BlockingDeque<LetterVo> WAIT_QUEUE = new LinkedBlockingDeque<>();
+    private static final BlockingDeque<LetterWebsocketVo> WAIT_QUEUE = new LinkedBlockingDeque<>();
 
     /*** 核心线程数*/
     private static final int CORE_POOL_SIZE = 2;
@@ -68,24 +68,24 @@ public class SendMailUtil {
      * 1.有五件信件没有发送
      * 2.等待了10_000ms没有到5封
      *
-     * @param letterVo 回复信件集合
+     * @param letterWebsocketVo 回复信件集合
      */
-    public static void enMessageToQueue(LetterVo letterVo) {
+    public static void enMessageToQueue(LetterWebsocketVo letterWebsocketVo) {
         int waitQueueSize = WAIT_QUEUE.size();
         if (waitQueueSize >= LETTER_THRESHOLD) {
             LOCK.lock();
             try{
-                List<LetterVo> letterVos = new ArrayList<>();
+                List<LetterWebsocketVo> letterWebsocketVos = new ArrayList<>();
                 for (int i = 0; i < LETTER_THRESHOLD; i++) {
-                    letterVos.add(WAIT_QUEUE.peek());
+                    letterWebsocketVos.add(WAIT_QUEUE.peek());
                 }
-                POOL.execute(new LetterTask(letterVos));
+                POOL.execute(new LetterTask(letterWebsocketVos));
                 log.info("开启一个线程");
             }finally {
                 LOCK.unlock();
             }
         }else{
-            WAIT_QUEUE.push(letterVo);
+            WAIT_QUEUE.push(letterWebsocketVo);
         }
     }
 
@@ -100,18 +100,18 @@ public class SendMailUtil {
      */
     public static class LetterTask implements Runnable {
 
-        private final List<LetterVo> letterVoList;
+        private final List<LetterWebsocketVo> letterWebsocketVoList;
 
-        public LetterTask(LetterVo letterVo){
+        public LetterTask(LetterWebsocketVo letterWebsocketVo){
             this();
-            this.letterVoList.add(letterVo);
+            this.letterWebsocketVoList.add(letterWebsocketVo);
         }
-        LetterTask(List<LetterVo> letterVoList) {
+        LetterTask(List<LetterWebsocketVo> letterWebsocketVoList) {
             this();
-            addAll(letterVoList);
+            addAll(letterWebsocketVoList);
         }
         private LetterTask(){
-            letterVoList = new ArrayList<>(10);
+            letterWebsocketVoList = new ArrayList<>(10);
         }
         /**
          * ------------send---------------
@@ -129,17 +129,17 @@ public class SendMailUtil {
          */
         @Override
         public void run() {
-            this.letterVoList.forEach(this::sendMessageToSingle);
-            this.letterVoList.clear();
+            this.letterWebsocketVoList.forEach(this::sendMessageToSingle);
+            this.letterWebsocketVoList.clear();
         }
 
-        private void sendMessageToSingle(LetterVo letterVo) {
-            log.info("即将发送消息来自" + letterVo.getSender() + "，发送给" + letterVo.getRecipient());
-            WebSocketServer socketServer = letterVo.getServer();
+        private void sendMessageToSingle(LetterWebsocketVo letterWebsocketVo) {
+            log.info("即将发送消息来自" + letterWebsocketVo.getSender() + "，发送给" + letterWebsocketVo.getRecipient());
+            WebSocketServer socketServer = letterWebsocketVo.getServer();
             if (socketServer != null) {
                 log.info("recipientServer.get().sender = {}", socketServer.sender);
                 try {
-                    socketServer.session.getBasicRemote().sendText(letterVo.getMessage());
+                    socketServer.session.getBasicRemote().sendText(letterWebsocketVo.getMessage());
                     log.info("已经发送");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -147,33 +147,33 @@ public class SendMailUtil {
                 }
             } else {
                 //此时将信息暂时存放到redis
-                log.info(MessageFormat.format("消息接收者{0}还未建立WebSocket连接，{1}发送的消息【{2}】将被存储到Redis的【{3}】列表中", letterVo.getRecipient(), letterVo.getSender(), letterVo.getMessage(), letterVo.getRecipient()));
+                log.info(MessageFormat.format("消息接收者{0}还未建立WebSocket连接，{1}发送的消息【{2}】将被存储到Redis的【{3}】列表中", letterWebsocketVo.getRecipient(), letterWebsocketVo.getSender(), letterWebsocketVo.getMessage(), letterWebsocketVo.getRecipient()));
                 //存储消息到Redis中
-                UnreadMessageDto unreadMessageDto = BeanUtil.toBean(letterVo,UnreadMessageDto.class);
+                UnreadMessageDto unreadMessageDto = BeanUtil.toBean(letterWebsocketVo,UnreadMessageDto.class);
                 unreadMessageDto.setSenderTime(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 final RedisUtil redisService = (RedisUtil) SpringUtil.getBean("redisUtil");
-                Object o = redisService.get(letterVo.getRecipient() + "_unread_message");
+                Object o = redisService.get(letterWebsocketVo.getRecipient() + "_unread_message");
                 if(o == null){
                     List<UnreadMessageDto> list = new ArrayList<>();
                     list.add(unreadMessageDto);
-                    redisService.set(letterVo.getRecipient() + "_unread_message", list);
+                    redisService.set(letterWebsocketVo.getRecipient() + "_unread_message", list);
                 }else{
                     @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) o;
                     messageDtoList.add(unreadMessageDto);
-                    redisService.set(letterVo.getRecipient() + "_unread_message", messageDtoList);
+                    redisService.set(letterWebsocketVo.getRecipient() + "_unread_message", messageDtoList);
                 }
             }
             LetterService letterService = (LetterService) SpringUtil.getBean("letterService");
             letterService.saveReplyFromSenderToRecipient(
                     new Reply(UUID.randomUUID().toString()
-                            , letterVo.getLetterId()
+                            , letterWebsocketVo.getLetterId()
                             , new Date()
-                            , letterVo.getMessage()
-                            , letterVo.getSender(), letterVo.getSender())
+                            , letterWebsocketVo.getMessage()
+                            , letterWebsocketVo.getSender(), letterWebsocketVo.getSender())
             );
         }
-        private void addAll(List<LetterVo> letterVos){
-            letterVoList.addAll(letterVos);
+        private void addAll(List<LetterWebsocketVo> letterWebsocketVos){
+            letterWebsocketVoList.addAll(letterWebsocketVos);
         }
     }
 }

@@ -10,7 +10,7 @@ import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
-import com.yundingxi.tell.bean.vo.LetterVo;
+import com.yundingxi.tell.bean.vo.LetterWebsocketVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
@@ -271,7 +271,7 @@ public class LetterServiceImpl implements LetterService {
         String recipientPenName = userMapper.selectPenNameByOpenId(letterReplyDto.getRecipient());
         String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
         ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
-                new LetterVo(letterReplyDto.getSender()
+                new LetterWebsocketVo(letterReplyDto.getSender()
                         , letterReplyDto.getRecipient()
                         , letterReplyDto.getLetterId()
                         , letterReplyDto.getSenderPenName()

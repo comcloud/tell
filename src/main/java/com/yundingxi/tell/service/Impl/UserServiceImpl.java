@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
         List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenId(openId);
         List<SpittingGrooves> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId);
-        data.setLetterList(GeneralDataProcessUtil.configLetterDataFromList(letterList, openId));
+        data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));
         data.setDiaryList(GeneralDataProcessUtil.configDataFromList(diaryList, Diarys.class, DiaryReturnVo.class));
         data.setSpittingGroovesList(GeneralDataProcessUtil.configDataFromList(spittingGroovesList, SpittingGrooves.class, SpittingGroovesVo.class));
         return ResultGenerator.genSuccessResult(data);

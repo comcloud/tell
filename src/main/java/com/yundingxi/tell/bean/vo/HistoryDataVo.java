@@ -24,7 +24,7 @@ import java.util.List;
 @ApiModel(value = "历史数据",description = "存储历史发布数据实体类")
 public class HistoryDataVo {
     @ApiModelProperty("信件集合")
-    private List<IndexLetterDto> letterList;
+    private List<LetterVo> letterList;
     @ApiModelProperty("日记集合")
     private List<DiaryReturnVo> diaryList;
     @ApiModelProperty("吐槽集合")
