@@ -1,6 +1,6 @@
 package com.yundingxi.tell.common;
 
-import com.yundingxi.tell.bean.vo.LetterVo;
+import com.yundingxi.tell.bean.vo.LetterWebsocketVo;
 import com.yundingxi.tell.util.message.SendMailUtil;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class ScheduledSyncService {
      */
     @Scheduled(cron = "0/100 * * * * ?")
     public void executeReplyLetterFromQueue(){
-        BlockingDeque<LetterVo> waitQueue = SendMailUtil.getWAIT_QUEUE();
+        BlockingDeque<LetterWebsocketVo> waitQueue = SendMailUtil.getWAIT_QUEUE();
         if(waitQueue.isEmpty()) {
             return;
         }
@@ -33,8 +33,8 @@ public class ScheduledSyncService {
         mainLock.lock();
         try {
             for (int i = 0; i < waitQueue.size(); i++) {
-                LetterVo letterVo = waitQueue.peek();
-                pool.execute(new SendMailUtil.LetterTask(letterVo));
+                LetterWebsocketVo letterWebsocketVo = waitQueue.peek();
+                pool.execute(new SendMailUtil.LetterTask(letterWebsocketVo));
             }
         }finally {
             mainLock.unlock();

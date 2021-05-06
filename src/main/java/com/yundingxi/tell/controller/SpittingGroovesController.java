@@ -48,7 +48,7 @@ public class SpittingGroovesController {
      */
     @PostMapping("delete")
     @Operation(description = "根据吐槽ID删除吐槽",summary = "根据吐槽ID删除吐槽")
-    Result<String> deleteById(@Parameter(description = "吐槽ID" ,required=true) Serializable id){
+    Result<String> deleteById(@Parameter(description = "吐槽ID" ,required=true) @RequestParam("id") Serializable id){
         return  spittingGroovesService.deleteById(id);
     }
 

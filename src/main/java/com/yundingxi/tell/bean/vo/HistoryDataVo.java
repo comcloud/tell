@@ -1,6 +1,5 @@
 package com.yundingxi.tell.bean.vo;
 
-import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.dto.IndexLetterDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,9 +24,9 @@ import java.util.List;
 @ApiModel(value = "历史数据",description = "存储历史发布数据实体类")
 public class HistoryDataVo {
     @ApiModelProperty("信件集合")
-    private List<IndexLetterDto> letterList;
+    private List<LetterVo> letterList;
     @ApiModelProperty("日记集合")
-    private List<DiaryDto> diaryList;
+    private List<DiaryReturnVo> diaryList;
     @ApiModelProperty("吐槽集合")
     private List<SpittingGroovesVo> spittingGroovesList;
 }

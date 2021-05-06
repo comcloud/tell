@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.http.HttpUtil;
+import com.yundingxi.tell.bean.dto.IndexLetterDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
@@ -174,9 +175,9 @@ public class UserServiceImpl implements UserService {
         List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenId(openId);
         List<SpittingGrooves> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId);
-        data.setLetterList(GeneralDataProcessUtil.configLetterDataFromList(letterList, openId));
-        data.setDiaryList(GeneralDataProcessUtil.configDiaryDataFromList(diaryList));
-        data.setSpittingGroovesList(GeneralDataProcessUtil.configSpitDataFromList(spittingGroovesList));
+        data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));
+        data.setDiaryList(GeneralDataProcessUtil.configDataFromList(diaryList, Diarys.class, DiaryReturnVo.class));
+        data.setSpittingGroovesList(GeneralDataProcessUtil.configDataFromList(spittingGroovesList, SpittingGrooves.class, SpittingGroovesVo.class));
         return ResultGenerator.genSuccessResult(data);
     }
 
