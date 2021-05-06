@@ -91,7 +91,7 @@
     </insert>
     <update id="deleteById">
         update comments c
-        set c.state=1
+        set c.state=4
         where c.id=#{id}
     </update>
     <resultMap id="CommentsVoMap" type="com.yundingxi.tell.bean.vo.CommentVo">

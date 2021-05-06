@@ -83,15 +83,10 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     @Override
     public Result<SpittingGrooves> selectDetailsById(String id) {
         redisUtil.select(RedisEnums.USER_SPITTINGGROOVES_JSON.getRedisDbIndex());
-//        SpittingGrooves hget = (SpittingGrooves)redisUtil.hget(RedisEnums.USER_SPITTINGGROOVES_JSON.getRedisKey(), id);
-//        if (true){
+
             SpittingGrooves spittingGroove= spittingGroovesMapper.selectDetailsById(id);
-//            redisUtil.hset(RedisEnums.USER_SPITTINGGROOVES_JSON.getRedisKey(),id,spittingGroove,3600);
             return ResultGenerator.genSuccessResult(spittingGroove);
-//        }else {
-////            log.info("=====================> {}redis中有",hget);
-//            return ResultGenerator.genSuccessResult(hget);
-//        }
+
     }
 
     @Override
