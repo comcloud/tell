@@ -1,8 +1,6 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
@@ -17,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -57,7 +54,7 @@ public class DiaryServiceImpl implements DiaryService {
     @SneakyThrows
     @Override
     public List<Diarys> getAllDiaryForSelfByOpenId(String openId) {
-        return CompletableFuture.supplyAsync(() -> diaryMapper.selectAllDiaryByOpenId(openId)).get();
+        return CompletableFuture.supplyAsync(() -> diaryMapper.selectAllDiaryByOpenIdAndNonState(openId,"1")).get();
     }
 
     @SneakyThrows
@@ -69,7 +66,7 @@ public class DiaryServiceImpl implements DiaryService {
     @SneakyThrows
     @Override
     public List<Diarys> getAllPublicDiary() {
-        return CompletableFuture.supplyAsync(() -> diaryMapper.selectAllPublicDiary()).get();
+        return CompletableFuture.supplyAsync(() -> diaryMapper.selectAllPublicDiary("1")).get();
     }
 
     @SneakyThrows
@@ -78,7 +75,7 @@ public class DiaryServiceImpl implements DiaryService {
         return CompletableFuture.supplyAsync(() -> {
             String orderBy = "date desc";
             PageHelper.startPage(pageNum, 10, orderBy);
-            List<Diarys> diarys = diaryMapper.selectAllPublicDiary();
+            List<Diarys> diarys = diaryMapper.selectAllPublicDiary("1");
             diarys.forEach(diary -> {
                 diary.setContent(diary.getContent().length() > 25 ? diary.getContent().substring(0, 25) : diary.getContent());
             });

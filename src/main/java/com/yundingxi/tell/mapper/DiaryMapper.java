@@ -19,11 +19,11 @@ public interface DiaryMapper {
 
     void deleteSingleDiaryById(@Param("id") String id);
 
-    List<Diarys> selectAllDiaryByOpenId(@Param("openId") String openId);
+    List<Diarys> selectAllDiaryByOpenIdAndNonState(@Param("openId") String openId, @Param("state") String state);
 
     Diarys selectSingleDiary(@Param("id") String id);
 
-    List<Diarys> selectAllPublicDiary();
+    List<Diarys> selectAllPublicDiary(@Param("state") String state);
 
     void updateDiaryNumber(@Param("id") String id, @Param("viewNum") Integer viewNum);
 

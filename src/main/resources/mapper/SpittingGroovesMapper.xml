@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yundingxi.tell.mapper.SpittingGroovesMapper">
     <!--开启二级缓存,使用Ehcache缓存框架-->
-<!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
     <resultMap id="SpittingGroovesMap" type="com.yundingxi.tell.bean.entity.SpittingGrooves">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
@@ -16,7 +16,8 @@
     </resultMap>
     <!--表中所有属性-->
     <sql id="Base_Column_List">
-        `id`, `content`, `date`, `number`, `state`, `open_id`,title,avatar_url,pen_name
+        `id`
+        , `content`, `date`, `number`, `state`, `open_id`,title,avatar_url,pen_name
     </sql>
     <!--添加属性sql-->
     <sql id="Base_Insert_Key_List">
@@ -95,7 +96,7 @@
             `number`=#{entity.number},
         </if>
         <if test="entity.state != null">
-           `state`=#{entity.state},
+            `state`=#{entity.state},
         </if>
         <if test="entity.openId != null">
             open_id=#{entity.openId},
@@ -111,7 +112,7 @@
         </if>
     </sql>
     <insert id="insert" parameterType="com.yundingxi.tell.bean.entity.SpittingGrooves">
-        insert into   spitting_grooves
+        insert into spitting_grooves
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <include refid="Base_Insert_Key_List"/>
         </trim>
@@ -121,8 +122,8 @@
     </insert>
     <update id="addNumber">
         update spitting_grooves
-        set `number` = `number`+1
-        where id=#{id}
+        set `number` = `number` + 1
+        where id = #{id}
     </update>
     <update id="updateById">
         update spitting_grooves
@@ -134,20 +135,22 @@
     <update id="deleteById">
         update spitting_grooves sg
         set sg.state=4
-        where sg.id=#{id}
+        where sg.id = #{id}
     </update>
     <resultMap id="SpittingGroovesVoMap" type="com.yundingxi.tell.bean.vo.SpittingGroovesVo">
-        <id column="id" jdbcType="VARCHAR"  property="id"/>
+        <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
-<!--        <result column="number" jdbcType="VARCHAR" property="number"/>-->
+        <!--        <result column="number" jdbcType="VARCHAR" property="number"/>-->
         <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
         <result column="number" property="number"/>
     </resultMap>
     <select id="selectAllVo" resultMap="SpittingGroovesVoMap">
-				        select sg.id,sg.title,sg.avatar_url,sg.pen_name,count(*)-1 number
-        from spitting_grooves sg, comments c
-				where  sg.id=c.sg_id and sg.`state`=1
+        select sg.id, sg.title, sg.avatar_url, sg.pen_name, count(*) - 1 number
+        from spitting_grooves sg,
+             comments c
+        where sg.id = c.sg_id
+          and sg.`state` = 1
         group by sg.id
     </select>
 
@@ -155,16 +158,21 @@
         select
         <include refid="Base_Column_List"/>
         from spitting_grooves
-        where   `state`=1 and id=#{id}
+        where `state`=1 and id=#{id}
     </select>
     <select id="getAllID" resultType="java.lang.String">
-        select  id from spitting_grooves
+        select id
+        from spitting_grooves
     </select>
     <select id="getOpenIdBySID" resultType="java.lang.String">
-        select open_id from spitting_grooves where id=#{id}
+        select open_id
+        from spitting_grooves
+        where id = #{id}
     </select>
     <select id="getConById" resultType="java.lang.String">
-        select content from spitting_grooves where  id=#{id}
+        select content
+        from spitting_grooves
+        where id = #{id}
     </select>
     <select id="selectAllSpitContentByOpenId" resultType="java.lang.String">
         select content
@@ -175,7 +183,8 @@
     <select id="selectAllSpitByOpenId" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
         select *
         from spitting_grooves
-        where open_id=#{openId}
+        where open_id = #{openId}
+          and state = 1
     </select>
 
 </mapper>

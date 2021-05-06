@@ -23,10 +23,11 @@
         from diarys
         where id = #{id}
     </delete>
-    <select id="selectAllDiaryByOpenId" resultType="com.yundingxi.tell.bean.entity.Diarys">
+    <select id="selectAllDiaryByOpenIdAndNonState" resultType="com.yundingxi.tell.bean.entity.Diarys">
         select *
         from diarys
         where open_id = #{openId}
+            and state!=#{state}
     </select>
     <select id="selectSingleDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
         select *
@@ -36,7 +37,7 @@
     <select id="selectAllPublicDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
         select id, content, date, number, pen_name, weather, state, open_id
         from diarys
-        where state = 1;
+        where state = #{state};
     </select>
     <select id="selectAllDiaryContentByOpenId" resultType="java.lang.String">
         select content

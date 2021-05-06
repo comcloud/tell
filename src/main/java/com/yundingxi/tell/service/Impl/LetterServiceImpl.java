@@ -128,8 +128,8 @@ public class LetterServiceImpl implements LetterService {
                 newValue.put("letter_count_location", letterCountLocation);
                 redisUtil.set("letter:" + openId + ":letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
             }
-            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId);
-            return GeneralDataProcessUtil.configLetterDataFromList(letters,openId);
+            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId, 1);
+            return GeneralDataProcessUtil.configLetterDataFromList(letters, openId);
         }).get();
     }
 
@@ -263,7 +263,7 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public int changeLetterState(String id, int state) {
-        return letterMapper.updateLetterState(id,state);
+        return letterMapper.updateLetterState(id, state);
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
