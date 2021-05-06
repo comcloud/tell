@@ -142,10 +142,10 @@
         <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
 <!--        <result column="number" jdbcType="VARCHAR" property="number"/>-->
         <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
-        <result column="count(*)" property="number"/>
+        <result column="number" property="number"/>
     </resultMap>
     <select id="selectAllVo" resultMap="SpittingGroovesVoMap">
-				        select sg.id,sg.title,sg.avatar_url,sg.pen_name,count(*)
+				        select sg.id,sg.title,sg.avatar_url,sg.pen_name,count(*)-1 number
         from spitting_grooves sg, comments c
 				where  sg.id=c.sg_id and sg.`state`=1
         group by sg.id

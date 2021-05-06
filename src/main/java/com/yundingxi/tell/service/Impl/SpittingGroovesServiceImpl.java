@@ -1,11 +1,13 @@
 package com.yundingxi.tell.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
 import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
+import com.yundingxi.tell.service.CommentsService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -33,11 +35,16 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     private SpittingGroovesMapper spittingGroovesMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private CommentsService commentsService;
     @Override
     public Result<String> insert(SpittingGrooves entity) {
         entity.subStringTitle();
         int state = spittingGroovesMapper.insert(entity);
         if (state>0){
+            Comments comments = new Comments();
+            comments.setSgId(entity.getId());
+            commentsService.insert(comments);
             log.info("===================> {} 数据保存成功" ,entity);
             return ResultGenerator.genSuccessResult("发布成功");
         }else {

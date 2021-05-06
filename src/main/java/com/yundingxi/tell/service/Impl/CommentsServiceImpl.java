@@ -52,10 +52,11 @@ public class CommentsServiceImpl implements CommentsService {
             UserVo userVoo = userMapper.getUserVoById(entity.getOpenId());
             UserCommentVo userCommentVo = new UserCommentVo(entity.getSgId(),entity.getContent(),new Date(), spittingGroovesMapper.getConById(entity.getSgId()),userVoo);
             String idBySgId = userMapper.getIDBySgId(entity.getSgId());
-            if(!entity.getOpenId().equals(idBySgId)){
+            if(entity.getOpenId()!=idBySgId){
                 redisUtil.incr("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":count",1);
                 redisUtil.rSet("comm:"+spittingGroovesService.getOpenIdBySID(entity.getSgId())+":info", userCommentVo);
             }
+
             return ResultGenerator.genSuccessResult("发布成功");
         }else {
             log.info("===================> {} 数据保存失败" ,entity);
