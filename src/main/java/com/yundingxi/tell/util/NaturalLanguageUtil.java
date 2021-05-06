@@ -98,7 +98,7 @@ public class NaturalLanguageUtil {
     public static Integer getTextLegalType(String content) {
         AipContentCensor client = NlpClient.getContentCensorClient();
 
-         JSONObject userDefined = client.textCensorUserDefined(content);
+        JSONObject userDefined = client.textCensorUserDefined(content);
         JsonNode parseJson = JsonUtil.parseJson(userDefined.toString());
         log.info(parseJson.toPrettyString());
         JsonNode conclusionType = parseJson.findPath("conclusionType");
@@ -124,7 +124,9 @@ public class NaturalLanguageUtil {
             //lazy load
             BaseClient baseClient = AIP_MAP.get(AipNlp.class);
             if (baseClient == null) {
-                AIP_MAP.put(AipNlp.class, getClient(AipNlp.class));
+                BaseClient client = getClient(AipNlp.class);
+                AIP_MAP.put(AipNlp.class, client);
+                baseClient = client;
             }
             return (AipNlp) baseClient;
         }
@@ -136,7 +138,9 @@ public class NaturalLanguageUtil {
             //lazy load
             BaseClient baseClient = AIP_MAP.get(AipContentCensor.class);
             if (baseClient == null) {
-                AIP_MAP.put(AipContentCensor.class, getClient(AipContentCensor.class));
+                BaseClient client = getClient(AipContentCensor.class);
+                AIP_MAP.put(AipContentCensor.class, client);
+                baseClient = client;
             }
             return (AipContentCensor) baseClient;
         }
