@@ -547,6 +547,27 @@ public final class RedisUtil {
 
     // ===============================list=================================
 
+
+
+    /**
+     * 从消息队列左侧取数据
+     * @param key
+     * @return
+     */
+    public Object leftPop(Object key){
+        return template.opsForList().leftPop((String) key);
+    }
+
+    /**
+     * 从消息队列右侧取数据
+     * @param key
+     * @return
+     */
+    public Object rightPop(Object key){
+        return template.opsForList().rightPop((String) key);
+    }
+
+
     /**
      * 获取list缓存的内容
      *
