@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -127,8 +128,8 @@ public class LetterServiceImpl implements LetterService {
                 newValue.put("letter_count_location", letterCountLocation);
                 redisUtil.set("letter:" + openId + ":letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
             }
-            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId);
-            return GeneralDataProcessUtil.configLetterDataFromList(letters,openId);
+            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId, 1);
+            return GeneralDataProcessUtil.configLetterDataFromList(letters, openId);
         }).get();
     }
 
@@ -143,7 +144,7 @@ public class LetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
-            String replyTime = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String replyTime = LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             letterMapper.insertReply(reply);
             @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
             UnreadMessageDto messageDto = new UnreadMessageDto(letterReplyDto.getSender()
@@ -262,7 +263,7 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     public int changeLetterState(String id, int state) {
-        return letterMapper.updateLetterState(id,state);
+        return letterMapper.updateLetterState(id, state);
     }
 
     public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {

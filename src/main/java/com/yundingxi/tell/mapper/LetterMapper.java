@@ -19,7 +19,7 @@ public interface LetterMapper {
     int insertSingleLetter(@Param("letter") Letter letter);
 
     List<Letter> selectLetterLimit(@Param("letterCountLocation") int letterCountLocation
-            , @Param("openId") String openId);
+            , @Param("openId") String openId,@Param("state") Integer state);
 
 
     void insertReply(@Param("reply") Reply reply);
@@ -45,7 +45,7 @@ public interface LetterMapper {
 
     String selectPenNameById(@Param("letterId") String letterId);
 
-    List<Letter> selectAllLetterByOpenId(@Param("openId") String openId);
+    List<Letter> selectAllLetterByOpenId(@Param("openId") String openId,@Param("state") Integer state);
 
     int updateLetterState(@Param("id") String id, @Param("state") int state);
 }

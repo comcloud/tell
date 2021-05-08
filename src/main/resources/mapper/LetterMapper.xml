@@ -27,7 +27,7 @@
         from letter
         where open_id!=#{openId}
             limit #{letterCountLocation}
-            , 3;
+            , 3 and state=#{state};
     </select>
     <select id="selectLetterById" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
@@ -76,5 +76,6 @@
         select *
         from letter
         where open_id=#{openId}
+                and state=#{state}
     </select>
 </mapper>
