@@ -104,4 +104,11 @@ public class UserController {
     public Result<HistoryDataVo> getDataOfHistory(@Parameter(description = "open id") @RequestParam("open id") String openId){
         return userService.getDataOfHistory(openId);
     }
+
+    @GetMapping("/getOfficialMsg")
+    @Operation(description = "获取官方推送",summary = "获取官方审核推送")
+    public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId){
+        return userService.getOfficialMsg(openId);
+    }
+
 }

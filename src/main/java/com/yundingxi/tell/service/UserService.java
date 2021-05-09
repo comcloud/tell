@@ -54,4 +54,6 @@ public interface UserService {
     Result<Integer> isTextLegal(String textContent);
 
     Result<HistoryDataVo> getDataOfHistory(String openId);
+
+    Result getOfficialMsg(String openId);
 }

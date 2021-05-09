@@ -180,6 +180,12 @@ public class UserServiceImpl implements UserService {
         return ResultGenerator.genSuccessResult(data);
     }
 
+    @Override
+    public Result<Object> getOfficialMsg(String openId) {
+        Object o = redisUtil.leftPop(RedisEnums.USER_OFFICIAL_MSG.getRedisKey() + ":" + openId);
+        return ResultGenerator.genSuccessResult(o);
+    }
+
     /**
      * 配置历史发布
      */
