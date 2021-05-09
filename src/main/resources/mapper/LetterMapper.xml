@@ -20,14 +20,15 @@
     <update id="updateLetterState">
         update letter
         set state=#{state}
-        where id=#{id}
+        where id = #{id}
     </update>
     <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter
         where open_id!=#{openId}
+          and state =#{state}
             limit #{letterCountLocation}
-            , 3 and state=#{state};
+            , 3;
     </select>
     <select id="selectLetterById" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
@@ -75,7 +76,7 @@
     <select id="selectAllLetterByOpenId" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter
-        where open_id=#{openId}
-                and state=#{state}
+        where open_id = #{openId}
+          and state!=#{state}
     </select>
 </mapper>
