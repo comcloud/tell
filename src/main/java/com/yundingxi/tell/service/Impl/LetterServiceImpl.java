@@ -146,7 +146,7 @@ public class LetterServiceImpl implements LetterService {
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
             String replyTime = LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             letterMapper.insertReply(reply);
-            @SuppressWarnings("unchecked") List<UnreadMessageDto> messageDtoList = (List<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
+            @SuppressWarnings("unchecked") LinkedList<UnreadMessageDto> messageDtoList = (LinkedList<UnreadMessageDto>) redisUtil.get("letter:" + letterReplyDto.getRecipient() + ":unread_message");
             UnreadMessageDto messageDto = new UnreadMessageDto(letterReplyDto.getSender()
                     , letterReplyDto.getRecipient()
                     , letterReplyDto.getMessage()
@@ -154,19 +154,19 @@ public class LetterServiceImpl implements LetterService {
                     , letterMapper.selectPenNameById(letterReplyDto.getLetterId())
                     , letterReplyDto.getLetterId(), replyId);
             String reserveString = "letter:" + letterReplyDto.getRecipient() + "_reserve:reply";
-            @SuppressWarnings("unchecked") List<UnreadMessageDto> reserveReply = (List<UnreadMessageDto>) redisUtil.get(reserveString);
-            List<UnreadMessageDto> list = new ArrayList<>();
+            @SuppressWarnings("unchecked") LinkedList<UnreadMessageDto> reserveReply = (LinkedList<UnreadMessageDto>) redisUtil.get(reserveString);
+            LinkedList<UnreadMessageDto> list = new LinkedList<>();
             list.add(messageDto);
             if (messageDtoList == null) {
                 redisUtil.set("letter:" + letterReplyDto.getRecipient() + ":unread_message", list);
             } else {
-                messageDtoList.add(messageDto);
+                messageDtoList.addFirst(messageDto);
                 redisUtil.set("letter:" + letterReplyDto.getRecipient() + ":unread_message", messageDtoList);
             }
             if (reserveReply == null) {
                 redisUtil.set(reserveString, list);
             } else {
-                reserveReply.add(messageDto);
+                reserveReply.addFirst(messageDto);
                 redisUtil.set(reserveString, reserveReply);
             }
         }).get();
@@ -256,7 +256,7 @@ public class LetterServiceImpl implements LetterService {
     public Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(String openId, Integer pageNum) {
         String reserveString = "letter:" + openId + "_reserve:reply";
         @SuppressWarnings("unchecked") List<UnreadMessageDto> reserveReply = (List<UnreadMessageDto>) redisUtil.get(reserveString);
-        String orderBy = "senderTime desc";
+        String orderBy = "senderTime asc";
         PageHelper.startPage(pageNum, 10, orderBy);
         return ResultGenerator.genSuccessResult(new PageInfo<>(reserveReply == null ? new ArrayList<>() : reserveReply));
     }

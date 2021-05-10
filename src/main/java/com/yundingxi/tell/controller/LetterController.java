@@ -104,9 +104,9 @@ public class LetterController {
         return letterService.getLetterOfHistory(openId, pageNum);
     }
 
-    @PutMapping("/changeLetterStateToDeleteById")
+    @PostMapping("/changeLetterStateToDeleteById")
     @Operation(description = "更改信件状态为删除状态，起到删除的作用", summary = "删除信件")
     public Result<String> changeLetterStateToDeleteById(@Parameter(description = "要更改的日记id") @RequestParam String id) {
-        return letterService.changeLetterState(id, 1) == 1 ? ResultGenerator.genSuccessResult("更改成功") : ResultGenerator.genFailResult("更改失败");
+        return letterService.changeLetterState(id, 4) == 1 ? ResultGenerator.genSuccessResult("更改成功") : ResultGenerator.genFailResult("更改失败");
     }
 }

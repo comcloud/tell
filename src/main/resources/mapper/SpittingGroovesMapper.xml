@@ -184,7 +184,7 @@
         select *
         from spitting_grooves
         where open_id = #{openId}
-          and state = 1
+          and state != #{state}
     </select>
 
 </mapper>

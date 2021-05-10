@@ -171,9 +171,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result<HistoryDataVo> getDataOfHistory(String openId) {
         HistoryDataVo data = new HistoryDataVo();
-        List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId, 1);
+        List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId, 4);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenIdAndNonState(openId, "4");
-        List<SpittingGrooves> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId, "1");
+        List<SpittingGrooves> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId, "4");
         data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));
         data.setDiaryList(GeneralDataProcessUtil.configDataFromList(diaryList, Diarys.class, DiaryReturnVo.class));
         data.setSpittingGroovesList(GeneralDataProcessUtil.configDataFromList(spittingGroovesList, SpittingGrooves.class, SpittingGroovesVo.class));

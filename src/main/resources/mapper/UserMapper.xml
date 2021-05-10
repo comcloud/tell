@@ -152,16 +152,19 @@
         select count(*)
         from letter
         where open_id=#{openId}
+            and state!=4
     </select>
     <select id="selectNumberOfDiaryByOpenId" resultType="java.lang.Integer">
         select count(*)
         from diarys
         where open_id = #{openId}
+          and state!=4
     </select>
     <select id="selectNumberOfLetSpitByOpenId" resultType="java.lang.Integer">
         select count(*)
         from spitting_grooves
         where open_id = #{openId}
+          and state!=4
     </select>
     <select id="selectNameAndUrlByOpenId" resultType="com.yundingxi.tell.bean.entity.User">
         select pen_name,avatar_url

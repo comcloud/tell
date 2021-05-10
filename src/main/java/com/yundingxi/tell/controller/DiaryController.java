@@ -44,9 +44,9 @@ public class DiaryController {
     }
 
     @Operation(description = "更改日记状态为删除状态，起到删除的作用" , summary = "删除日记")
-    @PutMapping("/changeDiaryStateToDeleteById")
+    @PostMapping("/changeDiaryStateToDeleteById")
     public Result<String> changeDiaryStateToDeleteById(@Parameter(description = "要更改的日记id") @RequestParam String id){
-        return diaryService.changeDiaryState(id,1) == 1 ? ResultGenerator.genSuccessResult("更改成功") : ResultGenerator.genFailResult("更改失败");
+        return diaryService.changeDiaryState(id,4) == 1 ? ResultGenerator.genSuccessResult("更改成功") : ResultGenerator.genFailResult("更改失败");
     }
 
     /**
