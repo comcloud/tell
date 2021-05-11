@@ -256,8 +256,7 @@ public class LetterServiceImpl implements LetterService {
     public Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(String openId, Integer pageNum) {
         String reserveString = "letter:" + openId + "_reserve:reply";
         @SuppressWarnings("unchecked") List<UnreadMessageDto> reserveReply = (List<UnreadMessageDto>) redisUtil.get(reserveString);
-        String orderBy = "senderTime asc";
-        PageHelper.startPage(pageNum, 10, orderBy);
+        PageHelper.startPage(pageNum, 10);
         return ResultGenerator.genSuccessResult(new PageInfo<>(reserveReply == null ? new ArrayList<>() : reserveReply));
     }
 
