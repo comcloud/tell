@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.yundingxi.tell.bean.dto.UnreadMessageDto;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.LetterWebsocketVo;
+import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.service.LetterService;
@@ -40,15 +41,6 @@ public class SendMailUtil {
     @Getter
     private static final BlockingDeque<LetterWebsocketVo> WAIT_QUEUE = new LinkedBlockingDeque<>();
 
-    /*** 核心线程数*/
-    private static final int CORE_POOL_SIZE = 2;
-
-    /*** 最大线程数*/
-    private static final int MAX_POOL_SIZE = 4;
-
-    /*** 当线程数大于核心时，这是多余空闲线程在终止前等待新任务的最长时间。*/
-    private static final int KEEP_ALIVE_TIME = 0;
-
     /*** 信件发送的阈值*/
     private static final int LETTER_THRESHOLD = 5;
 
@@ -56,12 +48,7 @@ public class SendMailUtil {
     private static final ReentrantLock LOCK = new ReentrantLock();
 
     @Getter
-    private static final ThreadPoolExecutor POOL = new ThreadPoolExecutor(CORE_POOL_SIZE
-            , MAX_POOL_SIZE
-            , KEEP_ALIVE_TIME
-            , TimeUnit.SECONDS
-            , new ResizableCapacityLinkedBlockingQueue<>(10)
-            , new ThreadPoolExecutor.CallerRunsPolicy());
+    private static final ThreadPoolExecutor POOL = CenterThreadPool.getWebsocketPool();
 
     /**
      * 何时会新建一个线程来发送邮件
