@@ -1,10 +1,13 @@
 package com.yundingxi.tell.bean.entity;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * <p>
@@ -18,11 +21,10 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(value="Stamp对象", description="")
-public class Stamp  {
-
+public class Stamp{
 
     @ApiModelProperty(value = "主键")
-    private String id;
+    private String id= UUID.randomUUID().toString();
 
     @ApiModelProperty(value = "邮票图片地址")
     private String stampUrl;
@@ -38,9 +40,11 @@ public class Stamp  {
 
     @ApiModelProperty(value = "邮票版本")
     private String stampEdition;
+    @ApiModelProperty(value = "邮票系列")
+    private String stampSeries;
 
     @ApiModelProperty(value = "状态")
-    private String state;
+    private String state=0+"";
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime stampCreateTime;
