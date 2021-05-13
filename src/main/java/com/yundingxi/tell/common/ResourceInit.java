@@ -62,13 +62,12 @@ public class ResourceInit implements CommandLineRunner {
     public void stampAndAchieveInitForEveryone(List<String> openIdList) {
         List<String> achieveTypeList = achieveMapper.selectAllAchieveType();
         openIdList.forEach(openId -> {
+            ObjectNode objectNode = JsonNodeFactory.instance.objectNode().putObject(openId);
             achieveTypeList.forEach(achieveType -> {
-                ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-                objectNode.putObject(openId)
-                        .put("achieveType",achieveType)
-                        .put("locationObtained",1);
-                redisUtil.set(openId,objectNode.toPrettyString());
+                objectNode.put(achieveType, 1);
             });
+            log.info(objectNode.toPrettyString());
+            redisUtil.set(openId, objectNode.toPrettyString());
         });
     }
 }
