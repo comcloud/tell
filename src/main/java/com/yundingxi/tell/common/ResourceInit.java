@@ -3,8 +3,10 @@ package com.yundingxi.tell.common;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.common.redis.RedisUtil;
+import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
+import com.yundingxi.tell.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,24 +33,42 @@ public class ResourceInit implements CommandLineRunner {
 
     private final UserMapper userMapper;
 
+    private final AchieveMapper achieveMapper;
     private final LetterService letterService;
+
     @Autowired
-    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper,LetterService letterService) {
+    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper, LetterService letterService, AchieveMapper achieveMapper) {
         this.redisUtil = redisUtil;
         this.userMapper = userMapper;
         this.letterService = letterService;
+        this.achieveMapper = achieveMapper;
     }
 
     @Override
     public void run(String... args) throws Exception {
         log.info("项目初始化");
-        letterInitForEveryOpenId();
+        List<String> openIdList = userMapper.selectAllOpenId();
+        letterInitForEveryOpenId(openIdList);
+        stampAndAchieveInitForEveryone(openIdList);
     }
 
-    public void letterInitForEveryOpenId(){
-        List<String> openIdList = userMapper.selectAllOpenId();
+    public void letterInitForEveryOpenId(List<String> openIdList) {
         openIdList.forEach(letterService::setLetterInitInfoByOpenId);
     }
 
-
+    /**
+     * 邮票成就初始化，初始化内容，加载出每一个人的基本信息
+     */
+    public void stampAndAchieveInitForEveryone(List<String> openIdList) {
+        List<String> achieveTypeList = achieveMapper.selectAllAchieveType();
+        openIdList.forEach(openId -> {
+            if (redisUtil.get(openId) == null) {
+                ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+                achieveTypeList.forEach(achieveType -> {
+                    objectNode.put(achieveType, 1);
+                });
+                redisUtil.set(openId, objectNode.toPrettyString());
+            }
+        });
+    }
 }

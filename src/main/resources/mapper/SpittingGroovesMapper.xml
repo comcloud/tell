@@ -180,11 +180,15 @@
         where open_id = #{openId}
           and to_days(#{currentTime}) &gt;= to_days(date)
     </select>
-    <select id="selectAllSpitByOpenId" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
-        select *
-        from spitting_grooves
-        where open_id = #{openId}
-          and state != #{state}
+
+    <select id="selectAllSpitByOpenId" resultMap="SpittingGroovesVoMap">
+        select sg.id, sg.title, sg.avatar_url, sg.pen_name, count(*) - 1 number
+        from spitting_grooves sg,
+             comments c
+        where sg.id = c.sg_id
+          and sg.`state` != #{state} and sg.open_id = #{openId}
+        group by sg.id
     </select>
+
 
 </mapper>

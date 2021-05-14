@@ -1,4 +1,7 @@
 package com.yundingxi.tell.mapper;
+
+
+import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.StampVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -6,13 +9,12 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * <p>
- *  Mapper 接口
- * </p>
- *
- * @author hds
- * @since 2021-05-10
+ * @version v1.0
+ * @ClassName StampMapper
+ * @Author rayss
+ * @Datetime 2021/5/13 11:27 下午
  */
+
 @Mapper
 public interface StampMapper {
     /**
@@ -28,4 +30,6 @@ public interface StampMapper {
      * @return 返回邮票集合
      */
     List<StampVo> notHaveListMeAll(@Param("openId") String openId);
+
+    int insertSingleNewUserStamp(@Param("userStamp") UserStamp userStamp);
 }

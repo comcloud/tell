@@ -1,6 +1,6 @@
 package com.yundingxi.tell;
-
-import com.yundingxi.tell.bean.entity.Achieve;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -11,7 +11,6 @@ import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
-import org.apache.cxf.interceptor.AbstractOutDatabindingInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +40,12 @@ class TellApplicationTests {
     private AchieveService achieveService;
     @Test
     void contextLoads() throws IllegalAccessException {
-        redisUtil.del();
+        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+        objectNode.put("letter",1);
+        System.out.println(objectNode.toPrettyString());
+        objectNode.put("letter",2);
+        System.out.println(objectNode.toPrettyString());
+
     }
 
 

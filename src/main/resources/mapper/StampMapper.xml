@@ -23,4 +23,8 @@
 
 				where   us.open_id=#{openId})
     </select>
+
+    <insert id="insertSingleNewUserStamp">
+        insert into user_stamp value(#{userStamp.id},#{userStamp.stampId},#{userStamp.openId},#{userStamp.state},#{userStamp.obtainTime},#{userStamp.number})
+    </insert>
 </mapper>

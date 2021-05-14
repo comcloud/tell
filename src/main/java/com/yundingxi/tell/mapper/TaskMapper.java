@@ -1,5 +1,6 @@
 package com.yundingxi.tell.mapper;
-
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -9,6 +10,8 @@ package com.yundingxi.tell.mapper;
  * @author hds
  * @since 2021-05-10
  */
+@Mapper
 public interface TaskMapper{
 
+    String selectTaskJsonByTaskId(@Param("taskId") String taskId);
 }

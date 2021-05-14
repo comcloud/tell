@@ -21,5 +21,31 @@
 				on ua.achieve_id=a.id
 
 				where   ua.open_id=#{openId})
+</select>
+    <insert id="insertSingleNewUserAchieve">
+        insert into user_achieve value(#{userAchieve.id},#{userAchieve.openId},#{userAchieve.achieveId},#{userAchieve.obtainTime},#{userAchieve.state})
+    </insert>
+
+    <select id="selectAllAchieveType" resultType="java.lang.String">
+        select achieve_type
+        from achieve;
+    </select>
+    <select id="selectAllTaskIdByAchieveTypeAndLocation" resultType="java.lang.String">
+        select task_id
+        from achieve
+        where achieve_type = #{achieveType} limit 10
+        offset #{locationObtained}
+    </select>
+    <select id="selectAllTaskIdAndIdByAchieveTypeAndLocation"
+            resultType="com.yundingxi.tell.bean.entity.Achieve">
+        select id,task_id
+        from achieve
+        where achieve_type = #{achieveType} limit 10
+        offset #{locationObtained}
+    </select>
+    <select id="selectAchieveRewardById" resultType="java.lang.String">
+        select achieve_reward
+        from achieve
+        where id=#{id}
     </select>
 </mapper>
