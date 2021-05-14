@@ -183,6 +183,12 @@ public class LetterServiceImpl implements LetterService {
             map.put(1, messageDtoList == null ? 0 : messageDtoList.size());
             Object commCount = redisUtil.get("comm:" + openId + ":count");
             map.put(2, commCount == null ? 0 : (Integer) commCount);
+            String achieveUnreadNumKey = "listener:" + openId + ":achieve_unread_num";
+            String stampUnreadNumKey = "listener:" + openId + ":stamp_unread_num";
+            Integer achieveNum = (Integer) redisUtil.get(achieveUnreadNumKey);
+            Integer stampNum = (Integer) redisUtil.get(stampUnreadNumKey);
+            map.put(3, achieveNum == null ? 0 : achieveNum);
+            map.put(4, stampNum == null ? 0 : stampNum);
             return map;
         }).get();
     }

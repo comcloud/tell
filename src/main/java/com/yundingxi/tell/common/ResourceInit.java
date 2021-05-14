@@ -67,7 +67,7 @@ public class ResourceInit implements CommandLineRunner {
                 achieveTypeList.forEach(achieveType -> {
                     objectNode.put(achieveType, 1);
                 });
-                redisUtil.set(openId, objectNode.toPrettyString());
+                redisUtil.set("listener:"+openId+":offset", objectNode.toPrettyString());
             }
         });
     }

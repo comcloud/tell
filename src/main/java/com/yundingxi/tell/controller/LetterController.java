@@ -77,7 +77,7 @@ public class LetterController {
         return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 
-    @Operation(description = "获取未读回信的数量,这里设定1为回信，2为评论", summary = "获取未读信件数量与评论数量")
+    @Operation(description = "获取未读内容的数量,这里设定1为回信，2为评论，3为成就，4为邮票", summary = "获取未读内容数量")
     @GetMapping("/getNumberOfLetter")
     public Result<Map<Integer, Integer>> getNumberOfLetter(@Parameter(description = "open id", required = true)
                                                            @RequestParam("openId") String openId) {

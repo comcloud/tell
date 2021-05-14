@@ -121,7 +121,7 @@ public class CustomListenerConfig {
                - 完成返回true，表示完成的话，需要将位置+1，同时给予对应的奖励achieve_reward，也就是对应的邮票
                - 未完成返回false，什么都不做
               */
-            String json = (String) redisUtil.get(openId);
+            String json = (String) redisUtil.get("listener:" + openId + ":offset");
             int locationObtained = JsonUtil.parseJson(json).get(achieveType).asInt();
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
             List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndLocation(locationObtained, achieveType);
@@ -142,7 +142,7 @@ public class CustomListenerConfig {
         String sqlStr = combineSqlString(openId, achieve);
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
-            insertUserStampAndAchieve(openId, achieve);
+            insertUserStampAndAchieve(openId, achieve, achieveType);
         }
         //更新redis内容
         updateRedisContent(openId, achieveType, json, locationObtained);
@@ -154,11 +154,16 @@ public class CustomListenerConfig {
      * @param openId  用户open id
      * @param achieve 存储成就id与任务id的成就对象
      */
-    private void insertUserStampAndAchieve(String openId, Achieve achieve) {
+    private void insertUserStampAndAchieve(String openId, Achieve achieve, String achieveType) {
         //成就完成，这时候给予成就对应的奖励，添加邮票到数据库，添加成就到数据库，然后缓存中成就参数加1
         achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "1"));
+        String achieveUnreadNumKey = "listener:" + openId + ":achieve_unread_num";
+        String stampUnreadNumKey = "listener:" + openId + ":stamp_unread_num";
+        Integer achieveNum = (Integer) redisUtil.get(achieveUnreadNumKey);
+        Integer stampNum = (Integer) redisUtil.get(stampUnreadNumKey);
+        redisUtil.set(achieveUnreadNumKey, achieveNum == null ? 1 : achieveNum + 1);
         //奖励是一些邮票内容
-        if ("stamp".equals(achieve.getAchieveType())) {
+        if (achieveType.equals(achieve.getAchieveType())) {
             //此时是邮票成就，不再奖励邮票
             return;
         }
@@ -167,6 +172,7 @@ public class CustomListenerConfig {
         for (String stampId : stampIdArray) {
             stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stampId, openId, "1", new Date(), 1));
         }
+        redisUtil.set(stampUnreadNumKey,stampNum == null ? 1 : (stampNum + stampIdArray.length));
         handleStampAchieve(openId);
         //添加成就
     }
@@ -213,6 +219,6 @@ public class CustomListenerConfig {
     private void updateRedisContent(String openId, String achieveType, String json, int locationObtained) {
         ObjectNode objectNode = (ObjectNode) JsonUtil.parseJson(json);
         objectNode.put(achieveType, locationObtained + 1);
-        redisUtil.set(openId, objectNode.toPrettyString());
+        redisUtil.set("listener:" + openId + ":offset", objectNode.toPrettyString());
     }
 }
