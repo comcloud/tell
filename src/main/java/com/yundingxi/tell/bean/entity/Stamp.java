@@ -41,6 +41,8 @@ public class Stamp  {
 
     @ApiModelProperty(value = "状态")
     private String state;
+    @ApiModelProperty(value = "邮票系列")
+    private String stampSeries;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime stampCreateTime;
