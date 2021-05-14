@@ -1,5 +1,7 @@
 package com.yundingxi.tell;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -31,7 +33,12 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
-        redisUtil.del();
+        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+        objectNode.put("letter",1);
+        System.out.println(objectNode.toPrettyString());
+        objectNode.put("letter",2);
+        System.out.println(objectNode.toPrettyString());
+
     }
 
 

@@ -1,6 +1,7 @@
 package com.yundingxi.tell.common.listener;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.UserAchieve;
 import com.yundingxi.tell.bean.entity.UserStamp;
@@ -94,25 +95,29 @@ public class CustomListenerConfig {
                 if (condition.isArray()) {
                     condition.forEach(con -> {
                         String conStr = con.toString();
-                        if (conStr.contains("openId")) {
-                            conStr = conStr.replace("#{}", openId);
+                        if (conStr.contains("open_id")) {
+                            conStr = conStr.replace("#{}", "'" + openId + "'");
                         }
                         sqlBuilder.append(" and ").append(conStr);
                     });
                 }
-                String sqlStr = sqlBuilder.toString();
+                String sqlStr = sqlBuilder.toString().replace("\"", "");
                 Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
-                if(result != null && result == 1){
+                if (result != null && result == 1) {
                     //成就完成，这时候给予成就对应的奖励，添加邮票到数据库，添加成就到数据库，然后缓存中成就参数加1
                     //奖励是一些邮票内容
                     String stampString = achieveMapper.selectAchieveRewardById(achieve.getId());
-                    String[] stampIdArray = stampString.split(",");
+                    String[] stampIdArray = "".equals(stampString) ? new String[0] : stampString.split(",");
                     for (String stampId : stampIdArray) {
-                        stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(),stampId,openId,"1",new Date(),1));
+                        stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stampId, openId, "1", new Date(), 1));
                     }
                     //添加成就
-                    achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(),openId,achieve.getId(),new Date(),"1"));
+                    achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "1"));
                 }
+                //更新redis内容
+                ObjectNode objectNode = (ObjectNode) JsonUtil.parseJson(json);
+                objectNode.put("letter", locationObtained + 1);
+                redisUtil.set(openId,objectNode.toPrettyString());
                 //这里就是成就没有完成，那么就是什么都不做
             });
         });
