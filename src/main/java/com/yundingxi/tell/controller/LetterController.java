@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.common.listener.PublishLetterEvent;
+import com.yundingxi.tell.common.listener.PublishReplyEvent;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -59,6 +60,7 @@ public class LetterController {
     public Result<String> replyLetter(@Parameter(description = "回复信件的对象", required = true)
                                               LetterReplyDto letterReplyDto) {
         String result = letterService.replyLetter(letterReplyDto);
+        publisher.publishEvent(new PublishReplyEvent(this,letterReplyDto));
         return ResultGenerator.genSuccessResult(result);
     }
 
