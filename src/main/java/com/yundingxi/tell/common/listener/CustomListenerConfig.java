@@ -73,10 +73,6 @@ public class CustomListenerConfig {
         EXECUTOR.execute(getRunnable(letterEvent.getLetterStorageDto().getOpenId(), "letter"));
     }
 
-
-
-  
-
     /**
      * 处理保存日记事件
      *
@@ -100,10 +96,10 @@ public class CustomListenerConfig {
         LOG.info(spitEvent.getSpittingGrooves().toString());
         EXECUTOR.execute(getRunnable(spitEvent.getSpittingGrooves().getOpenId(), "spit"));
     }
-    
+
     @EventListener
-    public void handleReply(PublishReplyEvent replyEvent){
-        LOG.info("触发保存吐槽事件，此时应该更新关于吐槽的成就内容");
+    public void handleReply(PublishReplyEvent replyEvent) {
+        LOG.info("触发保存回信事件，此时应该更新关于回信的成就内容");
         LOG.info(replyEvent.getLetterReplyDto().toString());
         EXECUTOR.execute(getRunnable(replyEvent.getLetterReplyDto().getRecipient(), "reply"));
     }
@@ -134,11 +130,12 @@ public class CustomListenerConfig {
 
     /**
      * 判断成就是否满足
-     * @param openId 此用户open id
-     * @param achieveType 成就类型
-     * @param json redis中存储用户的成就偏移量json串
+     *
+     * @param openId           此用户open id
+     * @param achieveType      成就类型
+     * @param json             redis中存储用户的成就偏移量json串
      * @param locationObtained 偏移量
-     * @param achieve 存储成就id与任务id的成就对象
+     * @param achieve          存储成就id与任务id的成就对象
      */
     private void judgeAchieve(String openId, String achieveType, String json, int locationObtained, Achieve achieve) {
         String sqlStr = combineSqlString(openId, achieve);
@@ -152,7 +149,8 @@ public class CustomListenerConfig {
 
     /**
      * 插入用户邮票与成就到数据库
-     * @param openId 用户open id
+     *
+     * @param openId  用户open id
      * @param achieve 存储成就id与任务id的成就对象
      */
     private void insertUserStampAndAchieve(String openId, Achieve achieve) {
@@ -169,7 +167,8 @@ public class CustomListenerConfig {
 
     /**
      * 从数据库查询的sql条件，拼接sql语句
-     * @param openId 用户open id
+     *
+     * @param openId  用户open id
      * @param achieve 存储成就id与任务id的成就对象
      * @return 拼接好的sql语句
      */
@@ -198,9 +197,10 @@ public class CustomListenerConfig {
 
     /**
      * 更新redis存储偏移量json串
-     * @param openId 用户open id
-     * @param achieveType 成就类型
-     * @param json redis中存储用户的成就偏移量json串
+     *
+     * @param openId           用户open id
+     * @param achieveType      成就类型
+     * @param json             redis中存储用户的成就偏移量json串
      * @param locationObtained 偏移量
      */
     private void updateRedisContent(String openId, String achieveType, String json, int locationObtained) {
