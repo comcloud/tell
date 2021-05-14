@@ -4,6 +4,8 @@ import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
 import com.yundingxi.tell.bean.vo.ProfileVo;
+import com.yundingxi.tell.service.AchieveService;
+import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.util.Result;
@@ -31,6 +33,10 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private StampService stampService;
+    @Autowired
+    private AchieveService articleService;
 
     @Operation(description = "用户注册", summary = "用户注册")
     @PostMapping("/registeredUser")
@@ -110,5 +116,13 @@ public class UserController {
     public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId){
         return userService.getOfficialMsg(openId);
     }
-
+    @GetMapping("/getAllStamp")
+    @Operation(description = "获取个人邮票",summary = "获取个人邮票")
+    public Result getAllStamp(String openId, Integer pageNum) {
+        return stampService.getAllStamp(openId, pageNum);
+    } @GetMapping("/getAllAchieve")
+    @Operation(description = "获取个人成就",summary = "获取个人成就")
+    public Result getAllAchieve(String openId, Integer pageNum) {
+        return articleService.getAllAchieve(openId, pageNum);
+    }
 }
