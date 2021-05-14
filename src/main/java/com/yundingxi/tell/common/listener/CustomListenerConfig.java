@@ -104,6 +104,10 @@ public class CustomListenerConfig {
         EXECUTOR.execute(getRunnable(replyEvent.getLetterReplyDto().getRecipient(), "reply"));
     }
 
+    public void handleStampAchieve(String openId) {
+        LOG.info("触发邮票事件，此时应该更新关于邮票的成就内容");
+        EXECUTOR.execute(getRunnable(openId, "stamp"));
+    }
 
     private Runnable getRunnable(String openId, String achieveType) {
         return () -> {
@@ -121,10 +125,7 @@ public class CustomListenerConfig {
             int locationObtained = JsonUtil.parseJson(json).get(achieveType).asInt();
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
             List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndLocation(locationObtained, achieveType);
-            achieveList.forEach(achieve -> {
-                judgeAchieve(openId, achieveType, json, locationObtained, achieve);
-                //这里就是成就没有完成，那么就是什么都不做
-            });
+            achieveList.forEach(achieve -> judgeAchieve(openId, achieveType, json, locationObtained, achieve));
         };
     }
 
@@ -155,15 +156,21 @@ public class CustomListenerConfig {
      */
     private void insertUserStampAndAchieve(String openId, Achieve achieve) {
         //成就完成，这时候给予成就对应的奖励，添加邮票到数据库，添加成就到数据库，然后缓存中成就参数加1
+        achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "1"));
         //奖励是一些邮票内容
+        if ("stamp".equals(achieve.getAchieveType())) {
+            //此时是邮票成就，不再奖励邮票
+            return;
+        }
         String stampString = achieveMapper.selectAchieveRewardById(achieve.getId());
         String[] stampIdArray = "".equals(stampString) ? new String[0] : stampString.split(",");
         for (String stampId : stampIdArray) {
             stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stampId, openId, "1", new Date(), 1));
         }
+        handleStampAchieve(openId);
         //添加成就
-        achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "1"));
     }
+
 
     /**
      * 从数据库查询的sql条件，拼接sql语句

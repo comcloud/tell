@@ -49,4 +49,7 @@ public class Achieve {
     @ApiModelProperty(value = "成就奖励")
     private String achieveReward;
 
+    @ApiModelProperty(value = "成就类型")
+    private String achieveType;
+
 }

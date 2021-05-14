@@ -17,7 +17,7 @@
     </select>
     <select id="selectAllTaskIdAndIdByAchieveTypeAndLocation"
             resultType="com.yundingxi.tell.bean.entity.Achieve">
-        select id,task_id
+        select id,task_id,achieve_type
         from achieve
         where achieve_type = #{achieveType} limit 10
         offset #{locationObtained}
