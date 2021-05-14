@@ -33,6 +33,8 @@ public class Achieve {
 
     @ApiModelProperty(value = "成就描述")
     private String achieveDesc;
+    @ApiModelProperty(value = "成就名")
+    private String achieveName;
 
     @ApiModelProperty(value = "对应任务")
     private String taskId;
