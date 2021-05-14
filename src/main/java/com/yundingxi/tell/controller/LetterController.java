@@ -3,6 +3,8 @@ package com.yundingxi.tell.controller;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
+import com.yundingxi.tell.common.listener.PublishLetterEvent;
+import com.yundingxi.tell.common.listener.PublishReplyEvent;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +38,9 @@ public class LetterController {
 
     private final Logger log = LoggerFactory.getLogger(LetterController.class);
 
+    @Autowired
+    private ApplicationEventPublisher publisher;
+
     /**
      * 普通发送
      *
@@ -45,6 +51,7 @@ public class LetterController {
     @PostMapping(value = "/send")
     @Operation(description = "保存信件", summary = "保存信件")
     public Result<String> saveLetter(@Parameter(description = "信件对象", required = true) LetterStorageDto letterStorageDto) {
+        publisher.publishEvent(new PublishLetterEvent(this, letterStorageDto));
         return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letterStorageDto));
     }
 
@@ -53,6 +60,7 @@ public class LetterController {
     public Result<String> replyLetter(@Parameter(description = "回复信件的对象", required = true)
                                               LetterReplyDto letterReplyDto) {
         String result = letterService.replyLetter(letterReplyDto);
+        publisher.publishEvent(new PublishReplyEvent(this,letterReplyDto));
         return ResultGenerator.genSuccessResult(result);
     }
 
