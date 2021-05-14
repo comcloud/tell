@@ -35,10 +35,7 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private StampService stampService;
-    @Autowired
-    private AchieveService articleService;
+
 
     @Operation(description = "用户注册", summary = "用户注册")
     @PostMapping("/registeredUser")
@@ -117,23 +114,5 @@ public class UserController {
     @Operation(description = "获取官方推送", summary = "获取官方审核推送")
     public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId) {
         return userService.getOfficialMsg(openId);
-    }
-
-    @GetMapping("/getAllStamp")
-    @Operation(description = "获取个人邮票", summary = "获取个人邮票")
-    public Result getAllStamp(String openId, Integer pageNum) {
-        return stampService.getAllStamp(openId, pageNum);
-    }
-
-    @GetMapping("/getAllAchieve")
-    @Operation(description = "获取个人成就", summary = "获取个人成就")
-    public Result getAllAchieve(String openId, Integer pageNum) {
-        return articleService.getAllAchieve(openId, pageNum);
-    }
-
-    @GetMapping("/getAllStampForAlbum")
-    @Operation(description = "获取所有邮票，为了集邮册内容",summary = "获取所有邮票")
-    public Result<List<Stamp>> getAllStampForAlbum(){
-        return stampService.getAllStampForAlbum();
     }
 }
