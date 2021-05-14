@@ -31,14 +31,14 @@ public class AchieveServiceImpl  implements AchieveService {
     private AchieveMapper achieveMapper;
 
     @Override
-    public Result getAllAchieve(String openId, Integer pageNum) {
-        String orderBy = "ua.obtain_time desc";
-        PageHelper.startPage(pageNum,10,orderBy);
-        List<AchieveVo> stampVo = achieveMapper.haveListMeAll(openId);
-        PageInfo<AchieveVo> pageInfo = new PageInfo<>(stampVo);
-        Map<String, Object> stringObjectHashMap = new HashMap<>(2);
-        stringObjectHashMap.put("have",pageInfo);
-        stringObjectHashMap.put("notHave",achieveMapper.notHaveListMeAll(openId));
-        return ResultGenerator.genSuccessResult(stringObjectHashMap);
+    public Result<List<AchieveVo>> getAllAchieve(String openId) {
+//        String orderBy = "ua.obtain_time desc";
+//        PageHelper.startPage(pageNum,10,orderBy);
+        List<AchieveVo> haveAchieve = achieveMapper.haveListMeAll(openId);
+//        PageInfo<AchieveVo> pageInfo = new PageInfo<>(stampVo);
+//        Map<String, Object> stringObjectHashMap = new HashMap<>(2);
+//        stringObjectHashMap.put("have",pageInfo);
+//        stringObjectHashMap.put("notHave",achieveMapper.notHaveListMeAll(openId));
+        return ResultGenerator.genSuccessResult(haveAchieve);
     }
 }

@@ -28,8 +28,7 @@ public class StampServiceImpl implements StampService {
     @Autowired
     private StampMapper stampMapper;
     @Override
-
-    public Result<List<StampVo>> getAllStamp(String openId, Integer pageNum) {
+    public Result<List<StampVo>> getAllStamp(String openId) {
 //        String orderBy = "us.obtain_time desc";
 //        PageHelper.startPage(pageNum,10,orderBy);
         List<StampVo> stampVoList = stampMapper.haveListMeAll(openId);

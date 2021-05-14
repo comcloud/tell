@@ -1,7 +1,10 @@
 package com.yundingxi.tell.service;
 
 
+import com.yundingxi.tell.bean.vo.AchieveVo;
 import com.yundingxi.tell.util.Result;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,6 +15,6 @@ import com.yundingxi.tell.util.Result;
  * @since 2021-05-10
  */
 public interface AchieveService {
-    Result getAllAchieve(String openId, Integer pageNum);
+    Result<List<AchieveVo>> getAllAchieve(String openId);
 
 }

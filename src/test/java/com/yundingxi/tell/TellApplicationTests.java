@@ -59,12 +59,9 @@ class TellApplicationTests {
     @Test
     void getAllStamp(){
 
-        System.out.println("1111");
-        System.out.println(stampService.getAllStamp("oUGur5B9FwaEIrLj_ftK4hURIsoE", 1));
     }
     @Test
     void getAllAchieve(){
-        System.out.println(achieveService.getAllAchieve("oUGur5B9FwaEIrLj_ftK4hURIsoE", 1));
     }
 
 }

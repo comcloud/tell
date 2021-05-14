@@ -1,6 +1,7 @@
 package com.yundingxi.tell.controller;
 
 import com.yundingxi.tell.bean.entity.Stamp;
+import com.yundingxi.tell.bean.vo.AchieveVo;
 import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.service.AchieveService;
 import com.yundingxi.tell.service.StampService;
@@ -32,14 +33,14 @@ public class StampAchieveController {
 
     @GetMapping("/getAllStamp")
     @Operation(description = "获取个人邮票", summary = "获取个人邮票")
-    public Result getAllStamp(String openId, Integer pageNum) {
-        return stampService.getAllStamp(openId, pageNum);
+    public Result<List<StampVo>> getAllStamp(String openId) {
+        return stampService.getAllStamp(openId);
     }
 
     @GetMapping("/getAllAchieve")
     @Operation(description = "获取个人成就", summary = "获取个人成就")
-    public Result getAllAchieve(String openId, Integer pageNum) {
-        return articleService.getAllAchieve(openId, pageNum);
+    public Result<List<AchieveVo>> getAllAchieve(String openId) {
+        return articleService.getAllAchieve(openId);
     }
 
     @GetMapping("/getAllStampForAlbum")
