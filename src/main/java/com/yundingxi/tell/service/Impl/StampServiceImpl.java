@@ -1,8 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.corba.se.impl.orbutil.StackImpl;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
+import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.service.StampService;
@@ -11,11 +10,9 @@ import com.yundingxi.tell.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * <p>
@@ -40,5 +37,10 @@ public class StampServiceImpl implements StampService {
         stringObjectHashMap.put("have",pageInfo);
         stringObjectHashMap.put("notHave",stampMapper.notHaveListMeAll(openId));
         return ResultGenerator.genSuccessResult(stringObjectHashMap);
+    }
+
+    @Override
+    public Result<List<Stamp>> getAllStampForAlbum() {
+        return ResultGenerator.genSuccessResult(stampMapper.selectAllStamp());
     }
 }

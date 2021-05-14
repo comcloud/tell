@@ -23,6 +23,9 @@
 
 				where   us.open_id=#{openId})
     </select>
+    <select id="selectAllStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
+        select * from stamp;
+    </select>
 
     <insert id="insertSingleNewUserStamp">
         insert into user_stamp value(#{userStamp.id},#{userStamp.stampId},#{userStamp.openId},#{userStamp.state},#{userStamp.obtainTime},#{userStamp.number})

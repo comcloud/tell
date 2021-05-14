@@ -1,9 +1,11 @@
 package com.yundingxi.tell.controller;
 
+import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
 import com.yundingxi.tell.bean.vo.ProfileVo;
+import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.service.AchieveService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
@@ -100,29 +102,38 @@ public class UserController {
     }
 
     @GetMapping("/isTextLegal")
-    @Operation(description = "判断文字内容是否属于违规语言,结果类型，1.合规，2.不合规，3.疑似，4.审核失败",summary = "文字违规判断")
-    public Result<Integer> textLegal(@Parameter(description = "文字内容") @RequestParam(value = "textContent") String textContent){
+    @Operation(description = "判断文字内容是否属于违规语言,结果类型，1.合规，2.不合规，3.疑似，4.审核失败", summary = "文字违规判断")
+    public Result<Integer> textLegal(@Parameter(description = "文字内容") @RequestParam(value = "textContent") String textContent) {
         return userService.isTextLegal(textContent);
     }
 
     @GetMapping("/getDataOfHistory")
-    @Operation(description = "获取所有历史发布内容，包括信件，日记，吐槽",summary = "获取历史发布内容")
-    public Result<HistoryDataVo> getDataOfHistory(@Parameter(description = "open id") @RequestParam("open id") String openId){
+    @Operation(description = "获取所有历史发布内容，包括信件，日记，吐槽", summary = "获取历史发布内容")
+    public Result<HistoryDataVo> getDataOfHistory(@Parameter(description = "open id") @RequestParam("open id") String openId) {
         return userService.getDataOfHistory(openId);
     }
 
     @GetMapping("/getOfficialMsg")
-    @Operation(description = "获取官方推送",summary = "获取官方审核推送")
-    public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId){
+    @Operation(description = "获取官方推送", summary = "获取官方审核推送")
+    public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId) {
         return userService.getOfficialMsg(openId);
     }
+
     @GetMapping("/getAllStamp")
-    @Operation(description = "获取个人邮票",summary = "获取个人邮票")
+    @Operation(description = "获取个人邮票", summary = "获取个人邮票")
     public Result getAllStamp(String openId, Integer pageNum) {
         return stampService.getAllStamp(openId, pageNum);
-    } @GetMapping("/getAllAchieve")
-    @Operation(description = "获取个人成就",summary = "获取个人成就")
+    }
+
+    @GetMapping("/getAllAchieve")
+    @Operation(description = "获取个人成就", summary = "获取个人成就")
     public Result getAllAchieve(String openId, Integer pageNum) {
         return articleService.getAllAchieve(openId, pageNum);
+    }
+
+    @GetMapping("/getAllStampForAlbum")
+    @Operation(description = "获取所有邮票，为了集邮册内容",summary = "获取所有邮票")
+    public Result<List<Stamp>> getAllStampForAlbum(){
+        return stampService.getAllStampForAlbum();
     }
 }

@@ -1,6 +1,7 @@
 package com.yundingxi.tell.mapper;
 
 
+import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.StampVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -32,4 +33,6 @@ public interface StampMapper {
     List<StampVo> notHaveListMeAll(@Param("openId") String openId);
 
     int insertSingleNewUserStamp(@Param("userStamp") UserStamp userStamp);
+
+    List<Stamp> selectAllStamp();
 }
