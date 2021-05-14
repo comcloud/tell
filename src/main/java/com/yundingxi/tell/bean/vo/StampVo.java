@@ -36,4 +36,6 @@ public class StampVo {
     @ApiModelProperty(value = "获取时间")
     private Date obtainTime;
 
+    @ApiModelProperty(value = "是否被锁")
+    private boolean isLock;
 }

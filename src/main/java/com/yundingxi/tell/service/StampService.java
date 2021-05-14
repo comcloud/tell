@@ -18,5 +18,5 @@ import java.util.List;
 public interface StampService  {
     Result getAllStamp(String openId, Integer pageNum);
 
-    Result<List<Stamp>> getAllStampForAlbum();
+    Result<List<StampVo>> getAllStampForAlbum(String openId);
 }
