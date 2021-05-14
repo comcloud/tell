@@ -32,7 +32,7 @@ public class AchieveServiceImpl  implements AchieveService {
 
     @Override
     public Result getAllAchieve(String openId, Integer pageNum) {
-        String orderBy = "sg.date desc";
+        String orderBy = "ua.obtain_time desc";
         PageHelper.startPage(pageNum,10,orderBy);
         List<AchieveVo> stampVo = achieveMapper.haveListMeAll(openId);
         PageInfo<AchieveVo> pageInfo = new PageInfo<>(stampVo);

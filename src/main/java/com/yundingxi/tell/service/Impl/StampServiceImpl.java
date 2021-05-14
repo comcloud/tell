@@ -32,7 +32,8 @@ public class StampServiceImpl implements StampService {
     @Override
 
     public Result getAllStamp(String openId, Integer pageNum) {
-        String orderBy = "sg.date desc";
+        String orderBy = "us" +
+                " desc";
         PageHelper.startPage(pageNum,10,orderBy);
         List<StampVo> stampVo = stampMapper.haveListMeAll(openId);
         PageInfo<StampVo> pageInfo = new PageInfo<>(stampVo);
