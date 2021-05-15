@@ -139,7 +139,6 @@ public class UserServiceImpl implements UserService {
         numVos.add(new ProfileNumVo("解忧", numOfLetter));
         numVos.add(new ProfileNumVo("日记", numOfDiary));
         numVos.add(new ProfileNumVo("吐槽", numOfSpit));
-        numVos.add(new ProfileNumVo("回信",numOfReply));
 
         ProfileVo profileVo = new ProfileVo(user.getPenName(), user.getAvatarUrl(), numVos);
         return ResultGenerator.genSuccessResult(profileVo);

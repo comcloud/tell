@@ -41,6 +41,7 @@ public class AchieveServiceImpl  implements AchieveService {
             for (AchieveVo haveAchieve : haveAchieveList) {
                 if(haveAchieve.getAchieveName().equals(achieveVo.getAchieveName())){
                     achieveVo.setLock(false);
+                    achieveVo.setObtainTime(haveAchieve.getObtainTime());
                     break;
                 }
             }
