@@ -26,10 +26,14 @@ import java.util.List;
 @Api(value = "/stamp", tags = "邮票成就接口")
 public class StampAchieveController {
 
+    private final StampService stampService;
+    private final AchieveService articleService;
+
     @Autowired
-    private StampService stampService;
-    @Autowired
-    private AchieveService articleService;
+    public StampAchieveController(StampService stampService, AchieveService articleService) {
+        this.stampService = stampService;
+        this.articleService = articleService;
+    }
 
     @GetMapping("/getAllStamp")
     @Operation(description = "获取个人邮票", summary = "获取个人邮票")

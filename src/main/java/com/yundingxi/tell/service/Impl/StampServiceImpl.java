@@ -29,14 +29,7 @@ public class StampServiceImpl implements StampService {
     private StampMapper stampMapper;
     @Override
     public Result<List<StampVo>> getAllStamp(String openId) {
-//        String orderBy = "us.obtain_time desc";
-//        PageHelper.startPage(pageNum,10,orderBy);
         List<StampVo> stampVoList = stampMapper.haveListMeAll(openId);
-        stampVoList.forEach(stampVo -> stampVo.setLock(false));
-//        PageInfo<StampVo> pageInfo = new PageInfo<>(stampVo);
-//        Map<String, Object> stringObjectHashMap = new HashMap<>(2);
-//        stringObjectHashMap.put("have",pageInfo);
-//        stringObjectHashMap.put("notHave",stampMapper.notHaveListMeAll(openId));
         return ResultGenerator.genSuccessResult(stampVoList);
     }
 

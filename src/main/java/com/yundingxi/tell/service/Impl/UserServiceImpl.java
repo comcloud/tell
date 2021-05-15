@@ -1,6 +1,8 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.http.HttpUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
@@ -184,6 +186,13 @@ public class UserServiceImpl implements UserService {
     public Result<Object> getOfficialMsg(String openId) {
         Object o = redisUtil.leftPop(RedisEnums.USER_OFFICIAL_MSG.getRedisKey() + ":" + openId);
         return ResultGenerator.genSuccessResult(o);
+    }
+
+    @Override
+    public Result<PageInfo<TimelineVo>> getTimelineData(String openId, Integer pageNum) {
+        @SuppressWarnings("unchecked") List<TimelineVo> timelineVoList = (List<TimelineVo>) redisUtil.get("user:" + openId + ":timeline");
+        PageHelper.startPage(pageNum, 15);
+        return ResultGenerator.genSuccessResult(new PageInfo<>(timelineVoList == null ? new LinkedList<>() : timelineVoList));
     }
 
     /**
