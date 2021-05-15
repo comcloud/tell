@@ -79,4 +79,9 @@
         where open_id = #{openId}
           and state!=#{state}
     </select>
+    <select id="selectNumberOfReply" resultType="java.lang.Integer">
+        select count(*)
+        from reply
+        where open_id=#{openId}
+    </select>
 </mapper>
