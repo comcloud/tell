@@ -1,8 +1,10 @@
 package com.yundingxi.tell.service;
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
 import com.yundingxi.tell.bean.vo.ProfileVo;
+import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.util.Result;
 import org.springframework.stereotype.Service;
@@ -56,4 +58,6 @@ public interface UserService {
     Result<HistoryDataVo> getDataOfHistory(String openId);
 
     Result getOfficialMsg(String openId);
+
+    Result<PageInfo<TimelineVo>> getTimelineData(String openId,Integer pageNum);
 }

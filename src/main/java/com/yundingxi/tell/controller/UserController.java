@@ -1,11 +1,9 @@
 package com.yundingxi.tell.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.bean.vo.HistoryDataVo;
-import com.yundingxi.tell.bean.vo.ProfileNumVo;
-import com.yundingxi.tell.bean.vo.ProfileVo;
-import com.yundingxi.tell.bean.vo.StampVo;
+import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.service.AchieveService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
@@ -114,5 +112,12 @@ public class UserController {
     @Operation(description = "获取官方推送", summary = "获取官方审核推送")
     public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId) {
         return userService.getOfficialMsg(openId);
+    }
+
+    @Operation(description = "获取事件线数据，目前时间线有，我发布了解忧、日记、吐槽其中某一个",summary = "获取时间线数据")
+    @GetMapping("/getTimelineData")
+    public Result<PageInfo<TimelineVo>> getTimelineData(@Parameter(description = "open id",required = true) String openId
+            , @Parameter(description = "页数，默认是1") @RequestParam(defaultValue = "1") Integer pageNum) {
+        return userService.getTimelineData(openId, pageNum);
     }
 }

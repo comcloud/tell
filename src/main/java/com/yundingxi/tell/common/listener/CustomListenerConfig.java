@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.UserAchieve;
 import com.yundingxi.tell.bean.entity.UserStamp;
+import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
@@ -18,7 +19,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -109,7 +114,7 @@ public class CustomListenerConfig {
         EXECUTOR.execute(getRunnable(openId, "stamp"));
     }
 
-    private Runnable getRunnable(String openId, String achieveType) {
+    private Runnable getRunnable(String openId, String eventType) {
         return () -> {
             /*
               这时候要做的事情
@@ -121,11 +126,12 @@ public class CustomListenerConfig {
                - 完成返回true，表示完成的话，需要将位置+1，同时给予对应的奖励achieve_reward，也就是对应的邮票
                - 未完成返回false，什么都不做
               */
+            updateRedisTimeline(openId, eventType);
             String json = (String) redisUtil.get("listener:" + openId + ":offset");
-            int locationObtained = JsonUtil.parseJson(json).get(achieveType).asInt();
+            int locationObtained = JsonUtil.parseJson(json).get(eventType).asInt();
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
-            List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndLocation(locationObtained, achieveType);
-            achieveList.forEach(achieve -> judgeAchieve(openId, achieveType, json, locationObtained, achieve));
+            List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndLocation(locationObtained, eventType);
+            achieveList.forEach(achieve -> judgeAchieve(openId, eventType, json, locationObtained, achieve));
         };
     }
 
@@ -172,7 +178,7 @@ public class CustomListenerConfig {
         for (String stampId : stampIdArray) {
             stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stampId, openId, "1", new Date(), 1));
         }
-        redisUtil.set(stampUnreadNumKey,stampNum == null ? 1 : (stampNum + stampIdArray.length));
+        redisUtil.set(stampUnreadNumKey, stampNum == null ? 1 : (stampNum + stampIdArray.length));
         handleStampAchieve(openId);
         //添加成就
     }
@@ -220,5 +226,19 @@ public class CustomListenerConfig {
         ObjectNode objectNode = (ObjectNode) JsonUtil.parseJson(json);
         objectNode.put(achieveType, locationObtained + 1);
         redisUtil.set("listener:" + openId + ":offset", objectNode.toPrettyString());
+    }
+
+    private void updateRedisTimeline(String openId, String eventType) {
+        String timelineKey = "user:" + openId + ":timeline";
+        @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
+        TimelineVo timelineVo = new TimelineVo(openId, eventType, LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        if (timelineVoLinkedList == null) {
+            LinkedList<TimelineVo> timelineVos = new LinkedList<>();
+            timelineVos.addFirst(timelineVo);
+            redisUtil.set(timelineKey, timelineVos);
+        } else {
+            timelineVoLinkedList.addFirst(timelineVo);
+            redisUtil.set(timelineKey, timelineVoLinkedList);
+        }
     }
 }
