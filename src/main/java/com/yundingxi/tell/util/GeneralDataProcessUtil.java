@@ -6,11 +6,14 @@ import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
+import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.mapper.UserMapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -109,4 +112,44 @@ public class GeneralDataProcessUtil {
             field.set(e, str.substring(0, 45));
         }
     }
+
+//    void updateRedis(){
+//        long start = System.currentTimeMillis();
+//        List<String> allOpenId = userMapper.selectAllOpenId();
+//        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );
+//        allOpenId.forEach(openId -> {
+//            del(openId);
+//            List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId, 1);
+//            letterList.forEach(letter -> {
+//                update(openId,"letter",sdf.format(letter.getReleaseTime()));
+//            });
+//            List<Diarys> diarysList = diaryMapper.selectAllPublicDiary("1");
+//            diarysList.forEach(diarys -> {
+//                update(openId,"diary",sdf.format(diarys.getDate()));
+//            });
+//            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpit();
+//            spittingGrooves.forEach(spittingGrooves1 -> {
+//                update(openId,"spit",sdf.format(spittingGrooves1.getDate()));
+//            });
+//
+//        });
+//        System.out.println((System.currentTimeMillis() - start) + "ms");
+//    }
+//    void update(String openId,String eventType,String time){
+//        String timelineKey = "user:" + openId + ":timeline";
+//        @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
+//        TimelineVo timelineVo = new TimelineVo(openId, eventType, time);
+//        if (timelineVoLinkedList == null) {
+//            LinkedList<TimelineVo> timelineVos = new LinkedList<>();
+//            timelineVos.addFirst(timelineVo);
+//            redisUtil.set(timelineKey, timelineVos);
+//        } else {
+//            timelineVoLinkedList.addFirst(timelineVo);
+//            redisUtil.set(timelineKey, timelineVoLinkedList);
+//        }
+//    }
+//    void del(String openId){
+//        String timelineKey = "user:" + openId + ":timeline";
+//        redisUtil.del(timelineKey);
+//    }
 }
