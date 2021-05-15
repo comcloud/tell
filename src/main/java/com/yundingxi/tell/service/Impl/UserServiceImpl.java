@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
         int numOfReply = letterMapper.selectNumberOfReply(openId);
         User user = userMapper.selectNameAndUrlByOpenId(openId);
         if (user == null) {
-            return ResultGenerator.genFailResult(new ProfileVo("用户不存在", null, null));
+            return ResultGenerator.genFailResult(new ProfileVo("用户不存在", null, null, null));
         }
 
         List<ProfileNumVo> numVos = new ArrayList<>();
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
         numVos.add(new ProfileNumVo("日记", numOfDiary));
         numVos.add(new ProfileNumVo("吐槽", numOfSpit));
 
-        ProfileVo profileVo = new ProfileVo(user.getPenName(), user.getAvatarUrl(), numVos);
+        ProfileVo profileVo = new ProfileVo(user.getPenName(), user.getAvatarUrl(), numVos, numOfReply);
         return ResultGenerator.genSuccessResult(profileVo);
     }
 
