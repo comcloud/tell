@@ -1,11 +1,15 @@
 package com.yundingxi.tell;
+
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Diarys;
+import com.yundingxi.tell.bean.entity.Letter;
+import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
+import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
+import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.CommentsMapper;
-import com.yundingxi.tell.mapper.SpittingGroovesMapper;
+import com.yundingxi.tell.mapper.*;
 import com.yundingxi.tell.service.AchieveService;
 import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.service.SpittingGroovesService;
@@ -15,6 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -38,16 +47,19 @@ class TellApplicationTests {
     private StampService stampService;
     @Autowired
     private AchieveService achieveService;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private LetterMapper letterMapper;
+    @Autowired
+    private DiaryMapper diaryMapper;
+    @Autowired
+    private SpittingGroovesMapper spittingGroovesMapper;
+
     @Test
     void contextLoads() throws IllegalAccessException {
-        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-        objectNode.put("letter",1);
-        System.out.println(objectNode.toPrettyString());
-        objectNode.put("letter",2);
-        System.out.println(objectNode.toPrettyString());
 
     }
-
 
     @Test
     void fileUtilTest() {
@@ -57,11 +69,12 @@ class TellApplicationTests {
     }
 
     @Test
-    void getAllStamp(){
+    void getAllStamp() {
 
     }
+
     @Test
-    void getAllAchieve(){
+    void getAllAchieve() {
     }
 
 }

@@ -30,4 +30,6 @@ public class ProfileVo {
     private String avatarUrl;
     @ApiModelProperty("内容数量")
     private List<ProfileNumVo> models;
+    @ApiModelProperty("回信数量")
+    private Integer backLetter;
 }

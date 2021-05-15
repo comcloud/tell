@@ -1,10 +1,8 @@
 package com.yundingxi.tell.util;
 
-import com.yundingxi.tell.bean.vo.ProfileVo;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 响应结果生成工具

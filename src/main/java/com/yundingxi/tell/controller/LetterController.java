@@ -88,7 +88,6 @@ public class LetterController {
     @GetMapping("/getAllUnreadLetter")
     public Result<List<UnreadMessageDto>> getAllUnreadLetter(@Parameter(description = "open id", required = true) String openId
             , @Parameter(description = "表示从多少页开始") @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum) {
-
         return ResultGenerator.genSuccessResult(letterService.getAllUnreadLetter(openId, pageNum));
     }
 

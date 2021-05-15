@@ -189,6 +189,10 @@
           and sg.`state` != #{state} and sg.open_id = #{openId}
         group by sg.id
     </select>
+    <select id="selectAllSpit" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+        select *
+        from spitting_grooves
+    </select>
 
 
 </mapper>
