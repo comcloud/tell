@@ -2,6 +2,7 @@ package com.yundingxi.tell.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Stamp;
+import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.service.StampService;
@@ -48,5 +49,10 @@ public class StampServiceImpl implements StampService {
             }
         });
         return ResultGenerator.genSuccessResult(stampVos);
+    }
+
+    @Override
+    public void insertDefaultStamp(List<UserStamp> userStampList) {
+        userStampList.forEach(userStamp -> stampMapper.insertSingleNewUserStamp(userStamp));
     }
 }
