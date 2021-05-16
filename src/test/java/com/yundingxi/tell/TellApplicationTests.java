@@ -1,12 +1,9 @@
 package com.yundingxi.tell;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.*;
@@ -20,12 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TellApplicationTests {
@@ -58,7 +51,56 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
+//        updateRedis();
+    }
+    void updateRedis(){
+        long start = System.currentTimeMillis();
+        List<String> allOpenId = userMapper.selectAllOpenId();
+        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        allOpenId.forEach(openId -> {
+            del(openId);
+            List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
+            if("oUGur5GBjDC1B3z-brhlM9rL3Gnc".equals(openId)){
+                System.out.println("letterList.size() = " + letterList.size());
+            }
+            System.out.println("letterList.size() = " + letterList.size());
+            letterList.forEach(letter -> {
+                update(openId,"letter",sdf.format(letter.getReleaseTime()));
+            });
+            List<Diarys> diarysList = diaryMapper.selectAllDiaryForSelfNonState(openId,"4");
+            if("oUGur5GBjDC1B3z-brhlM9rL3Gnc".equals(openId)){
+                System.out.println("diarysList.size() = " + diarysList.size());
+            }
+            diarysList.forEach(diarys -> {
+                update(openId,"diary",sdf.format(diarys.getDate()));
+            });
+            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId,"4");
+            if("oUGur5GBjDC1B3z-brhlM9rL3Gnc".equals(openId)){
+                System.out.println("spittingGrooves.size() = " + spittingGrooves.size());
+            }
+            spittingGrooves.forEach(spittingGrooves1 -> {
+                update(openId,"spit",sdf.format(spittingGrooves1.getDate()));
+            });
 
+        });
+        System.out.println((System.currentTimeMillis() - start) + "ms");
+    }
+    void update(String openId,String eventType,String time){
+        String timelineKey = "user:" + openId + ":timeline";
+        @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
+        TimelineVo timelineVo = new TimelineVo(openId, eventType, time);
+        if (timelineVoLinkedList == null) {
+            LinkedList<TimelineVo> timelineVos = new LinkedList<>();
+            timelineVos.addFirst(timelineVo);
+            redisUtil.set(timelineKey, timelineVos);
+        } else {
+            timelineVoLinkedList.addFirst(timelineVo);
+            redisUtil.set(timelineKey, timelineVoLinkedList);
+        }
+    }
+    void del(String openId){
+        String timelineKey = "user:" + openId + ":timeline";
+        redisUtil.del(timelineKey);
     }
 
     @Test

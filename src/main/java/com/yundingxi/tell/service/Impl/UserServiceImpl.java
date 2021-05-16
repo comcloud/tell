@@ -5,7 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.common.enums.RedisEnums;
@@ -126,9 +125,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<ProfileVo> getProfile(String openId) {
-        int numOfLetter = userMapper.selectNumberOfLetterByOpenId(openId);
-        int numOfDiary = userMapper.selectNumberOfDiaryByOpenId(openId);
-        int numOfSpit = userMapper.selectNumberOfLetSpitByOpenId(openId);
+        int numOfLetter = letterMapper.selectNumberOfLetterByOpenIdNonState(openId,4);
+        int numOfDiary = diaryMapper.selectNumberOfDiaryByOpenIdNonState(openId,"4");
+        int numOfSpit = spittingGroovesMapper.selectNumberOfLetSpitByOpenIdNonState(openId,"4");
         int numOfReply = letterMapper.selectNumberOfReply(openId);
         User user = userMapper.selectNameAndUrlByOpenId(openId);
         if (user == null) {
@@ -174,7 +173,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result<HistoryDataVo> getDataOfHistory(String openId) {
         HistoryDataVo data = new HistoryDataVo();
-        List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId, 4);
+        List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenIdAndNonState(openId, "4");
         List<SpittingGroovesVo> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId, "4");
         data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));

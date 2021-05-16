@@ -53,11 +53,5 @@ public interface UserMapper {
 
     String selectPenNameByOpenId(@Param("openId") String openId);
 
-    int selectNumberOfLetterByOpenId(@Param("openId") String openId);
-
-    int selectNumberOfDiaryByOpenId(@Param("openId") String openId);
-
-    int selectNumberOfLetSpitByOpenId(@Param("openId") String openId);
-
     User selectNameAndUrlByOpenId(@Param("openId") String openId);
 }

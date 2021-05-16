@@ -73,7 +73,7 @@
         from letter
         where id = #{letterId}
     </select>
-    <select id="selectAllLetterByOpenId" resultType="com.yundingxi.tell.bean.entity.Letter">
+    <select id="selectAllLetterByOpenIdNonState" resultType="com.yundingxi.tell.bean.entity.Letter">
         select *
         from letter
         where open_id = #{openId}
@@ -83,5 +83,12 @@
         select count(*)
         from reply
         where open_id=#{openId}
+    </select>
+
+    <select id="selectNumberOfLetterByOpenIdNonState" resultType="java.lang.Integer">
+        select count(*)
+        from letter
+        where open_id=#{openId}
+          and state!=#{state}
     </select>
 </mapper>
