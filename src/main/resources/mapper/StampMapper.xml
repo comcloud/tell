@@ -23,7 +23,7 @@
 				where   us.open_id=#{openId})
     </select>
     <select id="selectAllStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
-        select * from stamp;
+        select * from stamp
     </select>
 
     <insert id="insertSingleNewUserStamp">

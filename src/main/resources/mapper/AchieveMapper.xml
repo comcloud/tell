@@ -28,7 +28,7 @@
 
     <select id="selectAllAchieveType" resultType="java.lang.String">
         select achieve_type
-        from achieve;
+        from achieve
     </select>
     <select id="selectAllTaskIdByAchieveTypeAndLocation" resultType="java.lang.String">
         select task_id
@@ -49,6 +49,6 @@
         where id=#{id}
     </select>
     <select id="selectAllAchieve" resultType="com.yundingxi.tell.bean.entity.Achieve">
-        select * from achieve;
+        select * from achieve
     </select>
 </mapper>
