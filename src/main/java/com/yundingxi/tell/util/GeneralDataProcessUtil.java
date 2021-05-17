@@ -5,13 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.dto.IndexLetterDto;
+import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
-import com.yundingxi.tell.bean.vo.DiaryReturnVo;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
-import com.yundingxi.tell.bean.vo.SubMessageVo;
-import com.yundingxi.tell.bean.vo.TimelineVo;
+import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.mapper.UserMapper;
 
 import java.lang.reflect.Field;
@@ -118,7 +116,13 @@ public class GeneralDataProcessUtil {
         }
     }
 
-    private static final String SUB_MESSAGE_URL_POST = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send";
+    private static final OpenIdVo OPEN_ID_VO = (OpenIdVo) SpringUtil.getBean("openIdVo");
+
+    public static String getAccessToken(){
+        String url = WeChatEnum.SUB_MESSAGE_ACCESS_TOKEN_URL_GET.getValue() +"&appid="+OPEN_ID_VO.getAppid()+"&secret="+OPEN_ID_VO.getSecret();
+        String subInternetMessage = HttpUtil.get(url);
+        return JsonUtil.parseJson(subInternetMessage).findPath("access_token").toString();
+    }
 
     public static void subMessage(SubMessageVo subMessageVo){
         JSONObject objectNode = new JSONObject();
@@ -127,9 +131,8 @@ public class GeneralDataProcessUtil {
         objectNode.put("page",subMessageVo.getPage());
         objectNode.put("data",subMessageVo.getData());
         objectNode.put("miniprogram_state",subMessageVo.getMiniProgramState());
-        System.out.println(objectNode.toString());
-        String post = HttpUtil.post(SUB_MESSAGE_URL_POST+"?access_token="+subMessageVo.getAccessToken().replace("\"",""), objectNode.toString());
-        System.out.println("post = " + post);
+        String post = HttpUtil.post(WeChatEnum.SUB_MESSAGE_SEND_URL_POST.getValue()+"?access_token="+subMessageVo.getAccessToken().replace("\"",""), objectNode.toString());
+
     }
 
 //    void updateRedis(){

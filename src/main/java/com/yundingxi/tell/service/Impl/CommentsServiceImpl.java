@@ -1,9 +1,8 @@
 package com.yundingxi.tell.service.Impl;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.*;
@@ -13,7 +12,9 @@ import com.yundingxi.tell.mapper.SpittingGroovesMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.CommentsService;
 import com.yundingxi.tell.service.SpittingGroovesService;
-import com.yundingxi.tell.util.*;
+import com.yundingxi.tell.util.GeneralDataProcessUtil;
+import com.yundingxi.tell.util.Result;
+import com.yundingxi.tell.util.ResultGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,21 +61,23 @@ public class CommentsServiceImpl implements CommentsService {
              *  - 组成JSON串data
              *  - 固定miniProgram_state="trial"，体验版
              * */
-            String accessToken = InternetUtil.getAccessToken();
+            String accessToken = GeneralDataProcessUtil.getAccessToken();
             String id = entity.getSgId();
             SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(id);
+            String title = spittingGrooves.getTitle();
+            String content = entity.getContent();
             SubMessageDataVo data = new SubMessageDataVo(
-                    new SubMessageValueVo(entity.getContent())
-            ,new SubMessageValueVo(userMapper.selectPenNameByOpenId(entity.getOpenId()))
-            ,new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-            ,new SubMessageValueVo(spittingGrooves.getTitle().length() >=20 ? spittingGrooves.getTitle().substring(0,20):spittingGrooves.getTitle()));
+                    new SubMessageValueVo(content.length() >= 20 ? content.substring(0, 20) : content)
+                    , new SubMessageValueVo(userMapper.selectPenNameByOpenId(entity.getOpenId()))
+                    , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                    , new SubMessageValueVo(title.length() >= 20 ? title.substring(0, 20) : title));
             GeneralDataProcessUtil.subMessage(new SubMessageVo(
                     accessToken
                     , spittingGrooves.getOpenId()
-                    , "mghtoN9x1YBMmyWg9RtBlt8-XxHxMvEo8eAtHIazD34"
-                    , "packageWriteLetter/pages/complaintletter/complaintletter?id=" + id
+                    , WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID.getValue()
+                    , WeChatEnum.SUB_MESSAGE_COMMENT_PAGE.getValue() + "?id=" + id
                     , data
-                    , "trial"));
+                    , WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION.getValue()));
             log.info("===================> {} 数据保存成功", entity);
             //未读消息+1
             UserVo userVoo = userMapper.getUserVoById(entity.getOpenId());

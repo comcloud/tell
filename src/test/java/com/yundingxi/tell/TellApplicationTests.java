@@ -1,8 +1,9 @@
 package com.yundingxi.tell;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yundingxi.tell.bean.entity.*;
+import com.yundingxi.tell.bean.entity.Diarys;
+import com.yundingxi.tell.bean.entity.Letter;
+import com.yundingxi.tell.bean.entity.SpittingGrooves;
+import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -12,15 +13,11 @@ import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
-import com.yundingxi.tell.util.InternetUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -54,16 +51,6 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
-        String accessToken = InternetUtil.getAccessToken();
-        String id = "2c96f764-07c2-477b-8241-b559dcf69ccc";
-        SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(id);
-        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-        objectNode.putObject("thing2").put("value", "内容");
-        objectNode.putObject("thing3").put("value", userMapper.selectPenNameByOpenId("open id"));
-        objectNode.putObject("thing4").put("value", LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        objectNode.putObject("thing10").put("value", spittingGrooves.getTitle());
-
-        System.out.println(objectNode.toPrettyString());
     }
 
     void giveEveryoneToDefaultStamp() {
