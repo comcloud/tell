@@ -33,9 +33,14 @@ public class GeneralDataProcessUtil {
 
     private static final UserMapper USER_MAPPER = (UserMapper) SpringUtil.getBean("userMapper");
 
+    public static void configLetterDataFromSingleObject(Letter letter, String openId, List<IndexLetterDto> letterDtoList) {
+        letterDtoList.add(new IndexLetterDto(letter.getContent().length() > 50 ? letter.getContent().substring(0, 50) : letter.getContent(), letter.getOpenId(), letter.getId(), letter.getPenName(), letter.getStampUrl(), USER_MAPPER.selectPenNameByOpenId(openId), letter.getReleaseTime()));
+    }
+
+
     public static List<IndexLetterDto> configLetterDataFromList(List<Letter> letterList, String openId) {
         List<IndexLetterDto> letterDtoList = new ArrayList<>();
-        letterList.forEach(letter -> letterDtoList.add(new IndexLetterDto(letter.getContent().length() > 50 ? letter.getContent().substring(0, 50) : letter.getContent(), letter.getOpenId(), letter.getId(), letter.getPenName(), letter.getStampUrl(), USER_MAPPER.selectPenNameByOpenId(openId), letter.getReleaseTime())));
+        letterList.forEach(letter -> configLetterDataFromSingleObject(letter, openId, letterDtoList));
         return letterDtoList;
     }
 

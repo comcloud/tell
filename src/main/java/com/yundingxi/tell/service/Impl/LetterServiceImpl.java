@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -106,35 +107,77 @@ public class LetterServiceImpl implements LetterService {
     /**
      * 这里需要做出优化
      * 1.优先根据标签获取信件，如何判断
-     *  - "letter:" + openId + ":letter_info"这个缓存中存储每个用户的喜爱(此用户回信的信标签)的对应标签数量
-     *     获取两则占比最大的，然后这个表示最有可能推荐的，查询数据库时候按照标签进行分组，获取数据库中这个标签组中两片信件
-     *  - 如果上述条件获取的是两封，然后这个是获取其他不相干类型的一封，以来扩展
-     *  - 都要保证时间优先，也就是优先把最新的信件推送出去
-     *  - 随机获取，不可以排着数据库获取，而是随机获取，当然每日不可以重复
+     * - "letter:" + openId + ":letter_info"这个缓存中存储每个用户的喜爱(此用户回信的信标签)的对应标签数量
+     * 获取两则占比最大的，然后这个表示最有可能推荐的，查询数据库时候按照标签进行分组，获取数据库中这个标签组中两片信件
+     * - 如果上述条件获取的是两封，然后这个是获取其他不相干类型的一封，以来扩展
+     * - 都要保证时间优先，也就是优先把最新的信件推送出去
+     * - 随机获取，不可以排着数据库获取，而是随机获取，当然每日不可以重复
+     * <p>
+     * 1.从缓存中获取已经读取到的位置数据，用来判断数据库中的数据是否是最新的
      *
-     *  1.从缓存中获取已经读取到的位置数据，用来判断数据库中的数据是否是最新的
      * @param openId 用户 open id
      * @return 获取三封信件
      */
-//    @SneakyThrows
-//    public List<IndexLetterDto> getRandomLettersAndLatestByOpenId(String openId){
-//        return CompletableFuture.supplyAsync(() ->{
-//            /*
-//            * 1.从缓存获取此用户已经获取到的信件信息，包括获取时间、上次获取到的随机三个数值，以及上次访问数据库时候的信件数量(最开始时候默认为0)
-//            *  - 读取数据库信件数量，如果大于上次访问的信件数量说明数据已经更新，那么读取最新的最后十条数据然后获取返回，不大于的话直接返回为null，
-//            *    随机生成3个数字nextInt(10)，用来从最新的十篇中抽取三篇
-//            * */
-//            String letterInfoKey = "letter:" + openId + ":letter_info";
-//            String letterInfoJson = (String) redisUtil.get(letterInfoKey);
-//            JsonNode letterInfoJsonNode = JsonUtil.parseJson(letterInfoJson);
-//            String lastDate = letterInfoJsonNode.findPath("date").toString();
-//            String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//            if(lastDate.equals(currentDate)){
-////                return letterInfoJsonNode.findPath("IndexLetterDtoList");
-//
-//            }
-//        }).get();
-//    }
+    @SneakyThrows
+    @Override
+    public List<IndexLetterDto> getRandomLettersAndLatestByOpenId(String openId) {
+        return CompletableFuture.supplyAsync(() -> {
+            /*
+             * 1.从缓存获取此用户已经获取到的信件信息，包括获取时间、上次访问数据库时候的信件数量(最开始时候默认为0)
+             *  - 读取数据库信件数量，如果大于上次访问的信件数量说明数据已经更新，那么读取最新的最后十条数据然后获取返回，不大于的话直接返回为null，
+             *    随机生成3个数字nextInt(10)，用来从最新的十篇中抽取三篇
+             * */
+            String listKey = "IndexLetterDtoList";
+            String letterInfoKey = "letter:" + openId + ":letter_info";
+            Object o = redisUtil.get(letterInfoKey);
+            if (o == null) {
+                setLetterInitInfoByOpenId(openId);
+            }
+            String letterInfoJson = (String) redisUtil.get(letterInfoKey);
+            JsonNode letterInfoJsonNode = JsonUtil.parseJson(letterInfoJson);
+            String lastDate = letterInfoJsonNode.findPath("date").toString();
+            String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            int totalNumber = letterMapper.selectTotalNumber(openId);
+            int visibleNumber = letterInfoJsonNode.findPath("visitNumber").asInt();
+            if (lastDate.equals(currentDate) || visibleNumber >= totalNumber) {
+                //此时说明当天已经访问过，所以不用再查询而是直接从缓存中获取,数据库数量大于缓存中的数量表示数据库已经更新，则重新获取，否则也不再重新获取，而是直接获取缓存中的信件数据
+                @SuppressWarnings("unchecked") List<IndexLetterDto> indexLetterDtoList = (List<IndexLetterDto>) JSONObject.parse(letterInfoJsonNode.findPath(listKey).toString());
+                return indexLetterDtoList;
+            } else {
+                //此时需要从数据库获取内容,随机三个数字获取数据库中最新的十条数据中的位置
+                Random random = new Random();
+                int gainLetterNumber = 3;
+                List<IndexLetterDto> indexLetterDtoList = new ArrayList<>(3);
+                //用来解决生成随机数重复问题，以防出现相同的信件，当然如果数据库的数据比较少，进行randomInt+1之后还是会有重复
+                int num1 = 0, num2 = 0;
+                for (int i = 0; i < gainLetterNumber; i++) {
+                    int randomInt = random.nextInt(10);
+                    if (i == 1 && randomInt == num1) {
+                        randomInt = randomInt + 1;
+                        num2 = randomInt;
+                    } else if (i == 2 && randomInt == num1 || randomInt == num2) {
+                        //此时就是如果是第三次获取，出现的随机数是之前出现过的某一种都要进行+1操作
+                        randomInt = randomInt + 1;
+                        if(randomInt == num1 || randomInt == num2){
+                            //这个是做一个双重判断，以防+1后等于下个值
+                            randomInt = randomInt + 1;
+                        }
+                    } else {
+                        num1 = randomInt;
+                    }
+                    Letter letter = letterMapper.selectRandomLatestLetter(openId, randomInt % totalNumber, 1, 1);
+                    GeneralDataProcessUtil.configLetterDataFromSingleObject(letter, openId, indexLetterDtoList);
+                }
+                //更新redis缓存内容
+                JSONObject object = new JSONObject();
+                object.put("visitNumber", totalNumber);
+                object.put("date", currentDate);
+                object.put(listKey, indexLetterDtoList);
+                redisUtil.set(letterInfoKey, object.toJSONString());
+                return indexLetterDtoList;
+            }
+        }).get();
+    }
 
     /**
      * @param openId 用户 open id
@@ -251,19 +294,21 @@ public class LetterServiceImpl implements LetterService {
         return BeanUtil.toBean(letter, LetterDto.class);
     }
 
+    @SneakyThrows
     @Override
     public void setLetterInitInfoByOpenId(String openId) {
         CompletableFuture.runAsync(() -> {
-            Object o = redisUtil.get("letter:" + openId + ":letter_info");
+            String letterInfoKey = "letter:" + openId + ":letter_info";
+            Object o = redisUtil.get(letterInfoKey);
             if (o != null) {
                 return;
             }
             ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
-            String date = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            letterInfo.put("date", date);
-            letterInfo.put("letter_count_location", 0);
-            redisUtil.set("letter:" + openId + ":letter_info", letterInfo.toPrettyString());
-        });
+            letterInfo.put("date", "");
+            letterInfo.put("visitNumber", 0);
+            letterInfo.put("IndexLetterDtoList", "null");
+            redisUtil.set(letterInfoKey, letterInfo.toPrettyString());
+        }).get();
     }
 
     @SneakyThrows
