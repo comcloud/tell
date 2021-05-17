@@ -103,6 +103,44 @@ public class LetterServiceImpl implements LetterService {
         }).get();
     }
 
+    /**
+     * 这里需要做出优化
+     * 1.优先根据标签获取信件，如何判断
+     *  - "letter:" + openId + ":letter_info"这个缓存中存储每个用户的喜爱(此用户回信的信标签)的对应标签数量
+     *     获取两则占比最大的，然后这个表示最有可能推荐的，查询数据库时候按照标签进行分组，获取数据库中这个标签组中两片信件
+     *  - 如果上述条件获取的是两封，然后这个是获取其他不相干类型的一封，以来扩展
+     *  - 都要保证时间优先，也就是优先把最新的信件推送出去
+     *  - 随机获取，不可以排着数据库获取，而是随机获取，当然每日不可以重复
+     *
+     *  1.从缓存中获取已经读取到的位置数据，用来判断数据库中的数据是否是最新的
+     * @param openId 用户 open id
+     * @return 获取三封信件
+     */
+//    @SneakyThrows
+//    public List<IndexLetterDto> getRandomLettersAndLatestByOpenId(String openId){
+//        return CompletableFuture.supplyAsync(() ->{
+//            /*
+//            * 1.从缓存获取此用户已经获取到的信件信息，包括获取时间、上次获取到的随机三个数值，以及上次访问数据库时候的信件数量(最开始时候默认为0)
+//            *  - 读取数据库信件数量，如果大于上次访问的信件数量说明数据已经更新，那么读取最新的最后十条数据然后获取返回，不大于的话直接返回为null，
+//            *    随机生成3个数字nextInt(10)，用来从最新的十篇中抽取三篇
+//            * */
+//            String letterInfoKey = "letter:" + openId + ":letter_info";
+//            String letterInfoJson = (String) redisUtil.get(letterInfoKey);
+//            JsonNode letterInfoJsonNode = JsonUtil.parseJson(letterInfoJson);
+//            String lastDate = letterInfoJsonNode.findPath("date").toString();
+//            String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//            if(lastDate.equals(currentDate)){
+////                return letterInfoJsonNode.findPath("IndexLetterDtoList");
+//
+//            }
+//        }).get();
+//    }
+
+    /**
+     * @param openId 用户 open id
+     * @return 顺序获取三封信件
+     */
+    @Deprecated
     @SneakyThrows
     @Override
     public List<IndexLetterDto> getLettersByOpenId(String openId) {
