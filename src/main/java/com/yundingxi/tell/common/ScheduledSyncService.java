@@ -20,9 +20,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ScheduledSyncService {
 
     /**
+     * 暂时不使用websocket发送信件，而是客户端轮询主动拉取
      * 定时发送未发送的信件
      */
-    @Scheduled(cron = "0/100 * * * * ?")
+    @Deprecated
+//    @Scheduled(cron = "0/100 * * * * ?")
     public void executeReplyLetterFromQueue(){
         BlockingDeque<LetterWebsocketVo> waitQueue = SendMailUtil.getWAIT_QUEUE();
         if(waitQueue.isEmpty()) {

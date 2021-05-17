@@ -169,7 +169,8 @@ public class CustomListenerConfig {
         Integer stampNum = (Integer) redisUtil.get(stampUnreadNumKey);
         redisUtil.set(achieveUnreadNumKey, achieveNum == null ? 1 : achieveNum + 1);
         //奖励是一些邮票内容
-        if (achieveType.equals(achieve.getAchieveType())) {
+        String nonAchieveType = "stamp";
+        if (nonAchieveType.equals(achieve.getAchieveType())) {
             //此时是邮票成就，不再奖励邮票
             return;
         }
@@ -228,6 +229,11 @@ public class CustomListenerConfig {
         redisUtil.set("listener:" + openId + ":offset", objectNode.toPrettyString());
     }
 
+    /**
+     * 更新redis中时间线的缓存
+     * @param openId open id
+     * @param eventType 事件类型
+     */
     private void updateRedisTimeline(String openId, String eventType) {
         String timelineKey = "user:" + openId + ":timeline";
         @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);

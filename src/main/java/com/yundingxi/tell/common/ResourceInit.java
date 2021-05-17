@@ -6,16 +6,12 @@ import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
-import com.yundingxi.tell.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -45,7 +41,7 @@ public class ResourceInit implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         log.info("项目初始化");
         List<String> openIdList = userMapper.selectAllOpenId();
         letterInitForEveryOpenId(openIdList);
@@ -65,9 +61,7 @@ public class ResourceInit implements CommandLineRunner {
             String offsetKey = "listener:" + openId + ":offset";
             if (redisUtil.get(offsetKey) == null) {
                 ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-                achieveTypeList.forEach(achieveType -> {
-                    objectNode.put(achieveType, 1);
-                });
+                achieveTypeList.forEach(achieveType -> objectNode.put(achieveType, 0));
                 redisUtil.set(offsetKey, objectNode.toPrettyString());
             }
         });

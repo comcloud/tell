@@ -48,8 +48,6 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
-//        updateRedis();
-        giveEveryoneToDefaultStamp();
     }
 
     void giveEveryoneToDefaultStamp() {
