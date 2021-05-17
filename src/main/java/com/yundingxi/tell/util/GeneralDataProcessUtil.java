@@ -1,11 +1,16 @@
 package com.yundingxi.tell.util;
 
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.dto.IndexLetterDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
+import com.yundingxi.tell.bean.vo.SubMessageVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.mapper.UserMapper;
 
@@ -111,6 +116,20 @@ public class GeneralDataProcessUtil {
         } else {
             field.set(e, str.substring(0, 45));
         }
+    }
+
+    private static final String SUB_MESSAGE_URL_POST = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send";
+
+    public static void subMessage(SubMessageVo subMessageVo){
+        JSONObject objectNode = new JSONObject();
+        objectNode.put("touser",subMessageVo.getTouser());
+        objectNode.put("template_id",subMessageVo.getTemplateId());
+        objectNode.put("page",subMessageVo.getPage());
+        objectNode.put("data",subMessageVo.getData());
+        objectNode.put("miniprogram_state",subMessageVo.getMiniProgramState());
+        System.out.println(objectNode.toString());
+        String post = HttpUtil.post(SUB_MESSAGE_URL_POST+"?access_token="+subMessageVo.getAccessToken().replace("\"",""), objectNode.toString());
+        System.out.println("post = " + post);
     }
 
 //    void updateRedis(){

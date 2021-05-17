@@ -68,4 +68,6 @@ public interface SpittingGroovesMapper {
     List<SpittingGrooves> selectAllSpitForSelfNonState(@Param("openId") String openId,@Param("state") String state);
 
     int selectNumberOfLetSpitByOpenIdNonState(@Param("openId") String openId,@Param("state") String state);
+
+    SpittingGrooves selectOpenIdAndTitleById(@Param("id") String id);
 }
