@@ -31,12 +31,14 @@ public interface LetterService {
      */
     List<UnreadMessageDto> putUnreadMessage(String openId);
 
+    List<IndexLetterDto> getRandomLettersAndLatestByOpenId(String openId);
     /**
      * 获取信件要保证以下结果
      * 只要不是当天登陆，都会进行重新获取三封信
      * @param openId 用户 open id
      * @return 结果集
      */
+    @Deprecated
     List<IndexLetterDto> getLettersByOpenId(String openId);
 
     void saveReplyFromSenderToRecipient(Reply reply);

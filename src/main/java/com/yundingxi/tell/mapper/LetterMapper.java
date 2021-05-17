@@ -52,4 +52,8 @@ public interface LetterMapper {
     int selectNumberOfReply(@Param("openId") String openId);
 
     int selectNumberOfLetterByOpenIdNonState(@Param("openId") String openId, @Param("state") int state);
+
+    Letter selectRandomLatestLetter(@Param("openId") String openId,@Param("offset") int offset,@Param("number") int number,@Param("state") int state);
+
+    int selectTotalNumber(@Param("openId") String openId);
 }

@@ -74,7 +74,7 @@ public class LetterController {
     @Cacheable("letters")
     @Operation(description = "获取信件的用户的open id", summary = "获取三封信件")
     public Result<List<IndexLetterDto>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
+        return ResultGenerator.genSuccessResult(letterService.getRandomLettersAndLatestByOpenId(openId));
     }
 
     @Operation(description = "获取未读内容的数量,这里设定1为回信，2为评论，3为成就，4为邮票", summary = "获取未读内容数量")
