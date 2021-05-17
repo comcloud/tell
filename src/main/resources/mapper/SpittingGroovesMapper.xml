@@ -201,6 +201,11 @@
         where open_id = #{openId}
           and state!=#{state}
     </select>
+    <select id="selectOpenIdAndTitleById" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+        select open_id,title
+        from spitting_grooves
+        where id=#{id}
+    </select>
 
 
 </mapper>
