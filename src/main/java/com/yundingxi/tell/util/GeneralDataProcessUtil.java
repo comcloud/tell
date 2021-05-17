@@ -15,6 +15,9 @@ import com.yundingxi.tell.mapper.UserMapper;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,10 +95,10 @@ public class GeneralDataProcessUtil {
     }
 
     /**
-     * @param obj 给定字符串
+     * @param obj   给定字符串
      * @param field 要设置的域对象
-     * @param e 要给设置的对象
-     * @param <E> 元素范型
+     * @param e     要给设置的对象
+     * @param <E>   元素范型
      * @throws IllegalAccessException 不合法访问异常
      */
     private static <E> void configReasonableString(Object obj, Field field, E e) throws IllegalAccessException {
@@ -118,20 +121,39 @@ public class GeneralDataProcessUtil {
 
     private static final OpenIdVo OPEN_ID_VO = (OpenIdVo) SpringUtil.getBean("openIdVo");
 
-    public static String getAccessToken(){
-        String url = WeChatEnum.SUB_MESSAGE_ACCESS_TOKEN_URL_GET.getValue() +"&appid="+OPEN_ID_VO.getAppid()+"&secret="+OPEN_ID_VO.getSecret();
+    public static String getAccessToken() {
+        String url = WeChatEnum.SUB_MESSAGE_ACCESS_TOKEN_URL_GET.getValue() + "&appid=" + OPEN_ID_VO.getAppid() + "&secret=" + OPEN_ID_VO.getSecret();
         String subInternetMessage = HttpUtil.get(url);
         return JsonUtil.parseJson(subInternetMessage).findPath("access_token").toString();
     }
 
-    public static void subMessage(SubMessageVo subMessageVo){
+    /**
+     * @param parentId    被通知文章内容的id
+     * @param showContent 服务通知展示的内容
+     * @param title       服务通知展示的标题
+     * @param nickname    服务通知展示的发送者昵称
+     * @param touser      接受者open id
+     * @param templateId  模版ID
+     * @param page        服务通知进入的小程序页面
+     * @param version     小程序版本
+     */
+    public static void subMessage(String parentId
+            , String showContent, String title, String nickname
+            , String touser
+            , WeChatEnum templateId, WeChatEnum page, WeChatEnum version) {
+        String accessToken = GeneralDataProcessUtil.getAccessToken();
+        SubMessageDataVo data = new SubMessageDataVo(
+                new SubMessageValueVo(showContent.length() >= 20 ? showContent.substring(0, 20) : showContent)
+                , new SubMessageValueVo(nickname)
+                , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                , new SubMessageValueVo(title.length() >= 20 ? title.substring(0, 20) : title));
         JSONObject objectNode = new JSONObject();
-        objectNode.put("touser",subMessageVo.getTouser());
-        objectNode.put("template_id",subMessageVo.getTemplateId());
-        objectNode.put("page",subMessageVo.getPage());
-        objectNode.put("data",subMessageVo.getData());
-        objectNode.put("miniprogram_state",subMessageVo.getMiniProgramState());
-        String post = HttpUtil.post(WeChatEnum.SUB_MESSAGE_SEND_URL_POST.getValue()+"?access_token="+subMessageVo.getAccessToken().replace("\"",""), objectNode.toString());
+        objectNode.put("touser", touser);
+        objectNode.put("template_id", templateId.getValue());
+        objectNode.put("page", page.getValue() + "?id=" + parentId);
+        objectNode.put("data", data);
+        objectNode.put("miniprogram_state", version.getValue());
+        String post = HttpUtil.post(WeChatEnum.SUB_MESSAGE_SEND_URL_POST.getValue() + "?access_token=" + accessToken.replace("\"", ""), objectNode.toString());
 
     }
 

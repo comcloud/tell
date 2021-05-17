@@ -52,32 +52,8 @@ public class CommentsServiceImpl implements CommentsService {
     public Result<String> insert(Comments entity) {
         int state = commentsMapper.insert(entity);
         if (state > 0) {
-            /*
-             * 订阅消息
-             *  - 获取access_token
-             *  - 获取接受者open id,通过被回复吐槽的id来查询
-             *  - template_id 固定模版ID
-             *  - 拼接页面要跳转的page，需要page?id=id
-             *  - 组成JSON串data
-             *  - 固定miniProgram_state="trial"，体验版
-             * */
-            String accessToken = GeneralDataProcessUtil.getAccessToken();
-            String id = entity.getSgId();
-            SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(id);
-            String title = spittingGrooves.getTitle();
-            String content = entity.getContent();
-            SubMessageDataVo data = new SubMessageDataVo(
-                    new SubMessageValueVo(content.length() >= 20 ? content.substring(0, 20) : content)
-                    , new SubMessageValueVo(userMapper.selectPenNameByOpenId(entity.getOpenId()))
-                    , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                    , new SubMessageValueVo(title.length() >= 20 ? title.substring(0, 20) : title));
-            GeneralDataProcessUtil.subMessage(new SubMessageVo(
-                    accessToken
-                    , spittingGrooves.getOpenId()
-                    , WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID.getValue()
-                    , WeChatEnum.SUB_MESSAGE_COMMENT_PAGE.getValue() + "?id=" + id
-                    , data
-                    , WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION.getValue()));
+            SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(entity.getSgId());
+            GeneralDataProcessUtil.subMessage(entity.getSgId(), entity.getContent(), spittingGrooves.getTitle(), userMapper.selectPenNameByOpenId(spittingGrooves.getOpenId()), entity.getOpenId(), WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_COMMENT_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
             log.info("===================> {} 数据保存成功", entity);
             //未读消息+1
             UserVo userVoo = userMapper.getUserVoById(entity.getOpenId());
