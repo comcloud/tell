@@ -20,9 +20,9 @@ public interface LetterService {
     /**
      * 保存单封信件到数据库，返回信件的送达时间
      * @param letterStorageDto 信件对象
-     * @return 返回信件的送达时间
+     * @return 返回信件的保存情况
      */
-    String saveSingleLetter(LetterStorageDto letterStorageDto);
+    int saveSingleLetter(LetterStorageDto letterStorageDto);
 
     /**
      * 拉取用户唯独的消息

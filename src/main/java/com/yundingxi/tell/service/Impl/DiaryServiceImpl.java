@@ -35,15 +35,16 @@ public class DiaryServiceImpl implements DiaryService {
     @Autowired
     private DiaryMapper diaryMapper;
 
+    @SneakyThrows
     @Override
-    public void saveDiary(DiaryDto diaryDto) {
-        CompletableFuture.runAsync(() -> {
+    public int saveDiary(DiaryDto diaryDto) {
+        return CompletableFuture.supplyAsync(() -> {
             Diarys diarys = BeanUtil.toBean(diaryDto, Diarys.class);
             diarys.setId(UUID.randomUUID().toString());
             diarys.setDate(new Date());
             diarys.setNumber("0");
-            diaryMapper.insertSingleDiary(diarys);
-        });
+            return diaryMapper.insertSingleDiary(diarys);
+        }).get();
     }
 
     @Override

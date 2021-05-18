@@ -69,7 +69,7 @@ public class LetterServiceImpl implements LetterService {
 
     @SneakyThrows
     @Override
-    public String saveSingleLetter(LetterStorageDto letterStorageDto) {
+    public int saveSingleLetter(LetterStorageDto letterStorageDto) {
         Integer result = CompletableFuture.supplyAsync(() -> {
             Letter letter = new Letter(UUID.randomUUID().toString()
                     , letterStorageDto.getStampUrl()
@@ -85,7 +85,7 @@ public class LetterServiceImpl implements LetterService {
             }
             return letterMapper.insertSingleLetter(letter);
         }).get();
-        return result == 1 ? JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString() : "保存信件失败";
+        return result;
         //459399250
         //166799250
     }
@@ -252,7 +252,7 @@ public class LetterServiceImpl implements LetterService {
             }
         }).get();
 
-        return "";
+        return "success";
     }
 
     @SneakyThrows

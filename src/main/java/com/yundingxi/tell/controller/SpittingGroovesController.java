@@ -44,8 +44,12 @@ public class SpittingGroovesController {
     @PostMapping("/insert")
     @Operation(description = "保存/发布 吐槽", summary = "保存/发布 吐槽")
     Result<String> insert(@Parameter(description = "吐槽类对象", required = true) SpittingGrooves entity) {
-        publisher.publishEvent(new PublishSpitEvent(this, entity));
-        return spittingGroovesService.insert(entity);
+        Result<String> result = spittingGroovesService.insert(entity);
+        String success = "发布成功";
+        if (success.equals(result.getMessage())) {
+            publisher.publishEvent(new PublishSpitEvent(this, entity));
+        }
+        return result;
     }
 
     /**

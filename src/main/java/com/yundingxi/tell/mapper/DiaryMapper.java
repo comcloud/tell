@@ -15,7 +15,7 @@ import java.util.List;
 
 @Mapper
 public interface DiaryMapper {
-    void insertSingleDiary(@Param("diarys") Diarys diarys);
+    int insertSingleDiary(@Param("diarys") Diarys diarys);
 
     void deleteSingleDiaryById(@Param("id") String id);
 
