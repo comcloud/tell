@@ -146,11 +146,11 @@
         <result column="number" property="number"/>
     </resultMap>
     <select id="selectAllVo" resultMap="SpittingGroovesVoMap">
-        select sg.id, sg.title, sg.avatar_url, sg.pen_name, count(*)  number
-        from spitting_grooves sg,
+        select sg.id, sg.title, sg.avatar_url, sg.pen_name, (select count(*) from comments where sg_id=sg.id) number
+        from spitting_grooves sg LEFT join
              comments c
-        where sg.id = c.sg_id
-          and sg.`state` = 1
+        on sg.id = c.sg_id
+        where  sg.`state` = 1
         group by sg.id
     </select>
 
