@@ -104,8 +104,9 @@
     </resultMap>
     <select id="selectAll" resultMap="CommentsVoMap">
         select  c.`content`, c.`date`,u.pen_name,u.avatar_url
-        from comments  c, `user`  u where  c.open_id=u.open_id
-        and c.sg_id=#{id} and c.state!=4
+        from comments  c left join  `user`  u on  c.open_id=u.open_id
+        where
+        c.sg_id=#{id} and c.state!=4
 
     </select>
 
