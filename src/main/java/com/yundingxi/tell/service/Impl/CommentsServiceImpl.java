@@ -58,7 +58,7 @@ public class CommentsServiceImpl implements CommentsService {
         if (state > 0) {
             EXECUTOR.execute(() -> {
                 SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(entity.getSgId());
-                GeneralDataProcessUtil.subMessage(entity.getSgId(), entity.getContent(), spittingGrooves.getTitle(), userMapper.selectPenNameByOpenId(entity.getOpenId()), spittingGrooves.getOpenId(), WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_COMMENT_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
+                GeneralDataProcessUtil.subMessage(entity.getSgId(), entity.getContent(), "", userMapper.selectPenNameByOpenId(entity.getOpenId()), spittingGrooves.getOpenId(), WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_COMMENT_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
             });
             log.info("===================> {} 数据保存成功", entity);
             //未读消息+1

@@ -10,14 +10,13 @@
         <result column="number" jdbcType="VARCHAR" property="number"/>
         <result column="state" jdbcType="VARCHAR" property="state"/>
         <result column="open_id" jdbcType="VARCHAR" property="openId"/>
-        <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
         <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
     </resultMap>
     <!--表中所有属性-->
     <sql id="Base_Column_List">
         `id`
-        , `content`, `date`, `number`, `state`, `open_id`,title,avatar_url,pen_name
+        , `content`, `date`, `number`, `state`, `open_id`,avatar_url,pen_name
     </sql>
     <!--添加属性sql-->
     <sql id="Base_Insert_Key_List">
@@ -39,9 +38,7 @@
         <if test="entity.openId != null">
             open_id,
         </if>
-        <if test="entity.title != null">
-            title,
-        </if>
+
         <if test="entity.avatarUrl != null">
             avatar_url,
         </if>
@@ -71,9 +68,7 @@
         <if test="entity.openId != null">
             #{entity.openId},
         </if>
-        <if test="entity.title != null">
-            #{entity.title},
-        </if>
+
         <if test="entity.avatarUrl != null">
             #{entity.avatarUrl},
         </if>
@@ -100,9 +95,6 @@
         </if>
         <if test="entity.openId != null">
             open_id=#{entity.openId},
-        </if>
-        <if test="entity.title != null">
-            title=#{entity.title},
         </if>
         <if test="entity.avatarUrl != null">
             avatar_url=#{entity.avatarUrl},
@@ -139,14 +131,14 @@
     </update>
     <resultMap id="SpittingGroovesVoMap" type="com.yundingxi.tell.bean.vo.SpittingGroovesVo">
         <id column="id" jdbcType="VARCHAR" property="id"/>
-        <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
+        <result column="content" jdbcType="VARCHAR" property="title"/>
         <!--        <result column="number" jdbcType="VARCHAR" property="number"/>-->
         <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
         <result column="number" property="number"/>
     </resultMap>
     <select id="selectAllVo" resultMap="SpittingGroovesVoMap">
-        select sg.id, sg.title, sg.avatar_url, sg.pen_name, (select count(*) from comments where sg_id=sg.id) number
+        select sg.id, sg.avatar_url, sg.pen_name,sg.content ,(select count(*) from comments where sg_id=sg.id) number
         from spitting_grooves sg LEFT join
              comments c
         on sg.id = c.sg_id
@@ -182,7 +174,7 @@
     </select>
 
     <select id="selectAllSpitByOpenId" resultMap="SpittingGroovesVoMap">
-        select sg.id, sg.title, sg.avatar_url, sg.pen_name, count(*) - 1 number
+        select sg.id, sg.avatar_url, sg.pen_name, count(*) - 1 number
         from spitting_grooves sg,
              comments c
         where sg.id = c.sg_id
@@ -202,7 +194,7 @@
           and state!=#{state}
     </select>
     <select id="selectOpenIdAndTitleById" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
-        select open_id,title
+        select open_id
         from spitting_grooves
         where id=#{id}
     </select>

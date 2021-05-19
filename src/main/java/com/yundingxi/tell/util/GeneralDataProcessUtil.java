@@ -52,7 +52,7 @@ public class GeneralDataProcessUtil {
 
     public static List<SpittingGroovesVo> configSpitDataFromList(List<SpittingGrooves> spittingGroovesList) {
         List<SpittingGroovesVo> spittingGroovesVoList = new ArrayList<>();
-        spittingGroovesList.forEach(spit -> spittingGroovesVoList.add(new SpittingGroovesVo(spit.getId(), spit.getNumber(), spit.getTitle(), spit.getAvatarUrl(), spit.getPenName())));
+        spittingGroovesList.forEach(spit -> spittingGroovesVoList.add(new SpittingGroovesVo(spit.getId(), spit.getNumber(), "", spit.getAvatarUrl(), spit.getPenName())));
         return spittingGroovesVoList;
     }
 

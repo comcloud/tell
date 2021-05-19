@@ -1,6 +1,7 @@
 package com.yundingxi.tell.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.sun.xml.bind.v2.model.core.ID;
 import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
@@ -16,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -40,7 +43,6 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     private CommentsService commentsService;
     @Override
     public Result<String> insert(SpittingGrooves entity) {
-        entity.subStringTitle();
         int state = spittingGroovesMapper.insert(entity);
         if (state>0){
             log.info("===================> {} 数据保存成功" ,entity);
@@ -80,9 +82,34 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
         String orderBy = "sg.date desc";
         PageHelper.startPage(pageNum,10,orderBy);
         List<SpittingGroovesVo> spittingGroovesVos = spittingGroovesMapper.selectAllVo();
-        PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
+        for (SpittingGroovesVo spittingGroovesVo : spittingGroovesVos) {
+            System.out.println(spittingGroovesVo.getTitle());
+        }
+        spittingGroovesVos.forEach(this::subStringTitle);
+        System.out.println("=============================================================");
+        for (SpittingGroovesVo spittingGroovesVo : spittingGroovesVos) {
+            System.out.println(spittingGroovesVo.getTitle());
+        }
+            PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
         log.info("=====================> 查询数据成功 {}","");
         return ResultGenerator.genSuccessResult(pageInfo);
+    }
+    public void subStringTitle(SpittingGroovesVo spittingGroovesVo) {
+        String title = spittingGroovesVo.getTitle();
+        int i = title.indexOf("。", 20);
+
+        if (i==-1){
+            if (title.length()>31){
+                spittingGroovesVo.setTitle(title.substring(0, 25));
+            }
+        }else {
+            if (i > 20 && i <= 30) {
+                spittingGroovesVo.setTitle(title.substring(0, i));
+            } else if(i>30){
+                spittingGroovesVo.setTitle(title.substring(0, 25));
+            }
+        }
+
     }
 
     @Override
