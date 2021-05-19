@@ -59,7 +59,7 @@ public class SpittingGrooves implements Serializable {
         if (i > INDEX && i <= END) {
             this.title = content.substring(0, i);
         } else {
-            this.title = content.substring(0,30 );
+            this.title = content.substring(0,END);
         }
     }
 
