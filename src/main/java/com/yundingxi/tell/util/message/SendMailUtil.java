@@ -48,7 +48,7 @@ public class SendMailUtil {
     private static final ReentrantLock LOCK = new ReentrantLock();
 
     @Getter
-    private static final ThreadPoolExecutor POOL = CenterThreadPool.getWebsocketPool();
+    private static final ThreadPoolExecutor POOL = CenterThreadPool.getWEBSOCKET_POOL();
 
     /**
      * 何时会新建一个线程来发送邮件

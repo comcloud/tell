@@ -21,6 +21,10 @@ public enum WeChatEnum {
      */
     SUB_MESSAGE_COMMENT_TEMPLATE_ID("mghtoN9x1YBMmyWg9RtBlt8-XxHxMvEo8eAtHIazD34"),
     /**
+     * 订阅消息回信ID
+     */
+    SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID("vuxCjKVvzbUWW1iHbMkSCmsBrpXWkXFPJ81S8nVWJdw"),
+    /**
      * 订阅消息评论跳转page
      */
     SUB_MESSAGE_COMMENT_PAGE("packageWriteLetter/pages/complaintletter/complaintletter"),
@@ -39,7 +43,7 @@ public enum WeChatEnum {
 
     private final String value;
 
-    WeChatEnum(String value){
+    WeChatEnum(String value) {
         this.value = value;
     }
 

@@ -44,7 +44,7 @@ public class CustomListenerConfig {
     /**
      * 线程池
      */
-    private final ThreadPoolExecutor EXECUTOR = CenterThreadPool.getStampAchievePool();
+    private final ThreadPoolExecutor EXECUTOR = CenterThreadPool.getSTAMP_ACHIEVE_POOL();
 
     private final RedisUtil redisUtil;
 
