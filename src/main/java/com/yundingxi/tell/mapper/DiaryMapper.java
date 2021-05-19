@@ -30,4 +30,8 @@ public interface DiaryMapper {
     List<String> selectAllDiaryContentByOpenId(@Param("openId") String openId,@Param("currentTime") String currentTime);
 
     int updateDiaryState(@Param("id") String id, @Param("state") int state);
+
+    int selectNumberOfDiaryByOpenIdNonState(@Param("openId") String openId,@Param("state") String state);
+
+    List<Diarys> selectAllDiaryForSelfNonState(@Param("openId") String openId,@Param("state") String state);
 }

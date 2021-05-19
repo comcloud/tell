@@ -20,15 +20,14 @@ import java.util.Date;
 public class AchieveVo {
     @ApiModelProperty(value = "成就图片地址")
     private String achieveUrl;
-
     @ApiModelProperty(value = "成就描述")
     private String achieveDesc;
-
     @ApiModelProperty(value = "成就版本")
     private String achieveEdition;
     @ApiModelProperty(value = "成就名")
     private String achieveName;
     @ApiModelProperty(value = "成就名")
     private Date obtainTime;
-
+    @ApiModelProperty(value = "是否解锁")
+    private boolean isLock;
 }

@@ -45,4 +45,16 @@
         where open_id = #{openId}
           and to_days(#{currentTime}) &gt;= to_days(date)
     </select>
+
+    <select id="selectNumberOfDiaryByOpenIdNonState" resultType="java.lang.Integer">
+        select count(*)
+        from diarys
+        where open_id = #{openId}
+          and state!=#{state}
+    </select>
+    <select id="selectAllDiaryForSelfNonState" resultType="com.yundingxi.tell.bean.entity.Diarys">
+        select id, content, date, number, pen_name, weather, state, open_id
+        from diarys
+        where state != #{state} and open_id=#{openId};
+    </select>
 </mapper>

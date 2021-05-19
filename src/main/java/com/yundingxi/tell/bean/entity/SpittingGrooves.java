@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author houdongsheng
@@ -21,15 +21,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="SpittingGrooves对象", description="吐槽")
+@ApiModel(value = "SpittingGrooves对象", description = "吐槽")
 public class SpittingGrooves implements Serializable {
-    private final Integer INDEX=20;
-    private final Integer END=30;
+    private final Integer INDEX = 20;
+    private final Integer END = 30;
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "吐槽id")
-    private String id= UUID.randomUUID().toString();
+    private String id = UUID.randomUUID().toString();
 
     @ApiModelProperty(value = "内容")
     private String content;
@@ -53,13 +53,13 @@ public class SpittingGrooves implements Serializable {
     private String penName;
 
 
-    public void subStringTitle(){
-        this.date=new Date();
+    public void subStringTitle() {
+        this.date = new Date();
         int i = this.content.indexOf("。", INDEX);
-        if (i>INDEX&&i<=END){
-            this.title= content.substring(0,i);
-        }else {
-            this.title=content.substring(0, 25);
+        if (i > INDEX && i <= END) {
+            this.title = content.substring(0, i);
+        } else {
+            this.title = content;
         }
     }
 

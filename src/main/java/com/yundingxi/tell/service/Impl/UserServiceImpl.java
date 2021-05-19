@@ -1,17 +1,17 @@
 package com.yundingxi.tell.service.Impl;
 
 import cn.hutool.http.HttpUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.entity.User;
+import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.DiaryMapper;
-import com.yundingxi.tell.mapper.LetterMapper;
-import com.yundingxi.tell.mapper.SpittingGroovesMapper;
-import com.yundingxi.tell.mapper.UserMapper;
+import com.yundingxi.tell.mapper.*;
+import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.*;
 import lombok.SneakyThrows;
@@ -39,16 +39,18 @@ public class UserServiceImpl implements UserService {
     private final LetterMapper letterMapper;
     private final DiaryMapper diaryMapper;
     private final SpittingGroovesMapper spittingGroovesMapper;
+    private final StampMapper stampMapper;
 
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper, RedisUtil redisUtil, OpenIdVo openIdVo, LetterMapper letterMapper, DiaryMapper diaryMapper, SpittingGroovesMapper spittingGroovesMapper) {
+    public UserServiceImpl(UserMapper userMapper, RedisUtil redisUtil, OpenIdVo openIdVo, LetterMapper letterMapper, DiaryMapper diaryMapper, SpittingGroovesMapper spittingGroovesMapper, StampMapper stampMapper) {
         this.userMapper = userMapper;
         this.redisUtil = redisUtil;
         this.openIdVo = openIdVo;
         this.letterMapper = letterMapper;
         this.diaryMapper = diaryMapper;
         this.spittingGroovesMapper = spittingGroovesMapper;
+        this.stampMapper = stampMapper;
     }
 
     @Override
@@ -58,6 +60,10 @@ public class UserServiceImpl implements UserService {
             user.setRegistrationTime(new Date());
             Integer integer = userMapper.insertUser(user);
             if (integer > 0) {
+                //给新用户插入默认邮票
+                List<UserStamp> userStampList = getUserStamps(user.getOpenId());
+                userStampList.forEach(stampMapper::insertSingleNewUserStamp);
+
                 return ResultGenerator.genSuccessResult("用户注册成功!!!!!");
             } else {
                 return ResultGenerator.genFailResult("注册失败！！！");
@@ -65,6 +71,20 @@ public class UserServiceImpl implements UserService {
         } catch (DuplicateKeyException e) {
             return ResultGenerator.genSuccessResult("已经注册过了!!!!!");
         }
+    }
+
+    /**获取用户默认邮票列表*/
+    private List<UserStamp> getUserStamps(String openId) {
+        //每个人赋予默认邮票
+        List<String> strings = Arrays.asList("bd7d85e5-042e-40a1-8a3f-bf045028df40",
+                "01942371-da36-40e5-8fd9-327acba861b9",
+                "4a1c478f-bfa2-4339-902e-82653bdc178e",
+                "fb0c3579-d942-4de4-93df-19e59a48e9f7");
+        List<UserStamp> userStampList = new ArrayList<>(4);
+        strings.forEach(s1 -> {
+            userStampList.add(new UserStamp(UUID.randomUUID().toString(), s1, openId, "1", new Date(), 1));
+        });
+        return userStampList;
     }
 
     @Override
@@ -124,12 +144,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<ProfileVo> getProfile(String openId) {
-        int numOfLetter = userMapper.selectNumberOfLetterByOpenId(openId);
-        int numOfDiary = userMapper.selectNumberOfDiaryByOpenId(openId);
-        int numOfSpit = userMapper.selectNumberOfLetSpitByOpenId(openId);
+        int numOfLetter = letterMapper.selectNumberOfLetterByOpenIdNonState(openId, 4);
+        int numOfDiary = diaryMapper.selectNumberOfDiaryByOpenIdNonState(openId, "4");
+        int numOfSpit = spittingGroovesMapper.selectNumberOfLetSpitByOpenIdNonState(openId, "4");
+        int numOfReply = letterMapper.selectNumberOfReply(openId);
         User user = userMapper.selectNameAndUrlByOpenId(openId);
         if (user == null) {
-            return ResultGenerator.genFailResult(new ProfileVo("用户不存在", null, null));
+            return ResultGenerator.genFailResult(new ProfileVo("用户不存在", null, null, null));
         }
 
         List<ProfileNumVo> numVos = new ArrayList<>();
@@ -137,7 +158,7 @@ public class UserServiceImpl implements UserService {
         numVos.add(new ProfileNumVo("日记", numOfDiary));
         numVos.add(new ProfileNumVo("吐槽", numOfSpit));
 
-        ProfileVo profileVo = new ProfileVo(user.getPenName(), user.getAvatarUrl(), numVos);
+        ProfileVo profileVo = new ProfileVo(user.getPenName(), user.getAvatarUrl(), numVos, numOfReply);
         return ResultGenerator.genSuccessResult(profileVo);
     }
 
@@ -171,7 +192,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result<HistoryDataVo> getDataOfHistory(String openId) {
         HistoryDataVo data = new HistoryDataVo();
-        List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId, 4);
+        List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenIdAndNonState(openId, "4");
         List<SpittingGroovesVo> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId, "4");
         data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));
@@ -184,6 +205,13 @@ public class UserServiceImpl implements UserService {
     public Result<Object> getOfficialMsg(String openId) {
         Object o = redisUtil.leftPop(RedisEnums.USER_OFFICIAL_MSG.getRedisKey() + ":" + openId);
         return ResultGenerator.genSuccessResult(o);
+    }
+
+    @Override
+    public Result<PageInfo<TimelineVo>> getTimelineData(String openId, Integer pageNum) {
+        @SuppressWarnings("unchecked") List<TimelineVo> timelineVoList = (List<TimelineVo>) redisUtil.get("user:" + openId + ":timeline");
+        PageHelper.startPage(pageNum, 15);
+        return ResultGenerator.genSuccessResult(new PageInfo<>(timelineVoList == null ? new LinkedList<>() : timelineVoList));
     }
 
     /**

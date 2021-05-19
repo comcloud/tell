@@ -2,8 +2,10 @@ package com.yundingxi.tell.bean.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,8 @@ import java.util.UUID;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
 @Accessors(chain = true)
 @ApiModel(value="Stamp对象", description="")
 public class Stamp{

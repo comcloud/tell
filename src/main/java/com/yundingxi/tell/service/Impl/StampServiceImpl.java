@@ -1,8 +1,8 @@
 package com.yundingxi.tell.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.corba.se.impl.orbutil.StackImpl;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
+import com.yundingxi.tell.bean.entity.Stamp;
+import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.service.StampService;
@@ -11,11 +11,10 @@ import com.yundingxi.tell.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * <p>
@@ -30,15 +29,30 @@ public class StampServiceImpl implements StampService {
     @Autowired
     private StampMapper stampMapper;
     @Override
+    public Result<List<StampVo>> getAllStamp(String openId) {
+        List<StampVo> stampVoList = stampMapper.haveListMeAll(openId);
+        return ResultGenerator.genSuccessResult(stampVoList);
+    }
 
-    public Result getAllStamp(String openId, Integer pageNum) {
-        String orderBy = "us.obtain_time desc";
-        PageHelper.startPage(pageNum,10,orderBy);
-        List<StampVo> stampVo = stampMapper.haveListMeAll(openId);
-        PageInfo<StampVo> pageInfo = new PageInfo<>(stampVo);
-        Map<String, Object> stringObjectHashMap = new HashMap<>(2);
-        stringObjectHashMap.put("have",pageInfo);
-        stringObjectHashMap.put("notHave",stampMapper.notHaveListMeAll(openId));
-        return ResultGenerator.genSuccessResult(stringObjectHashMap);
+    @Override
+    public Result<List<StampVo>> getAllStampForAlbum(String openId) {
+        List<StampVo> stampVos = new ArrayList<>();
+        List<Stamp> stampList = stampMapper.selectAllStamp();
+        stampList.forEach(stamp -> stampVos.add(new StampVo(stamp.getStampUrl(),stamp.getStampName(),stamp.getStampSeries(),stamp.getStampNumber(),stamp.getStampDesc(),stamp.getStampEdition(),null,true)));
+        List<StampVo> haveStampVoList = stampMapper.haveListMeAll(openId);
+        stampVos.forEach(stampVo -> {
+            for (StampVo vo : haveStampVoList) {
+                if(vo.getStampNumber().equals(stampVo.getStampNumber())){
+                    stampVo.setLock(false);
+                    break;
+                }
+            }
+        });
+        return ResultGenerator.genSuccessResult(stampVos);
+    }
+
+    @Override
+    public void insertDefaultStamp(List<UserStamp> userStampList) {
+        userStampList.forEach(userStamp -> stampMapper.insertSingleNewUserStamp(userStamp));
     }
 }

@@ -13,6 +13,7 @@ import com.yundingxi.tell.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +32,20 @@ public class AchieveServiceImpl  implements AchieveService {
     private AchieveMapper achieveMapper;
 
     @Override
-    public Result getAllAchieve(String openId, Integer pageNum) {
-        String orderBy = "ua.obtain_time desc";
-        PageHelper.startPage(pageNum,10,orderBy);
-        List<AchieveVo> stampVo = achieveMapper.haveListMeAll(openId);
-        PageInfo<AchieveVo> pageInfo = new PageInfo<>(stampVo);
-        Map<String, Object> stringObjectHashMap = new HashMap<>(2);
-        stringObjectHashMap.put("have",pageInfo);
-        stringObjectHashMap.put("notHave",achieveMapper.notHaveListMeAll(openId));
-        return ResultGenerator.genSuccessResult(stringObjectHashMap);
+    public Result<List<AchieveVo>> getAllAchieve(String openId) {
+        List<AchieveVo> achieveVos = new ArrayList<>();
+        List<Achieve> allAchieveList = achieveMapper.selectAllAchieve();
+        allAchieveList.forEach(achieve -> achieveVos.add(new AchieveVo(achieve.getAchieveUrl(),achieve.getAchieveDesc(),achieve.getAchieveEdition(),achieve.getAchieveName(),null,true)));
+        List<AchieveVo> haveAchieveList = achieveMapper.haveListMeAll(openId);
+        achieveVos.forEach(achieveVo -> {
+            for (AchieveVo haveAchieve : haveAchieveList) {
+                if(haveAchieve.getAchieveName().equals(achieveVo.getAchieveName())){
+                    achieveVo.setLock(false);
+                    achieveVo.setObtainTime(haveAchieve.getObtainTime());
+                    break;
+                }
+            }
+        });
+        return ResultGenerator.genSuccessResult(achieveVos);
     }
 }

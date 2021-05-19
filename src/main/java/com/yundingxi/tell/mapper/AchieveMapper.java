@@ -34,4 +34,7 @@ public interface AchieveMapper {
     String selectAchieveRewardById(@Param("id") String id);
 
     int insertSingleNewUserAchieve(@Param("userAchieve") UserAchieve userAchieve);
+
+    List<Achieve> selectAllAchieve();
+
 }

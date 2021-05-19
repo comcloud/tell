@@ -7,7 +7,6 @@
         <result column="stamp_number"   property="stampNumber"/>
         <result column="stamp_desc"   property="stampDesc"/>
         <result column="stamp_edition"   property="stampEdition"/>
-        <result column="stamp_series"   property="stampUrl"/>
         <result column="stamp_series"   property="stampSeries"/>
         <result column="obtain_time" property="obtainTime"/>
     </resultMap>
@@ -22,6 +21,9 @@
 				on us.stamp_id=s.id
 
 				where   us.open_id=#{openId})
+    </select>
+    <select id="selectAllStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
+        select * from stamp
     </select>
 
     <insert id="insertSingleNewUserStamp">
