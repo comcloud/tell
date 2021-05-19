@@ -69,7 +69,7 @@ public class LetterServiceImpl implements LetterService {
 
     @SneakyThrows
     @Override
-    public String saveSingleLetter(LetterStorageDto letterStorageDto) {
+    public int saveSingleLetter(LetterStorageDto letterStorageDto) {
         Integer result = CompletableFuture.supplyAsync(() -> {
             Letter letter = new Letter(UUID.randomUUID().toString()
                     , letterStorageDto.getStampUrl()
@@ -85,7 +85,7 @@ public class LetterServiceImpl implements LetterService {
             }
             return letterMapper.insertSingleLetter(letter);
         }).get();
-        return result == 1 ? JsonNodeFactory.instance.objectNode().put("arrivalTime", 0).toPrettyString() : "保存信件失败";
+        return result;
         //459399250
         //166799250
     }
@@ -137,7 +137,7 @@ public class LetterServiceImpl implements LetterService {
             JsonNode letterInfoJsonNode = JsonUtil.parseJson(letterInfoJson);
             String lastDate = letterInfoJsonNode.findPath("date").toString();
             String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            int totalNumber = letterMapper.selectTotalNumber(openId);
+            int totalNumber = letterMapper.selectTotalNumberNonSelf(openId);
             int visibleNumber = letterInfoJsonNode.findPath("visitNumber").asInt();
             if (lastDate.equals(currentDate) || visibleNumber >= totalNumber) {
                 //此时说明当天已经访问过，所以不用再查询而是直接从缓存中获取,数据库数量大于缓存中的数量表示数据库已经更新，则重新获取，否则也不再重新获取，而是直接获取缓存中的信件数据
@@ -149,21 +149,21 @@ public class LetterServiceImpl implements LetterService {
                 int gainLetterNumber = 3;
                 List<IndexLetterDto> indexLetterDtoList = new ArrayList<>(3);
                 //用来解决生成随机数重复问题，以防出现相同的信件，当然如果数据库的数据比较少，进行randomInt+1之后还是会有重复
-                int num1 = 0, num2 = 0;
+                int firstRandomNumber = 0, secondRandomNumber = 0;
                 for (int i = 0; i < gainLetterNumber; i++) {
                     int randomInt = random.nextInt(10);
-                    if (i == 1 && randomInt == num1) {
-                        randomInt = randomInt + 1;
-                        num2 = randomInt;
-                    } else if (i == 2 && randomInt == num1 || randomInt == num2) {
+                    if (i == 1 && randomInt == firstRandomNumber) {
+                        secondRandomNumber = randomInt;
+                        randomInt = spinRandomNumberToNonExist(randomInt, firstRandomNumber);
+                    } else if (i == 2 && (randomInt == firstRandomNumber || randomInt == secondRandomNumber)) {
                         //此时就是如果是第三次获取，出现的随机数是之前出现过的某一种都要进行+1操作
-                        randomInt = randomInt + 1;
-                        if(randomInt == num1 || randomInt == num2){
+                        randomInt = spinRandomNumberToNonExist(randomInt, firstRandomNumber, secondRandomNumber);
+                        if (randomInt == firstRandomNumber || randomInt == secondRandomNumber) {
                             //这个是做一个双重判断，以防+1后等于下个值
                             randomInt = randomInt + 1;
                         }
                     } else {
-                        num1 = randomInt;
+                        firstRandomNumber = randomInt;
                     }
                     Letter letter = letterMapper.selectRandomLatestLetter(openId, randomInt % totalNumber, 1, 1);
                     GeneralDataProcessUtil.configLetterDataFromSingleObject(letter, openId, indexLetterDtoList);
@@ -177,6 +177,29 @@ public class LetterServiceImpl implements LetterService {
                 return indexLetterDtoList;
             }
         }).get();
+    }
+
+    /**
+     * 自旋直到产生没有出现过的数字
+     *
+     * @param randomNumber  随机数字
+     * @param alreadyNumber 已经出现的数字
+     * @return 自旋数字结果
+     */
+    private int spinRandomNumberToNonExist(int randomNumber, int... alreadyNumber) {
+        for (; ; ) {
+            //成功标记，表示着是否已经不存在重复数字
+            boolean successFlag = true;
+            for (int num : alreadyNumber) {
+                if (num == randomNumber) {
+                    randomNumber = (randomNumber + 1) % 10;
+                    successFlag = false;
+                }
+            }
+            if (successFlag) {
+                return randomNumber;
+            }
+        }
     }
 
     /**
@@ -252,7 +275,7 @@ public class LetterServiceImpl implements LetterService {
             }
         }).get();
 
-        return "";
+        return "success";
     }
 
     @SneakyThrows

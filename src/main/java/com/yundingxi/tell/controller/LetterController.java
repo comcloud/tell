@@ -51,17 +51,25 @@ public class LetterController {
     @PostMapping(value = "/send")
     @Operation(description = "保存信件", summary = "保存信件")
     public Result<String> saveLetter(@Parameter(description = "信件对象", required = true) LetterStorageDto letterStorageDto) {
-        publisher.publishEvent(new PublishLetterEvent(this, letterStorageDto));
-        return ResultGenerator.genSuccessResult(letterService.saveSingleLetter(letterStorageDto));
+        if (letterService.saveSingleLetter(letterStorageDto) == 1) {
+            publisher.publishEvent(new PublishLetterEvent(this, letterStorageDto));
+            return ResultGenerator.genSuccessResult("保存信件成功");
+        }else{
+            return ResultGenerator.genFailResult("保存信件失败");
+        }
     }
 
     @PostMapping(value = "/reply")
     @Operation(description = "给对方回复信件", summary = "回复信件")
     public Result<String> replyLetter(@Parameter(description = "回复信件的对象", required = true)
                                               LetterReplyDto letterReplyDto) {
-        String result = letterService.replyLetter(letterReplyDto);
-        publisher.publishEvent(new PublishReplyEvent(this,letterReplyDto));
-        return ResultGenerator.genSuccessResult(result);
+        String successResult = "success";
+        if (successResult.equals(letterService.replyLetter(letterReplyDto))) {
+            publisher.publishEvent(new PublishReplyEvent(this, letterReplyDto));
+            return ResultGenerator.genSuccessResult(successResult);
+        } else {
+            return ResultGenerator.genFailResult("回复失败");
+        }
     }
 
     /**

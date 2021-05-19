@@ -6,7 +6,6 @@ import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @version v1.0
@@ -19,8 +18,9 @@ public interface DiaryService {
     /**
      * 保存用户的日记对象
      * @param diaryDto 一个日记
+     * @return
      */
-    void saveDiary(DiaryDto diaryDto);
+    int saveDiary(DiaryDto diaryDto);
 
     void removeDiaryById(String id);
 

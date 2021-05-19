@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.StampVo;
+import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.util.Result;
@@ -28,8 +29,13 @@ import java.util.Map;
 public class StampServiceImpl implements StampService {
     @Autowired
     private StampMapper stampMapper;
+    @Autowired
+    private RedisUtil redisUtil;
     @Override
     public Result<List<StampVo>> getAllStamp(String openId) {
+        //将redis缓存中存储未读邮票个数清为0
+        String stampUnreadNumKey = "listener:" + openId + ":stamp_unread_num";
+        redisUtil.set(stampUnreadNumKey,0);
         List<StampVo> stampVoList = stampMapper.haveListMeAll(openId);
         return ResultGenerator.genSuccessResult(stampVoList);
     }

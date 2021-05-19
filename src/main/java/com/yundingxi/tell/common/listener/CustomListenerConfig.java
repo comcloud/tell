@@ -1,6 +1,5 @@
 package com.yundingxi.tell.common.listener;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.UserAchieve;
@@ -194,25 +193,9 @@ public class CustomListenerConfig {
      */
     private String combineSqlString(String openId, Achieve achieve) {
         //此时根据json串拼接sql语句查询是否满足条件
-        String taskJson = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
-        JsonNode parseJson = JsonUtil.parseJson(taskJson);
-        String from = parseJson.get("from").toString();
-        String count = parseJson.get("count").toString();
-        JsonNode condition = parseJson.get("condition");
-        String symbol = parseJson.get("symbol").toString();
-        StringBuilder sqlBuilder = new StringBuilder("select count(*) ");
-        sqlBuilder.append(symbol).append(count).append(" from ").append(from).append(" where 1=1");
-        if (condition.isArray()) {
-            String conditionOpenId = "open_id";
-            condition.forEach(con -> {
-                String conStr = con.toString();
-                if (conStr.contains(conditionOpenId)) {
-                    conStr = conStr.replace("#{}", "'" + openId + "'");
-                }
-                sqlBuilder.append(" and ").append(conStr);
-            });
-        }
-        return sqlBuilder.toString().replace("\"", "");
+        String taskSql = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
+        taskSql = taskSql.replace("\"","").replace("#{openId}","'" + openId + "'");
+        return taskSql;
     }
 
     /**

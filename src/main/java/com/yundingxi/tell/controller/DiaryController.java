@@ -44,9 +44,13 @@ public class DiaryController {
     @PostMapping("/saveDiary")
     public Result<Object> saveDiary(@Parameter(description = "日记对象")
                                             DiaryDto diaryDto) {
-        diaryService.saveDiary(diaryDto);
-        publisher.publishEvent(new PublishDiaryEvent(this, diaryDto));
-        return ResultGenerator.genSuccessResult();
+        if (diaryService.saveDiary(diaryDto) == 1) {
+            publisher.publishEvent(new PublishDiaryEvent(this, diaryDto));
+            return ResultGenerator.genSuccessResult();
+        }else{
+            return ResultGenerator.genFailResult(new Object());
+        }
+
     }
 
     @Operation(description = "更改日记状态为删除状态，起到删除的作用", summary = "删除日记")

@@ -99,7 +99,7 @@
             limit #{number} offset #{offset}
 
     </select>
-    <select id="selectTotalNumber" resultType="java.lang.Integer">
-        select count(*) from letter where open_id=#{openId}
+    <select id="selectTotalNumberNonSelf" resultType="java.lang.Integer">
+        select count(*) from letter where open_id!=#{openId}
     </select>
 </mapper>
