@@ -6,6 +6,7 @@ import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.*;
+import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.CommentsMapper;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
@@ -25,6 +26,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author hds
@@ -48,12 +50,16 @@ public class CommentsServiceImpl implements CommentsService {
     @Autowired
     private UserMapper userMapper;
 
+    private final ThreadPoolExecutor EXECUTOR = CenterThreadPool.getBUSINESS_POOL();
+
     @Override
     public Result<String> insert(Comments entity) {
         int state = commentsMapper.insert(entity);
         if (state > 0) {
-            SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(entity.getSgId());
-            GeneralDataProcessUtil.subMessage(entity.getSgId(), entity.getContent(), spittingGrooves.getTitle(), userMapper.selectPenNameByOpenId(spittingGrooves.getOpenId()), spittingGrooves.getOpenId(), WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_COMMENT_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
+            EXECUTOR.execute(() -> {
+                SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(entity.getSgId());
+                GeneralDataProcessUtil.subMessage(entity.getSgId(), entity.getContent(), spittingGrooves.getTitle(), userMapper.selectPenNameByOpenId(spittingGrooves.getOpenId()), spittingGrooves.getOpenId(), WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_COMMENT_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
+            });
             log.info("===================> {} 数据保存成功", entity);
             //未读消息+1
             UserVo userVoo = userMapper.getUserVoById(entity.getOpenId());

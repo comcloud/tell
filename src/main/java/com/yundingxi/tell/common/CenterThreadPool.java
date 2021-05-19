@@ -2,7 +2,9 @@ package com.yundingxi.tell.common;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.yundingxi.tell.util.message.ResizableCapacityLinkedBlockingQueue;
+import lombok.Getter;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -28,12 +30,20 @@ public class CenterThreadPool {
     /**
      * websocket线程池
      */
+    @Getter
     private static final ThreadPoolExecutor WEBSOCKET_POOL;
 
     /**
      * 邮票成就线程池
      */
+    @Getter
     private static final ThreadPoolExecutor STAMP_ACHIEVE_POOL;
+
+    /**
+     * 业务处理线程池
+     */
+    @Getter
+    private static final ThreadPoolExecutor BUSINESS_POOL;
 
     static {
         // 自定义线程工厂
@@ -53,13 +63,13 @@ public class CenterThreadPool {
                 , threadFactoryBuilder.setNameFormat("stamp_achieve-pool-%d").build()
                 , new ThreadPoolExecutor.CallerRunsPolicy());
 
-    }
+        BUSINESS_POOL = new ThreadPoolExecutor(CORE_POOL_SIZE
+                , MAX_POOL_SIZE
+                , KEEP_ALIVE_TIME
+                , TimeUnit.SECONDS
+                , new ResizableCapacityLinkedBlockingQueue<>(100)
+                , threadFactoryBuilder.setNameFormat("business-pool-%d").build()
+                , new ThreadPoolExecutor.CallerRunsPolicy());
 
-    public static ThreadPoolExecutor getWebsocketPool() {
-        return WEBSOCKET_POOL;
-    }
-
-    public static ThreadPoolExecutor getStampAchievePool() {
-        return STAMP_ACHIEVE_POOL;
     }
 }
