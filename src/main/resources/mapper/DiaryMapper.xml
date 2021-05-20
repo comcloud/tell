@@ -28,6 +28,7 @@
         from diarys
         where open_id = #{openId}
             and state!=#{state}
+        order by date desc;
     </select>
     <select id="selectSingleDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
         select *

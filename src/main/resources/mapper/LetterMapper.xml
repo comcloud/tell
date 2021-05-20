@@ -78,6 +78,7 @@
         from letter
         where open_id = #{openId}
           and state!=#{state}
+        order by release_time desc;
     </select>
     <select id="selectNumberOfReply" resultType="java.lang.Integer">
         select count(*)
