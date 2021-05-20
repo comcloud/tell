@@ -94,6 +94,7 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
         log.info("=====================> 查询数据成功 {}","");
         return ResultGenerator.genSuccessResult(pageInfo);
     }
+    @Override
     public void subStringTitle(SpittingGroovesVo spittingGroovesVo) {
         String title = spittingGroovesVo.getTitle();
         int i = title.indexOf("。", 20);

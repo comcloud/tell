@@ -61,4 +61,6 @@ public interface SpittingGroovesService{
 
     String getOpenIdBySID(@Param("id") String id);
 
+
+    void subStringTitle(SpittingGroovesVo spittingGroovesVo);
 }

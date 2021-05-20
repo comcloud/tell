@@ -3,14 +3,12 @@ package com.yundingxi.tell.service.Impl;
 import cn.hutool.http.HttpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.entity.Diarys;
-import com.yundingxi.tell.bean.entity.Letter;
-import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.bean.entity.UserStamp;
+import com.yundingxi.tell.bean.entity.*;
 import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.*;
+import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.*;
@@ -41,9 +39,11 @@ public class UserServiceImpl implements UserService {
     private final SpittingGroovesMapper spittingGroovesMapper;
     private final StampMapper stampMapper;
 
+    private final SpittingGroovesService spittingGroovesService;
+
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper, RedisUtil redisUtil, OpenIdVo openIdVo, LetterMapper letterMapper, DiaryMapper diaryMapper, SpittingGroovesMapper spittingGroovesMapper, StampMapper stampMapper) {
+    public UserServiceImpl(UserMapper userMapper, RedisUtil redisUtil, OpenIdVo openIdVo, LetterMapper letterMapper, DiaryMapper diaryMapper, SpittingGroovesMapper spittingGroovesMapper, StampMapper stampMapper, SpittingGroovesService spittingGroovesService) {
         this.userMapper = userMapper;
         this.redisUtil = redisUtil;
         this.openIdVo = openIdVo;
@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
         this.diaryMapper = diaryMapper;
         this.spittingGroovesMapper = spittingGroovesMapper;
         this.stampMapper = stampMapper;
+        this.spittingGroovesService = spittingGroovesService;
     }
 
     @Override
@@ -73,7 +74,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    /**获取用户默认邮票列表*/
+    /**
+     * 获取用户默认邮票列表
+     */
     private List<UserStamp> getUserStamps(String openId) {
         //每个人赋予默认邮票
         List<String> strings = Arrays.asList("bd7d85e5-042e-40a1-8a3f-bf045028df40",
@@ -194,11 +197,27 @@ public class UserServiceImpl implements UserService {
         HistoryDataVo data = new HistoryDataVo();
         List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenIdAndNonState(openId, "4");
-        List<SpittingGroovesVo> spittingGroovesList = spittingGroovesMapper.selectAllSpitByOpenId(openId, "4");
+        List<SpittingGrooves> spittingGroovesList = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
+
         data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));
         data.setDiaryList(GeneralDataProcessUtil.configDataFromList(diaryList, Diarys.class, DiaryReturnVo.class));
-        data.setSpittingGroovesList(spittingGroovesList);
+        data.setSpittingGroovesList(resolveTitle(spittingGroovesList));
         return ResultGenerator.genSuccessResult(data);
+    }
+
+    private List<SpittingGroovesVo> resolveTitle(List<SpittingGrooves> spittingGroovesList) {
+        Random random = new Random();
+        List<SpittingGroovesVo> spittingGroovesVoList = new ArrayList<>();
+        spittingGroovesList.forEach(spittingGrooves -> {
+            String content = spittingGrooves.getContent();
+            spittingGroovesVoList.add(
+                    new SpittingGroovesVo(
+                            spittingGrooves.getId()
+                            , spittingGrooves.getNumber()
+                            , content.length() > 20 ? content.substring(0, 20 + (random.nextInt(11))) : content
+                            , spittingGrooves.getAvatarUrl(), spittingGrooves.getPenName()));
+        });
+        return spittingGroovesVoList;
     }
 
     @Override
