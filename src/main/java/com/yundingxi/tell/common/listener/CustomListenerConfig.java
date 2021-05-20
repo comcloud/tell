@@ -218,6 +218,10 @@ public class CustomListenerConfig {
      * @param eventType 事件类型
      */
     private void updateRedisTimeline(String openId, String eventType) {
+        String nonAchieveType = "stamp";
+        if (nonAchieveType.equals(eventType)) {
+            return;
+        }
         String timelineKey = "user:" + openId + ":timeline";
         @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
         TimelineVo timelineVo = new TimelineVo(openId, eventType, LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

@@ -51,17 +51,16 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
+        giveEveryoneToDefaultStamp();
     }
 
     void giveEveryoneToDefaultStamp() {
-        List<String> strings = Arrays.asList("1a5952ad-6078-4003-b997-510f14501933",
-                "7937ead0-0298-40c6-bf05-fe006b060597",
-                "9e53aa4e-ec94-4ef3-83a2-968971d6997d",
-                "a6cb7443-bc66-42ab-9777-e5ff5479b475",
-                "de2dd5d4-f159-4646-a0f9-af4449a1f995",
-                "e433d3cd-e1c9-4649-8fd1-2599949d1ec1");
+        List<String> strings = Arrays.asList("fb0c3579-d942-4de4-93df-19e59a48e9f7",
+                "4a1c478f-bfa2-4339-902e-82653bdc178e",
+                "bd7d85e5-042e-40a1-8a3f-bf045028df40",
+                "01942371-da36-40e5-8fd9-327acba861b9");
         List<UserStamp> userStampList = new ArrayList<>(7);
-        strings.forEach(s1 -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), s1, "oUGur5NFcTHkjrPDDnRpSEGDVX5s", "1", new Date(), 1)));
+        strings.forEach(s1 -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), s1, "oUGur5GBjDC1B3z-brhlM9rL3Gnc", "1", new Date(), 1)));
         stampService.insertDefaultStamp(userStampList);
     }
 

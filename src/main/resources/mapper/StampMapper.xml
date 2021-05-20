@@ -11,7 +11,7 @@
         <result column="obtain_time" property="obtainTime"/>
     </resultMap>
     <select id="haveListMeAll" resultMap="StampVoMap">
-        select * from user_stamp us,stamp s where us.stamp_id=s.id and us.open_id=#{openId}
+        select * from user_stamp us,stamp s where us.stamp_id=s.id and us.open_id=#{openId} order by us.obtain_time desc
     </select>
     <select id="notHaveListMeAll" resultMap="StampVoMap">
         select *  from stamp ss where ss.id not in  (select s.id from user_stamp us
