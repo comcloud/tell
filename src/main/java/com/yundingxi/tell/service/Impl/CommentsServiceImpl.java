@@ -6,6 +6,7 @@ import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.*;
+import com.yundingxi.tell.bean.vo.submessage.SubMessageParam;
 import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.CommentsMapper;
@@ -21,9 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -57,8 +55,9 @@ public class CommentsServiceImpl implements CommentsService {
         int state = commentsMapper.insert(entity);
         if (state > 0) {
             EXECUTOR.execute(() -> {
-                SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndTitleById(entity.getSgId());
-                GeneralDataProcessUtil.subMessage(entity.getSgId(), entity.getContent(), "", userMapper.selectPenNameByOpenId(entity.getOpenId()), spittingGrooves.getOpenId(), WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_COMMENT_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
+                SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndContentById(entity.getSgId());
+                SubMessageParam param = SubMessageParam.builder().parentId(entity.getSgId()).showContent(entity.getContent()).title(spittingGrooves.getContent()).nickname(userMapper.selectPenNameByOpenId(entity.getOpenId())).templateId(WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID).version(WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION).build();
+                GeneralDataProcessUtil.subMessage(param);
             });
             log.info("===================> {} 数据保存成功", entity);
             //未读消息+1

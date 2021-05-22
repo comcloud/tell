@@ -193,8 +193,8 @@
         where open_id = #{openId}
           and state!=#{state}
     </select>
-    <select id="selectOpenIdAndTitleById" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
-        select open_id
+    <select id="selectOpenIdAndContentById" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+        select open_id,content
         from spitting_grooves
         where id=#{id}
     </select>

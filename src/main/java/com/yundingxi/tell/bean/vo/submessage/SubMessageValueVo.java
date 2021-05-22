@@ -1,4 +1,4 @@
-package com.yundingxi.tell.bean.vo;
+package com.yundingxi.tell.bean.vo.submessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

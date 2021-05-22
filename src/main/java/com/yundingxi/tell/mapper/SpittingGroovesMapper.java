@@ -69,5 +69,5 @@ public interface SpittingGroovesMapper {
 
     int selectNumberOfLetSpitByOpenIdNonState(@Param("openId") String openId,@Param("state") String state);
 
-    SpittingGrooves selectOpenIdAndTitleById(@Param("id") String id);
+    SpittingGrooves selectOpenIdAndContentById(@Param("id") String id);
 }

@@ -1,4 +1,4 @@
-package com.yundingxi.tell.bean.vo;
+package com.yundingxi.tell.bean.vo.submessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +22,6 @@ public class SubMessageVo {
     private String touser;
     private String templateId;
     private String page;
-    private SubMessageDataVo data;
+    private SubMessageCommentDataVo data;
     private String miniProgramState;
 }

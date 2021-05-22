@@ -54,6 +54,7 @@ class TellApplicationTests {
         giveEveryoneToDefaultStamp();
     }
 
+
     void giveEveryoneToDefaultStamp() {
         List<String> strings = Arrays.asList("fb0c3579-d942-4de4-93df-19e59a48e9f7",
                 "4a1c478f-bfa2-4339-902e-82653bdc178e",
@@ -70,25 +71,18 @@ class TellApplicationTests {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         allOpenId.forEach(openId -> {
             del(openId);
+
             List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
-            if ("oUGur5GBjDC1B3z-brhlM9rL3Gnc".equals(openId)) {
-                System.out.println("letterList.size() = " + letterList.size());
-            }
-            System.out.println("letterList.size() = " + letterList.size());
             letterList.forEach(letter -> {
                 update(openId, "letter", sdf.format(letter.getReleaseTime()));
             });
+
             List<Diarys> diarysList = diaryMapper.selectAllDiaryForSelfNonState(openId, "4");
-            if ("oUGur5GBjDC1B3z-brhlM9rL3Gnc".equals(openId)) {
-                System.out.println("diarysList.size() = " + diarysList.size());
-            }
             diarysList.forEach(diarys -> {
                 update(openId, "diary", sdf.format(diarys.getDate()));
             });
+
             List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
-            if ("oUGur5GBjDC1B3z-brhlM9rL3Gnc".equals(openId)) {
-                System.out.println("spittingGrooves.size() = " + spittingGrooves.size());
-            }
             spittingGrooves.forEach(spittingGrooves1 -> {
                 update(openId, "spit", sdf.format(spittingGrooves1.getDate()));
             });

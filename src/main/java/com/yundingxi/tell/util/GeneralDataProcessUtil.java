@@ -2,24 +2,25 @@ package com.yundingxi.tell.util;
 
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.dto.IndexLetterDto;
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.*;
+import com.yundingxi.tell.bean.vo.submessage.SubMessageCommentDataVo;
+import com.yundingxi.tell.bean.vo.submessage.SubMessageParam;
+import com.yundingxi.tell.bean.vo.submessage.SubMessageReplyVo;
+import com.yundingxi.tell.bean.vo.submessage.SubMessageValueVo;
 import com.yundingxi.tell.mapper.UserMapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -133,31 +134,50 @@ public class GeneralDataProcessUtil {
     }
 
     /**
-     * @param parentId    被通知文章内容的id
-     * @param showContent 服务通知展示的内容
-     * @param title       服务通知展示的标题
-     * @param nickname    服务通知展示的发送者昵称
-     * @param touser      接受者open id
-     * @param templateId  模版ID
-     * @param page        服务通知进入的小程序页面
-     * @param version     小程序版本
+     * 订阅消息
      */
-    public static void subMessage(String parentId
-            , String showContent, String title, String nickname
-            , String touser
-            , WeChatEnum templateId, WeChatEnum page, WeChatEnum version) {
+    public static void subMessage(SubMessageParam param, String... reserveParam) {
         String accessToken = GeneralDataProcessUtil.getAccessToken();
-        SubMessageDataVo data = new SubMessageDataVo(
-                new SubMessageValueVo(showContent.length() >= 20 ? showContent.substring(0, 20) : showContent)
-                , new SubMessageValueVo(nickname)
-                , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                , new SubMessageValueVo(title.length() >= 20 ? title.substring(0, 20) : title));
+        Object data = null;
         JSONObject objectNode = new JSONObject();
-        objectNode.put("touser", touser);
-        objectNode.put("template_id", templateId.getValue());
-        objectNode.put("page", page.getValue() + "?id=" + parentId);
+        switch (param.getTemplateId()) {
+            case SUB_MESSAGE_COMMENT_TEMPLATE_ID:
+                data = new SubMessageCommentDataVo(
+                        new SubMessageValueVo(param.getShowContent().length() >= 20 ? param.getShowContent().substring(0, 20) : param.getShowContent())
+                        , new SubMessageValueVo(param.getNickname())
+                        , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                        , new SubMessageValueVo(param.getTitle().length() >= 20 ? param.getTitle().substring(0, 20) : param.getTitle()));
+                objectNode.put("page", param.getPage().getValue() + "?id=" + param.getParentId());
+                break;
+            case SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID:
+                data = new SubMessageReplyVo(
+                        new SubMessageValueVo(param.getNickname())
+                        , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                        , new SubMessageValueVo(param.getShowContent()));
+                if (param.getObj() instanceof LetterReplyDto) {
+                    LetterReplyDto replyDto = (LetterReplyDto) param.getObj();
+                    objectNode.put("page", param.getPage().getValue()
+                            + "?letterId=" + replyDto.getLetterId()
+                            + "&senderOpenId=" + replyDto.getSender()
+                            + "&recipientPenName" + USER_MAPPER.selectPenNameByOpenId(replyDto.getRecipient())
+                            + "&senderPenName=" + replyDto.getSenderPenName()
+                            + "&replyId=" + reserveParam[0]);
+                } else {
+                    throw new IllegalArgumentException("传入的补充对象不为LetterReplyDto");
+                }
+                break;
+            default:
+                try {
+                    throw new IllegalAccessException("使用模版ID不正确");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+        }
+
+        objectNode.put("touser", param.getTouser());
+        objectNode.put("template_id", param.getTemplateId().getValue());
         objectNode.put("data", data);
-        objectNode.put("miniprogram_state", version.getValue());
+        objectNode.put("miniprogram_state", param.getVersion().getValue());
         String post = HttpUtil.post(WeChatEnum.SUB_MESSAGE_SEND_URL_POST.getValue() + "?access_token=" + accessToken.replace("\"", ""), objectNode.toString());
 
     }

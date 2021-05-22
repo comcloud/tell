@@ -1,4 +1,4 @@
-package com.yundingxi.tell.bean.vo;
+package com.yundingxi.tell.bean.vo.submessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubMessageDataVo {
+public class SubMessageCommentDataVo {
     private SubMessageValueVo thing2;
     private SubMessageValueVo thing3;
     private SubMessageValueVo time4;

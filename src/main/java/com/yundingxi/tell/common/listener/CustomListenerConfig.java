@@ -147,10 +147,10 @@ public class CustomListenerConfig {
         String sqlStr = combineSqlString(openId, achieve);
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
+            updateRedisContent(openId, achieveType, json, locationObtained);
             insertUserStampAndAchieve(openId, achieve, achieveType);
         }
         //更新redis内容
-        updateRedisContent(openId, achieveType, json, locationObtained);
     }
 
     /**
@@ -194,7 +194,7 @@ public class CustomListenerConfig {
     private String combineSqlString(String openId, Achieve achieve) {
         //此时根据json串拼接sql语句查询是否满足条件
         String taskSql = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
-        taskSql = taskSql.replace("\"","").replace("#{openId}","'" + openId + "'");
+        taskSql = taskSql.replace("\"", "").replace("#{openId}", "'" + openId + "'");
         return taskSql;
     }
 
@@ -214,7 +214,8 @@ public class CustomListenerConfig {
 
     /**
      * 更新redis中时间线的缓存
-     * @param openId open id
+     *
+     * @param openId    open id
      * @param eventType 事件类型
      */
     private void updateRedisTimeline(String openId, String eventType) {

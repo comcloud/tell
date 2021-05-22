@@ -12,6 +12,7 @@ import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.LetterWebsocketVo;
+import com.yundingxi.tell.bean.vo.submessage.SubMessageParam;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;
 import com.yundingxi.tell.mapper.LetterMapper;
@@ -247,6 +248,8 @@ public class LetterServiceImpl implements LetterService {
     public String replyLetter(LetterReplyDto letterReplyDto) {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
+            SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION);
+            GeneralDataProcessUtil.subMessage(param, replyId);
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
             String replyTime = LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             letterMapper.insertReply(reply);
@@ -323,7 +326,7 @@ public class LetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String letterInfoKey = "letter:" + openId + ":letter_info";
             Object o = redisUtil.get(letterInfoKey);
-            if (o != null) {
+            if (o != null && !"oUGur5NFcTHkjrPDDnRpSEGDVX5s".equals(openId)) {
                 return;
             }
             ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");

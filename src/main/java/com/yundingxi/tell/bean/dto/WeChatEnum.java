@@ -29,6 +29,10 @@ public enum WeChatEnum {
      */
     SUB_MESSAGE_COMMENT_PAGE("packageWriteLetter/pages/complaintletter/complaintletter"),
     /**
+     * 订阅消息回复跳转page
+     */
+    SUB_MESSAGE_REPLY_PAGE("packageMyInfo/pages/replyletter/replyletter"),
+    /**
      * 订阅消息体验版
      */
     SUB_MESSAGE_MINI_PROGRAM_STATE_TRIAL_VERSION("trial"),
