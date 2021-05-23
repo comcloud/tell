@@ -1,5 +1,7 @@
 package com.yundingxi.tell.service;
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.tell.bean.dto.QuestionnaireDto;
+import com.yundingxi.tell.bean.entity.Questionnaire;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
@@ -60,4 +62,6 @@ public interface UserService {
     Result getOfficialMsg(String openId);
 
     Result<PageInfo<TimelineVo>> getTimelineData(String openId,Integer pageNum);
+
+    Result<String> saveQuestionnaire(QuestionnaireDto questionnaireDto);
 }

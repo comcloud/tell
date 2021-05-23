@@ -98,6 +98,10 @@
             <include refid="Base_Insert_Value_List"/>
         </trim>
     </insert>
+    <insert id="insertQuestionnaire">
+        insert into questionnaire
+        value (#{questionnaire.openId},#{questionnaire.isIllegal},#{questionnaire.isHelp},#{questionnaire.interestScore},#{questionnaire.pageScore},#{questionnaire.otherSpeech},#{questionnaire.date})
+    </insert>
     <update id="updateUser">
             update `user`
             <set>
