@@ -238,11 +238,7 @@ public class UserServiceImpl implements UserService {
     public Result<String> saveQuestionnaire(QuestionnaireDto questionnaireDto) {
         Questionnaire questionnaire = new Questionnaire(questionnaireDto.getOpenId(), questionnaireDto.getIsIllegal(), questionnaireDto.getIsHelp(), questionnaireDto.getInterestScore(), questionnaireDto.getPageScore(), questionnaireDto.getOtherSpeech(), new Date());
         int result = userMapper.insertQuestionnaire(questionnaire);
-        if(result == 1){
-            return ResultGenerator.genSuccessResult("保存成功");
-        }else{
-            return ResultGenerator.genFailResult("保存失败");
-        }
+        return result == 1 ? ResultGenerator.genSuccessResult("保存成功") : ResultGenerator.genFailResult("保存失败");
     }
 
     /**

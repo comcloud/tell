@@ -179,7 +179,7 @@ public class GeneralDataProcessUtil {
         objectNode.put("data", data);
         objectNode.put("miniprogram_state", param.getVersion().getValue());
         String post = HttpUtil.post(WeChatEnum.SUB_MESSAGE_SEND_URL_POST.getValue() + "?access_token=" + accessToken.replace("\"", ""), objectNode.toString());
-
+        System.out.println(param.getNickname() + ":::" + param.getTouser() + post);
     }
 
 

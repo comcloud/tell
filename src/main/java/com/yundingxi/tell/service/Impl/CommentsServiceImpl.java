@@ -56,7 +56,14 @@ public class CommentsServiceImpl implements CommentsService {
         if (state > 0) {
             EXECUTOR.execute(() -> {
                 SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndContentById(entity.getSgId());
-                SubMessageParam param = SubMessageParam.builder().parentId(entity.getSgId()).showContent(entity.getContent()).title(spittingGrooves.getContent()).nickname(userMapper.selectPenNameByOpenId(entity.getOpenId())).templateId(WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID).version(WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_DEVELOPER_VERSION).build();
+                SubMessageParam param = SubMessageParam.builder()
+                        .parentId(entity.getSgId())
+                        .showContent(entity.getContent())
+                        .title(spittingGrooves.getContent())
+                        .touser(spittingGrooves.getOpenId())
+                        .nickname(userMapper.selectPenNameByOpenId(entity.getOpenId()))
+                        .templateId(WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID)
+                        .version(WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION).page(WeChatEnum.SUB_MESSAGE_COMMENT_PAGE).build();
                 GeneralDataProcessUtil.subMessage(param);
             });
             log.info("===================> {} 数据保存成功", entity);
