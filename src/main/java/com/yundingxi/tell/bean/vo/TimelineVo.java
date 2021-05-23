@@ -28,4 +28,6 @@ public class TimelineVo {
     private String eventType;
     @ApiModelProperty("事件时间")
     private String eventTime;
+    @ApiModelProperty("发布的内容")
+    private String content;
 }

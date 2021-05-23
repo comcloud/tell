@@ -51,7 +51,9 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
-        giveEveryoneToDefaultStamp();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(UUID.randomUUID().toString());
+        }
     }
 
 
@@ -74,27 +76,27 @@ class TellApplicationTests {
 
             List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
             letterList.forEach(letter -> {
-                update(openId, "letter", sdf.format(letter.getReleaseTime()));
+                update(openId, "letter", sdf.format(letter.getReleaseTime()),letter.getContent());
             });
 
             List<Diarys> diarysList = diaryMapper.selectAllDiaryForSelfNonState(openId, "4");
             diarysList.forEach(diarys -> {
-                update(openId, "diary", sdf.format(diarys.getDate()));
+                update(openId, "diary", sdf.format(diarys.getDate()),diarys.getContent());
             });
 
             List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
             spittingGrooves.forEach(spittingGrooves1 -> {
-                update(openId, "spit", sdf.format(spittingGrooves1.getDate()));
+                update(openId, "spit", sdf.format(spittingGrooves1.getDate()),spittingGrooves1.getContent());
             });
 
         });
         System.out.println((System.currentTimeMillis() - start) + "ms");
     }
 
-    void update(String openId, String eventType, String time) {
+    void update(String openId, String eventType, String time,String content) {
         String timelineKey = "user:" + openId + ":timeline";
         @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
-        TimelineVo timelineVo = new TimelineVo(openId, eventType, time);
+        TimelineVo timelineVo = new TimelineVo(openId, eventType, time,content);
         if (timelineVoLinkedList == null) {
             LinkedList<TimelineVo> timelineVos = new LinkedList<>();
             timelineVos.addFirst(timelineVo);
