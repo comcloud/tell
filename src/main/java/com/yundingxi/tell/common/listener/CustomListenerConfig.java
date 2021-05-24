@@ -1,5 +1,6 @@
 package com.yundingxi.tell.common.listener;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.UserAchieve;
@@ -21,10 +22,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -126,28 +124,28 @@ public class CustomListenerConfig {
                - 未完成返回false，什么都不做
               */
             updateRedisTimeline(openId, eventType, content);
-            String json = (String) redisUtil.get("listener:" + openId + ":offset");
-            int locationObtained = JsonUtil.parseJson(json).get(eventType).asInt();
+            JSONObject jsonObject = (JSONObject) redisUtil.get("listener:" + openId + ":offset");
+            @SuppressWarnings("unchecked") ArrayList<String> list = (ArrayList<String>) jsonObject.get(eventType);
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
-            List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndLocation(locationObtained, eventType);
-            achieveList.forEach(achieve -> judgeAchieve(openId, eventType, (String) redisUtil.get("listener:" + openId + ":offset"), achieve));
+            List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndNonId(list, eventType);
+            achieveList.forEach(achieve -> judgeAchieve(openId, eventType, (JSONObject) redisUtil.get("listener:" + openId + ":offset"), achieve));
         };
     }
 
     /**
      * 判断成就是否满足
      *
-     * @param openId           此用户open id
-     * @param achieveType      成就类型
-     * @param json             redis中存储用户的成就偏移量json串
-     * @param achieve          存储成就id与任务id的成就对象
+     * @param openId      此用户open id
+     * @param achieveType 成就类型
+     * @param jsonObject  redis中存储用户的成就偏移量json对象
+     * @param achieve     存储成就id与任务id的成就对象
      */
-    private void judgeAchieve(String openId, String achieveType, String json, Achieve achieve) {
+    private void judgeAchieve(String openId, String achieveType, JSONObject jsonObject, Achieve achieve) {
         String sqlStr = combineSqlString(openId, achieve);
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
             //更新redis内容
-            updateRedisContent(openId, achieveType, json);
+            updateRedisContent(openId, achieveType, jsonObject, achieve.getId());
             insertUserStampAndAchieve(openId, achieve);
         }
     }
@@ -193,8 +191,6 @@ public class CustomListenerConfig {
     private String combineSqlString(String openId, Achieve achieve) {
         //此时根据json串拼接sql语句查询是否满足条件
         String taskSql = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
-        LOG.info("taskSql:" + taskSql);
-        LOG.info("achieve:" + achieve);
         taskSql = taskSql.replace("\"", "").replace("#{openId}", "'" + openId + "'");
         return taskSql;
     }
@@ -202,14 +198,16 @@ public class CustomListenerConfig {
     /**
      * 更新redis存储偏移量json串
      *
-     * @param openId      用户open id
-     * @param achieveType 成就类型
-     * @param json        redis中存储用户的成就偏移量json串
+     * @param openId         用户open id
+     * @param achieveType    成就类型
+     * @param jsonObject     redis中存储用户的成就偏移量json对象
+     * @param alreadyExistId 已经获取到的事件ID
      */
-    private void updateRedisContent(String openId, String achieveType, String json) {
-        ObjectNode objectNode = (ObjectNode) JsonUtil.parseJson(json);
-        objectNode.put(achieveType, objectNode.get(achieveType).asInt() + 1);
-        redisUtil.set("listener:" + openId + ":offset", objectNode.toPrettyString());
+    private void updateRedisContent(String openId, String achieveType, JSONObject jsonObject, String alreadyExistId) {
+        @SuppressWarnings("unchecked") ArrayList<String> list = (ArrayList<String>) jsonObject.get(achieveType);
+        list.add(alreadyExistId);
+        jsonObject.put(achieveType, list);
+        redisUtil.set("listener:" + openId + ":offset", jsonObject);
     }
 
     /**
