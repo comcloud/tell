@@ -51,9 +51,6 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(new Random().nextInt(3));
-        }
     }
 
 

@@ -330,9 +330,9 @@ public class LetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String letterInfoKey = "letter:" + openId + ":letter_info";
             Object o = redisUtil.get(letterInfoKey);
-//            if (o != null) {
-//                return;
-//            }
+            if (o != null) {
+                return;
+            }
             ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
             letterInfo.put("date", "");
             letterInfo.put("visitNumber", 0);

@@ -130,7 +130,7 @@ public class CustomListenerConfig {
             int locationObtained = JsonUtil.parseJson(json).get(eventType).asInt();
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
             List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndLocation(locationObtained, eventType);
-            achieveList.forEach(achieve -> judgeAchieve(openId, eventType, json, locationObtained, achieve));
+            achieveList.forEach(achieve -> judgeAchieve(openId, eventType, (String) redisUtil.get("listener:" + openId + ":offset"), achieve));
         };
     }
 
@@ -140,17 +140,16 @@ public class CustomListenerConfig {
      * @param openId           此用户open id
      * @param achieveType      成就类型
      * @param json             redis中存储用户的成就偏移量json串
-     * @param locationObtained 偏移量
      * @param achieve          存储成就id与任务id的成就对象
      */
-    private void judgeAchieve(String openId, String achieveType, String json, int locationObtained, Achieve achieve) {
+    private void judgeAchieve(String openId, String achieveType, String json, Achieve achieve) {
         String sqlStr = combineSqlString(openId, achieve);
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
-            updateRedisContent(openId, achieveType, json, locationObtained);
+            //更新redis内容
+            updateRedisContent(openId, achieveType, json);
             insertUserStampAndAchieve(openId, achieve);
         }
-        //更新redis内容
     }
 
     /**
@@ -203,14 +202,13 @@ public class CustomListenerConfig {
     /**
      * 更新redis存储偏移量json串
      *
-     * @param openId           用户open id
-     * @param achieveType      成就类型
-     * @param json             redis中存储用户的成就偏移量json串
-     * @param locationObtained 偏移量
+     * @param openId      用户open id
+     * @param achieveType 成就类型
+     * @param json        redis中存储用户的成就偏移量json串
      */
-    private void updateRedisContent(String openId, String achieveType, String json, int locationObtained) {
+    private void updateRedisContent(String openId, String achieveType, String json) {
         ObjectNode objectNode = (ObjectNode) JsonUtil.parseJson(json);
-        objectNode.put(achieveType, locationObtained + 1);
+        objectNode.put(achieveType, objectNode.get(achieveType).asInt() + 1);
         redisUtil.set("listener:" + openId + ":offset", objectNode.toPrettyString());
     }
 
