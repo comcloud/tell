@@ -146,26 +146,12 @@ public class LetterServiceImpl implements LetterService {
                 return indexLetterDtoList;
             } else {
                 //此时需要从数据库获取内容,随机三个数字获取数据库中最新的十条数据中的位置
-                Random random = new Random();
-                int gainLetterNumber = 3;
+                int gainLetterNumber = totalNumber == 1 || totalNumber == 2 ? totalNumber : 3;
                 List<IndexLetterDto> indexLetterDtoList = new ArrayList<>(3);
                 //用来解决生成随机数重复问题，以防出现相同的信件，当然如果数据库的数据比较少，进行randomInt+1之后还是会有重复
-                int firstRandomNumber = 0, secondRandomNumber = 0;
+                int[] randomIntArray = getDifferentArray(totalNumber, gainLetterNumber);
                 for (int i = 0; i < gainLetterNumber; i++) {
-                    int randomInt = random.nextInt(10);
-                    if (i == 1 && randomInt == firstRandomNumber) {
-                        secondRandomNumber = randomInt;
-                        randomInt = spinRandomNumberToNonExist(randomInt, firstRandomNumber);
-                    } else if (i == 2 && (randomInt == firstRandomNumber || randomInt == secondRandomNumber)) {
-                        //此时就是如果是第三次获取，出现的随机数是之前出现过的某一种都要进行+1操作
-                        randomInt = spinRandomNumberToNonExist(randomInt, firstRandomNumber, secondRandomNumber);
-                        if (randomInt == firstRandomNumber || randomInt == secondRandomNumber) {
-                            //这个是做一个双重判断，以防+1后等于下个值
-                            randomInt = randomInt + 1;
-                        }
-                    } else {
-                        firstRandomNumber = randomInt;
-                    }
+                    int randomInt = randomIntArray[i];
                     Letter letter = letterMapper.selectRandomLatestLetter(openId, randomInt % totalNumber, 1, 1);
                     GeneralDataProcessUtil.configLetterDataFromSingleObject(letter, openId, indexLetterDtoList);
                 }
@@ -181,19 +167,36 @@ public class LetterServiceImpl implements LetterService {
     }
 
     /**
+     * 获取length个不同数字的数字
+     * @param surplusThreshold 求余的阈值
+     * @param length 要获取的长度
+     * @return 不同数字数组
+     */
+    private int[] getDifferentArray(int surplusThreshold, int length) {
+        Random random = new Random();
+        int[] differentArray = new int[length];
+        for (int i = 0; i < differentArray.length; i++) {
+            differentArray[i] = spinRandomNumberToNonExist(random.nextInt(surplusThreshold), surplusThreshold, i, differentArray);
+        }
+        return differentArray;
+    }
+
+    /**
      * 自旋直到产生没有出现过的数字
      *
      * @param randomNumber  随机数字
+     * @param spinThreshold 自旋阈值，表示每次对哪个数字进行取余
+     * @param length        已经有的数字长度
      * @param alreadyNumber 已经出现的数字
      * @return 自旋数字结果
      */
-    private int spinRandomNumberToNonExist(int randomNumber, int... alreadyNumber) {
+    private int spinRandomNumberToNonExist(int randomNumber, int spinThreshold, int length, int... alreadyNumber) {
         for (; ; ) {
             //成功标记，表示着是否已经不存在重复数字
             boolean successFlag = true;
-            for (int num : alreadyNumber) {
-                if (num == randomNumber) {
-                    randomNumber = (randomNumber + 1) % 10;
+            for (int i = 0; i < length; i++) {
+                if (alreadyNumber[i] == randomNumber) {
+                    randomNumber = (randomNumber + 1) % spinThreshold;
                     successFlag = false;
                 }
             }
@@ -248,8 +251,10 @@ public class LetterServiceImpl implements LetterService {
     public String replyLetter(LetterReplyDto letterReplyDto) {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
+            //回信订阅消息
             SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION);
             GeneralDataProcessUtil.subMessage(param, replyId);
+
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
             String replyTime = LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             letterMapper.insertReply(reply);
@@ -277,7 +282,6 @@ public class LetterServiceImpl implements LetterService {
                 redisUtil.set(reserveString, reserveReply);
             }
         }).get();
-
         return "success";
     }
 
@@ -326,9 +330,9 @@ public class LetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String letterInfoKey = "letter:" + openId + ":letter_info";
             Object o = redisUtil.get(letterInfoKey);
-            if (o != null) {
-                return;
-            }
+//            if (o != null) {
+//                return;
+//            }
             ObjectNode letterInfo = JsonNodeFactory.instance.objectNode().putObject(openId + "_letter_info");
             letterInfo.put("date", "");
             letterInfo.put("visitNumber", 0);

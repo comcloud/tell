@@ -74,7 +74,7 @@ public class CustomListenerConfig {
     public void handleSaveLetterEvent(PublishLetterEvent letterEvent) {
         LOG.info("触发保存信件事件，此时应该更新关于信件的成就内容");
         LOG.info(letterEvent.getLetterStorageDto().toString());
-        EXECUTOR.execute(getRunnable(letterEvent.getLetterStorageDto().getOpenId(), "letter",letterEvent.getLetterStorageDto().getContent()));
+        EXECUTOR.execute(getRunnable(letterEvent.getLetterStorageDto().getOpenId(), "letter", letterEvent.getLetterStorageDto().getContent()));
     }
 
     /**
@@ -86,7 +86,7 @@ public class CustomListenerConfig {
     public void handleSaveDiary(PublishDiaryEvent diaryEvent) {
         LOG.info("触发保存日记事件，此时应该更新关于日记的成就内容");
         LOG.info(diaryEvent.getDiaryDto().toString());
-        EXECUTOR.execute(getRunnable(diaryEvent.getDiaryDto().getOpenId(), "diary",diaryEvent.getDiaryDto().getContent()));
+        EXECUTOR.execute(getRunnable(diaryEvent.getDiaryDto().getOpenId(), "diary", diaryEvent.getDiaryDto().getContent()));
     }
 
     /**
@@ -98,22 +98,22 @@ public class CustomListenerConfig {
     public void handleSaveSpit(PublishSpitEvent spitEvent) {
         LOG.info("触发保存吐槽事件，此时应该更新关于吐槽的成就内容");
         LOG.info(spitEvent.getSpittingGrooves().toString());
-        EXECUTOR.execute(getRunnable(spitEvent.getSpittingGrooves().getOpenId(), "spit",spitEvent.getSpittingGrooves().getContent()));
+        EXECUTOR.execute(getRunnable(spitEvent.getSpittingGrooves().getOpenId(), "spit", spitEvent.getSpittingGrooves().getContent()));
     }
 
     @EventListener
     public void handleReply(PublishReplyEvent replyEvent) {
         LOG.info("触发保存回信事件，此时应该更新关于回信的成就内容");
         LOG.info(replyEvent.getLetterReplyDto().toString());
-        EXECUTOR.execute(getRunnable(replyEvent.getLetterReplyDto().getRecipient(), "reply",replyEvent.getLetterReplyDto().getMessage()));
+        EXECUTOR.execute(getRunnable(replyEvent.getLetterReplyDto().getRecipient(), "reply", replyEvent.getLetterReplyDto().getMessage()));
     }
 
     public void handleStampAchieve(String openId) {
         LOG.info("触发邮票事件，此时应该更新关于邮票的成就内容");
-        EXECUTOR.execute(getRunnable(openId, "stamp",""));
+        EXECUTOR.execute(getRunnable(openId, "stamp", ""));
     }
 
-    private Runnable getRunnable(String openId, String eventType,String content) {
+    private Runnable getRunnable(String openId, String eventType, String content) {
         return () -> {
             /*
               这时候要做的事情
@@ -125,7 +125,7 @@ public class CustomListenerConfig {
                - 完成返回true，表示完成的话，需要将位置+1，同时给予对应的奖励achieve_reward，也就是对应的邮票
                - 未完成返回false，什么都不做
               */
-            updateRedisTimeline(openId, eventType,content);
+            updateRedisTimeline(openId, eventType, content);
             String json = (String) redisUtil.get("listener:" + openId + ":offset");
             int locationObtained = JsonUtil.parseJson(json).get(eventType).asInt();
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
@@ -148,7 +148,7 @@ public class CustomListenerConfig {
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
             updateRedisContent(openId, achieveType, json, locationObtained);
-            insertUserStampAndAchieve(openId, achieve, achieveType);
+            insertUserStampAndAchieve(openId, achieve);
         }
         //更新redis内容
     }
@@ -159,7 +159,7 @@ public class CustomListenerConfig {
      * @param openId  用户open id
      * @param achieve 存储成就id与任务id的成就对象
      */
-    private void insertUserStampAndAchieve(String openId, Achieve achieve, String achieveType) {
+    private void insertUserStampAndAchieve(String openId, Achieve achieve) {
         //成就完成，这时候给予成就对应的奖励，添加邮票到数据库，添加成就到数据库，然后缓存中成就参数加1
         achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "1"));
         String achieveUnreadNumKey = "listener:" + openId + ":achieve_unread_num";
@@ -194,6 +194,8 @@ public class CustomListenerConfig {
     private String combineSqlString(String openId, Achieve achieve) {
         //此时根据json串拼接sql语句查询是否满足条件
         String taskSql = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
+        LOG.info("taskSql:" + taskSql);
+        LOG.info("achieve:" + achieve);
         taskSql = taskSql.replace("\"", "").replace("#{openId}", "'" + openId + "'");
         return taskSql;
     }
@@ -218,14 +220,14 @@ public class CustomListenerConfig {
      * @param openId    open id
      * @param eventType 事件类型
      */
-    private void updateRedisTimeline(String openId, String eventType,String content) {
+    private void updateRedisTimeline(String openId, String eventType, String content) {
         String nonAchieveType = "stamp";
         if (nonAchieveType.equals(eventType)) {
             return;
         }
         String timelineKey = "user:" + openId + ":timeline";
         @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
-        TimelineVo timelineVo = new TimelineVo(openId, eventType, LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),content);
+        TimelineVo timelineVo = new TimelineVo(openId, eventType, LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), content);
         if (timelineVoLinkedList == null) {
             LinkedList<TimelineVo> timelineVos = new LinkedList<>();
             timelineVos.addFirst(timelineVo);

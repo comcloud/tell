@@ -153,7 +153,7 @@ public class GeneralDataProcessUtil {
                 data = new SubMessageReplyVo(
                         new SubMessageValueVo(param.getNickname())
                         , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                        , new SubMessageValueVo(param.getShowContent()));
+                        , new SubMessageValueVo(param.getShowContent().length() > 20 ? param.getShowContent().substring(0, 20) : param.getShowContent()));
                 if (param.getObj() instanceof LetterReplyDto) {
                     LetterReplyDto replyDto = (LetterReplyDto) param.getObj();
                     objectNode.put("page", param.getPage().getValue()
