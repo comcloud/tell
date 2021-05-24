@@ -51,4 +51,12 @@
     <select id="selectAllAchieve" resultType="com.yundingxi.tell.bean.entity.Achieve">
         select * from achieve
     </select>
+    <select id="selectAllTaskIdAndIdByAchieveTypeAndNonId" resultType="com.yundingxi.tell.bean.entity.Achieve">
+        select id,task_id,achieve_type
+        from achieve
+        where achieve_type=#{achieveType}
+        <foreach collection="list" item="item">
+            and id!=#{item}
+        </foreach>
+    </select>
 </mapper>

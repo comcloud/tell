@@ -1,11 +1,10 @@
 package com.yundingxi.tell.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.entity.Stamp;
+import com.yundingxi.tell.bean.dto.QuestionnaireDto;
+import com.yundingxi.tell.bean.entity.Questionnaire;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.*;
-import com.yundingxi.tell.service.AchieveService;
-import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.util.Result;
@@ -114,10 +113,16 @@ public class UserController {
         return userService.getOfficialMsg(openId);
     }
 
-    @Operation(description = "获取事件线数据，目前时间线有，我发布了解忧、日记、吐槽其中某一个",summary = "获取时间线数据")
+    @Operation(description = "获取事件线数据，目前时间线有，我发布了解忧、日记、吐槽其中某一个", summary = "获取时间线数据")
     @GetMapping("/getTimelineData")
-    public Result<PageInfo<TimelineVo>> getTimelineData(@Parameter(description = "open id",required = true) String openId
+    public Result<PageInfo<TimelineVo>> getTimelineData(@Parameter(description = "open id", required = true) String openId
             , @Parameter(description = "页数，默认是1") @RequestParam(defaultValue = "1") Integer pageNum) {
         return userService.getTimelineData(openId, pageNum);
+    }
+
+    @Operation(description = "保存调查问卷", summary = "保存调查问卷")
+    @PostMapping("/saveQuestionnaire")
+    public Result<String> saveQuestionnaire(@Parameter(description = "调查问卷实体类，时间可以不传递") QuestionnaireDto questionnaireDto) {
+        return userService.saveQuestionnaire(questionnaireDto);
     }
 }

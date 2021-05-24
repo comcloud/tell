@@ -51,20 +51,21 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(UUID.randomUUID().toString());
-        }
     }
 
 
     void giveEveryoneToDefaultStamp() {
-        List<String> strings = Arrays.asList("fb0c3579-d942-4de4-93df-19e59a48e9f7",
-                "4a1c478f-bfa2-4339-902e-82653bdc178e",
-                "bd7d85e5-042e-40a1-8a3f-bf045028df40",
-                "01942371-da36-40e5-8fd9-327acba861b9");
-        List<UserStamp> userStampList = new ArrayList<>(7);
-        strings.forEach(s1 -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), s1, "oUGur5GBjDC1B3z-brhlM9rL3Gnc", "1", new Date(), 1)));
-        stampService.insertDefaultStamp(userStampList);
+        List<String> allOpenId = userMapper.selectAllOpenId();
+        allOpenId.forEach(openId -> {
+            List<String> strings = Arrays.asList("fb0c3579-d942-4de4-93df-19e59a48e9f7",
+                    "4a1c478f-bfa2-4339-902e-82653bdc178e",
+                    "bd7d85e5-042e-40a1-8a3f-bf045028df40",
+                    "01942371-da36-40e5-8fd9-327acba861b9");
+            List<UserStamp> userStampList = new ArrayList<>(7);
+            strings.forEach(s1 -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), s1, openId, "1", new Date(), 1)));
+            stampService.insertDefaultStamp(userStampList);
+
+        });
     }
 
     void updateRedis() {
@@ -76,27 +77,27 @@ class TellApplicationTests {
 
             List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
             letterList.forEach(letter -> {
-                update(openId, "letter", sdf.format(letter.getReleaseTime()),letter.getContent());
+                update(openId, "letter", sdf.format(letter.getReleaseTime()), letter.getContent());
             });
 
             List<Diarys> diarysList = diaryMapper.selectAllDiaryForSelfNonState(openId, "4");
             diarysList.forEach(diarys -> {
-                update(openId, "diary", sdf.format(diarys.getDate()),diarys.getContent());
+                update(openId, "diary", sdf.format(diarys.getDate()), diarys.getContent());
             });
 
             List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
             spittingGrooves.forEach(spittingGrooves1 -> {
-                update(openId, "spit", sdf.format(spittingGrooves1.getDate()),spittingGrooves1.getContent());
+                update(openId, "spit", sdf.format(spittingGrooves1.getDate()), spittingGrooves1.getContent());
             });
 
         });
         System.out.println((System.currentTimeMillis() - start) + "ms");
     }
 
-    void update(String openId, String eventType, String time,String content) {
+    void update(String openId, String eventType, String time, String content) {
         String timelineKey = "user:" + openId + ":timeline";
         @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
-        TimelineVo timelineVo = new TimelineVo(openId, eventType, time,content);
+        TimelineVo timelineVo = new TimelineVo(openId, eventType, time, content);
         if (timelineVoLinkedList == null) {
             LinkedList<TimelineVo> timelineVos = new LinkedList<>();
             timelineVos.addFirst(timelineVo);

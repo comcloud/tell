@@ -3,6 +3,7 @@ package com.yundingxi.tell.service.Impl;
 import cn.hutool.http.HttpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.tell.bean.dto.QuestionnaireDto;
 import com.yundingxi.tell.bean.entity.*;
 import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.common.enums.RedisEnums;
@@ -231,6 +232,13 @@ public class UserServiceImpl implements UserService {
         @SuppressWarnings("unchecked") List<TimelineVo> timelineVoList = (List<TimelineVo>) redisUtil.get("user:" + openId + ":timeline");
         PageHelper.startPage(pageNum, 15);
         return ResultGenerator.genSuccessResult(new PageInfo<>(timelineVoList == null ? new LinkedList<>() : timelineVoList));
+    }
+
+    @Override
+    public Result<String> saveQuestionnaire(QuestionnaireDto questionnaireDto) {
+        Questionnaire questionnaire = new Questionnaire(questionnaireDto.getOpenId(), questionnaireDto.getIsIllegal(), questionnaireDto.getIsHelp(), questionnaireDto.getInterestScore(), questionnaireDto.getPageScore(), questionnaireDto.getOtherSpeech(), new Date());
+        int result = userMapper.insertQuestionnaire(questionnaire);
+        return result == 1 ? ResultGenerator.genSuccessResult("保存成功") : ResultGenerator.genFailResult("保存失败");
     }
 
     /**

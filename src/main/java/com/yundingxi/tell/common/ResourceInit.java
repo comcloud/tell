@@ -1,5 +1,6 @@
 package com.yundingxi.tell.common;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.common.redis.RedisUtil;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -60,9 +63,9 @@ public class ResourceInit implements CommandLineRunner {
         openIdList.forEach(openId -> {
             String offsetKey = "listener:" + openId + ":offset";
             if (redisUtil.get(offsetKey) == null) {
-                ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-                achieveTypeList.forEach(achieveType -> objectNode.put(achieveType, 0));
-                redisUtil.set(offsetKey, objectNode.toPrettyString());
+                JSONObject jsonObject = new JSONObject();
+                achieveTypeList.forEach(achieveType -> jsonObject.put(achieveType, new ArrayList<String>(5)));
+                redisUtil.set(offsetKey, jsonObject);
             }
         });
     }

@@ -5,6 +5,7 @@ import com.yundingxi.tell.bean.entity.UserAchieve;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,4 +38,5 @@ public interface AchieveMapper {
 
     List<Achieve> selectAllAchieve();
 
+    List<Achieve> selectAllTaskIdAndIdByAchieveTypeAndNonId(@Param("list") ArrayList<String> list, @Param("achieveType") String achieveType);
 }

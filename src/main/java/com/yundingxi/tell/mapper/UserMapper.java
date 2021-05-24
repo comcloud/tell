@@ -1,5 +1,6 @@
 package com.yundingxi.tell.mapper;
 
+import com.yundingxi.tell.bean.entity.Questionnaire;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.UserCommentVo;
 import com.yundingxi.tell.bean.vo.UserVo;
@@ -54,4 +55,6 @@ public interface UserMapper {
     String selectPenNameByOpenId(@Param("openId") String openId);
 
     User selectNameAndUrlByOpenId(@Param("openId") String openId);
+
+    int insertQuestionnaire(@Param("questionnaire") Questionnaire questionnaire);
 }

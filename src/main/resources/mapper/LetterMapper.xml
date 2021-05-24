@@ -101,6 +101,6 @@
 
     </select>
     <select id="selectTotalNumberNonSelf" resultType="java.lang.Integer">
-        select count(*) from letter where open_id!=#{openId}
+        select count(*) from letter where open_id!=#{openId} and state!=4
     </select>
 </mapper>

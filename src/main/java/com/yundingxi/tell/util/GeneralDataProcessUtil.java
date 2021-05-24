@@ -153,7 +153,7 @@ public class GeneralDataProcessUtil {
                 data = new SubMessageReplyVo(
                         new SubMessageValueVo(param.getNickname())
                         , new SubMessageValueVo(LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                        , new SubMessageValueVo(param.getShowContent()));
+                        , new SubMessageValueVo(param.getShowContent().length() > 20 ? param.getShowContent().substring(0, 20) : param.getShowContent()));
                 if (param.getObj() instanceof LetterReplyDto) {
                     LetterReplyDto replyDto = (LetterReplyDto) param.getObj();
                     objectNode.put("page", param.getPage().getValue()
@@ -179,46 +179,8 @@ public class GeneralDataProcessUtil {
         objectNode.put("data", data);
         objectNode.put("miniprogram_state", param.getVersion().getValue());
         String post = HttpUtil.post(WeChatEnum.SUB_MESSAGE_SEND_URL_POST.getValue() + "?access_token=" + accessToken.replace("\"", ""), objectNode.toString());
-
+        System.out.println(param.getNickname() + ":::" + param.getTouser() + post);
     }
 
-//    void updateRedis(){
-//        long start = System.currentTimeMillis();
-//        List<String> allOpenId = userMapper.selectAllOpenId();
-//        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );
-//        allOpenId.forEach(openId -> {
-//            del(openId);
-//            List<Letter> letterList = letterMapper.selectAllLetterByOpenId(openId, 1);
-//            letterList.forEach(letter -> {
-//                update(openId,"letter",sdf.format(letter.getReleaseTime()));
-//            });
-//            List<Diarys> diarysList = diaryMapper.selectAllPublicDiary("1");
-//            diarysList.forEach(diarys -> {
-//                update(openId,"diary",sdf.format(diarys.getDate()));
-//            });
-//            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpit();
-//            spittingGrooves.forEach(spittingGrooves1 -> {
-//                update(openId,"spit",sdf.format(spittingGrooves1.getDate()));
-//            });
-//
-//        });
-//        System.out.println((System.currentTimeMillis() - start) + "ms");
-//    }
-//    void update(String openId,String eventType,String time){
-//        String timelineKey = "user:" + openId + ":timeline";
-//        @SuppressWarnings("unchecked") LinkedList<TimelineVo> timelineVoLinkedList = (LinkedList<TimelineVo>) redisUtil.get(timelineKey);
-//        TimelineVo timelineVo = new TimelineVo(openId, eventType, time);
-//        if (timelineVoLinkedList == null) {
-//            LinkedList<TimelineVo> timelineVos = new LinkedList<>();
-//            timelineVos.addFirst(timelineVo);
-//            redisUtil.set(timelineKey, timelineVos);
-//        } else {
-//            timelineVoLinkedList.addFirst(timelineVo);
-//            redisUtil.set(timelineKey, timelineVoLinkedList);
-//        }
-//    }
-//    void del(String openId){
-//        String timelineKey = "user:" + openId + ":timeline";
-//        redisUtil.del(timelineKey);
-//    }
+
 }
