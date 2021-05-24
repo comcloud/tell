@@ -132,7 +132,7 @@
     </resultMap>
     <select id="getUserCommentVos" resultMap="CommentsVoMap">
 
-        select  c.`content`, c.`date`,c.sg_id,sg.title,u.pen_name,u.avatar_url
+        select  c.`content`, c.`date`,c.sg_id,u.pen_name,u.avatar_url
         from comments  c, `user`  u ,spitting_grooves sg where  c.open_id=u.open_id  and sg.id=c.sg_id and
 
                 c.sg_id in (select id from spitting_grooves where open_id=#{openId}) and u.open_id!=sg.open_id

@@ -215,7 +215,7 @@ public class UserServiceImpl implements UserService {
                     new SpittingGroovesVo(
                             spittingGrooves.getId()
                             , spittingGrooves.getNumber()
-                            , content.length() > 20 ? content.substring(0, 20 + (random.nextInt(11))) : content
+                            , content.length() > 30 ? content.substring(0, 20 + (random.nextInt(10))) : content
                             , spittingGrooves.getAvatarUrl(), spittingGrooves.getPenName()));
         });
         return spittingGroovesVoList;
