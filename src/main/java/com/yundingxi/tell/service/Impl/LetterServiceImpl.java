@@ -115,6 +115,10 @@ public class LetterServiceImpl implements LetterService {
      * - 随机获取，不可以排着数据库获取，而是随机获取，当然每日不可以重复
      * <p>
      * 1.从缓存中获取已经读取到的位置数据，用来判断数据库中的数据是否是最新的
+     * <p>
+     * <p>
+     * - 设计一个算法计算阈值
+     * - 添加权重比值判断到获取随机数中，在计算随机数时候将此因素考虑进去
      *
      * @param openId 用户 open id
      * @return 获取三封信件
@@ -155,21 +159,34 @@ public class LetterServiceImpl implements LetterService {
                     Letter letter = letterMapper.selectRandomLatestLetter(openId, randomInt % totalNumber, 1, 1);
                     GeneralDataProcessUtil.configLetterDataFromSingleObject(letter, openId, indexLetterDtoList);
                 }
-                //更新redis缓存内容
-                JSONObject object = new JSONObject();
-                object.put("visitNumber", totalNumber);
-                object.put("date", currentDate);
-                object.put(listKey, indexLetterDtoList);
-                redisUtil.set(letterInfoKey, object.toJSONString());
+                updateRedisLetterInfo(letterInfoKey, totalNumber, currentDate, indexLetterDtoList);
                 return indexLetterDtoList;
             }
         }).get();
     }
 
     /**
+     * 更新redis中letter info的缓存内容
+     *
+     * @param key         此缓存中对应redis的key名
+     * @param visitNumber 此时访问数据库时候数据库中的数据量
+     * @param currentDate 当前日记字符串
+     * @param list        存储着信件的列表
+     */
+    private void updateRedisLetterInfo(String key, int visitNumber, String currentDate, List<IndexLetterDto> list) {
+        //更新redis缓存内容
+        JSONObject object = new JSONObject();
+        object.put("visitNumber", visitNumber);
+        object.put("date", currentDate);
+        object.put("IndexLetterDtoList", list);
+        redisUtil.set(key, object.toJSONString());
+    }
+
+    /**
      * 获取length个不同数字的数字
+     *
      * @param surplusThreshold 求余的阈值
-     * @param length 要获取的长度
+     * @param length           要获取的长度
      * @return 不同数字数组
      */
     private int[] getDifferentArray(int surplusThreshold, int length) {

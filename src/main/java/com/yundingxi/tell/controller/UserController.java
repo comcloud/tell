@@ -103,13 +103,13 @@ public class UserController {
 
     @GetMapping("/getDataOfHistory")
     @Operation(description = "获取所有历史发布内容，包括信件，日记，吐槽", summary = "获取历史发布内容")
-    public Result<HistoryDataVo> getDataOfHistory(@Parameter(description = "open id") @RequestParam("open id") String openId) {
+    public Result<HistoryDataVo> getDataOfHistory(@Parameter(description = "openid") @RequestParam("openid") String openId) {
         return userService.getDataOfHistory(openId);
     }
 
     @GetMapping("/getOfficialMsg")
     @Operation(description = "获取官方推送", summary = "获取官方审核推送")
-    public Result getOfficialMsg(@Parameter(description = "open id") @RequestParam("open id") String openId) {
+    public Result getOfficialMsg(@Parameter(description = "openid") @RequestParam("openid") String openId) {
         return userService.getOfficialMsg(openId);
     }
 
