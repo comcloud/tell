@@ -1,5 +1,6 @@
 package com.yundingxi.tell;
 
+import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
@@ -13,6 +14,8 @@ import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
+import com.yundingxi.tell.util.strategy.SubMessageStrategy;
+import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

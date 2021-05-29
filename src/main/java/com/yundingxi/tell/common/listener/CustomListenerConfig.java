@@ -164,20 +164,19 @@ public class CustomListenerConfig {
         Integer achieveNum = (Integer) redisUtil.get(achieveUnreadNumKey);
         Integer stampNum = (Integer) redisUtil.get(stampUnreadNumKey);
         redisUtil.set(achieveUnreadNumKey, achieveNum == null ? 1 : achieveNum + 1);
-        //奖励是一些邮票内容
-        String nonAchieveType = "stamp";
-        if (nonAchieveType.equals(achieve.getAchieveType())) {
-            //此时是邮票成就，不再奖励邮票
-            return;
-        }
+
         String stampString = achieveMapper.selectAchieveRewardById(achieve.getId());
         String[] stampIdArray = "".equals(stampString) ? new String[0] : stampString.split(",");
         for (String stampId : stampIdArray) {
             stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stampId, openId, "1", new Date(), 1));
         }
         redisUtil.set(stampUnreadNumKey, stampNum == null ? 1 : (stampNum + stampIdArray.length));
-        handleStampAchieve(openId);
-        //添加成就
+        //检测邮票
+        String nonAchieveType = "stamp";
+        if (!nonAchieveType.equals(achieve.getAchieveType())) {
+            //查看邮票是否满足
+            handleStampAchieve(openId);
+        }
     }
 
 

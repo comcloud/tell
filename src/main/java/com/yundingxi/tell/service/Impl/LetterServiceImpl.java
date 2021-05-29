@@ -25,6 +25,7 @@ import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
+import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -270,7 +271,7 @@ public class LetterServiceImpl implements LetterService {
             String replyId = UUID.randomUUID().toString();
             //回信订阅消息
             SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION);
-            GeneralDataProcessUtil.subMessage(param, replyId);
+            SubMessageStrategyContext.getSubMessageStrategy(WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID).processSubMessage(param, replyId);
 
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
             String replyTime = LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

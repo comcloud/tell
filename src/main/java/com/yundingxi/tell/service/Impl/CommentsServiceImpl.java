@@ -17,6 +17,7 @@ import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
+import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class CommentsServiceImpl implements CommentsService {
                         .nickname(userMapper.selectPenNameByOpenId(entity.getOpenId()))
                         .templateId(WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID)
                         .version(WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION).page(WeChatEnum.SUB_MESSAGE_COMMENT_PAGE).build();
-                GeneralDataProcessUtil.subMessage(param);
+                SubMessageStrategyContext.getSubMessageStrategy(WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID).processSubMessage(param);
             });
             log.info("===================> {} 数据保存成功", entity);
             //未读消息+1
