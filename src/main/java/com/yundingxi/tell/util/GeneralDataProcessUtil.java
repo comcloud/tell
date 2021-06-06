@@ -137,6 +137,10 @@ public class GeneralDataProcessUtil {
      * 订阅消息
      */
     public static void subMessage(SubMessageParam param, String... reserveParam) {
+        if(param.getTouser().equals(param.getSender())){
+            //此时是给自己做出事件，不尽兴订阅消息
+            return ;
+        }
         String accessToken = GeneralDataProcessUtil.getAccessToken();
         Object data = null;
         JSONObject objectNode = new JSONObject();

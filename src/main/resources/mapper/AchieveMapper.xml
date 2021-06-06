@@ -27,7 +27,7 @@
     </insert>
 
     <select id="selectAllAchieveType" resultType="java.lang.String">
-        select achieve_type
+        select distinct achieve_type
         from achieve
     </select>
     <select id="selectAllTaskIdByAchieveTypeAndLocation" resultType="java.lang.String">
