@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Executors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TellApplicationTests {
@@ -51,6 +52,9 @@ class TellApplicationTests {
 
     @Test
     void contextLoads() throws IllegalAccessException {
+        LinkedList<TimelineVo> list = ((LinkedList<TimelineVo>)redisUtil.get("user:oUGur5NFcTHkjrPDDnRpSEGDVX5s:timeline"));
+        list.forEach(System.out::println);
+        Executors.newCachedThreadPool();
     }
 
 
@@ -117,7 +121,6 @@ class TellApplicationTests {
     void fileUtilTest() {
         List<Diarys> allPublicDiary = diaryService.getAllPublicDiary();
         List<DiaryReturnVo> diaryReturnVos = GeneralDataProcessUtil.configDataFromList(allPublicDiary, Diarys.class, DiaryReturnVo.class);
-        System.out.println(diaryReturnVos);
     }
 
     @Test

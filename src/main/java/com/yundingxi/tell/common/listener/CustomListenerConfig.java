@@ -1,7 +1,6 @@
 package com.yundingxi.tell.common.listener;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.UserAchieve;
 import com.yundingxi.tell.bean.entity.UserStamp;
@@ -11,7 +10,6 @@ import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.mapper.TaskMapper;
-import com.yundingxi.tell.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +140,9 @@ public class CustomListenerConfig {
      */
     private void judgeAchieve(String openId, String achieveType, JSONObject jsonObject, Achieve achieve) {
         String sqlStr = combineSqlString(openId, achieve);
+        if ("".equals(sqlStr)) {
+            return ;
+        }
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
             //更新redis内容
@@ -191,6 +192,9 @@ public class CustomListenerConfig {
     private String combineSqlString(String openId, Achieve achieve) {
         //此时根据json串拼接sql语句查询是否满足条件
         String taskSql = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
+        if(taskSql == null) {
+            return "";
+        }
         taskSql = taskSql.replace("\"", "").replace("#{openId}", "'" + openId + "'");
         return taskSql;
     }

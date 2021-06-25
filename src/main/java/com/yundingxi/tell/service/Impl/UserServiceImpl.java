@@ -131,7 +131,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<String> updateUser(User entity) {
-        System.out.println(entity);
         if (userMapper.updateUser(entity) > 0) {
             return ResultGenerator.genSuccessResult("user 用户 信息 修改  成功!!!");
         }
