@@ -35,4 +35,6 @@ public interface StampMapper {
     int insertSingleNewUserStamp(@Param("userStamp") UserStamp userStamp);
 
     List<Stamp> selectAllStamp();
+
+    List<UserStamp> selectBaseStamp();
 }
