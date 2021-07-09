@@ -80,7 +80,10 @@ public class UserServiceImpl implements UserService {
      */
     private List<UserStamp> getUserStamps(String openId) {
         //每个人赋予默认邮票
-        return stampMapper.selectBaseStamp();
+        List<Stamp> baseStamp = stampMapper.selectBaseStamp();
+        List<UserStamp> userStampList = new ArrayList<>();
+        baseStamp.forEach(stamp -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), stamp.getId(), openId, "1", new Date(), 1)));
+        return userStampList;
     }
 
     @Override
