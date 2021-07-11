@@ -229,8 +229,8 @@ public class CustomListenerConfig {
      * @param eventType 事件类型
      */
     private void updateRedisTimeline(String openId, String eventType, String content) {
-        String nonAchieveType = "stamp";
-        if (nonAchieveType.equals(eventType)) {
+        String isAchieveType = "letter,spit,diary";
+        if (!isAchieveType.contains(eventType)) {
             return;
         }
         String timelineKey = "user:" + openId + ":timeline";
