@@ -59,14 +59,20 @@ public class ResourceInit implements CommandLineRunner {
      * 邮票成就初始化，初始化内容，加载出每一个人的基本信息
      */
     public void stampAndAchieveInitForEveryone(List<String> openIdList) {
+        openIdList.forEach(openId -> stampAndAchieveInitForEveryone(openId,false));
+    }
+
+    /**
+     * @param openId 用户open id
+     * @param isForce 是否强制进行初始化，true表示即使用户存在缓存但是依旧重新初始化
+     */
+    public void stampAndAchieveInitForEveryone(String openId,boolean isForce) {
         List<String> achieveTypeList = achieveMapper.selectAllAchieveType();
-        openIdList.forEach(openId -> {
-            String offsetKey = "listener:" + openId + ":offset";
-            if (redisUtil.get(offsetKey) == null) {
-                JSONObject jsonObject = new JSONObject();
-                achieveTypeList.forEach(achieveType -> jsonObject.put(achieveType, new ArrayList<String>(5)));
-                redisUtil.set(offsetKey, jsonObject);
-            }
-        });
+        String offsetKey = "listener:" + openId + ":offset";
+        if (redisUtil.get(offsetKey) == null || isForce) {
+            JSONObject jsonObject = new JSONObject();
+            achieveTypeList.forEach(achieveType -> jsonObject.put(achieveType, new ArrayList<String>(5)));
+            redisUtil.set(offsetKey, jsonObject);
+        }
     }
 }
