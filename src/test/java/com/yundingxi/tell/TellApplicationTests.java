@@ -106,10 +106,10 @@ class TellApplicationTests {
                 update(openId, "diary", sdf.format(diarys.getDate()), diarys.getContent());
             });
 
-            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
-            spittingGrooves.forEach(spittingGrooves1 -> {
-                update(openId, "spit", sdf.format(spittingGrooves1.getDate()), spittingGrooves1.getContent());
-            });
+//            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
+//            spittingGrooves.forEach(spittingGrooves1 -> {
+//                update(openId, "spit", sdf.format(spittingGrooves1.getDate()), spittingGrooves1.getContent());
+//            });
 
         });
         System.out.println((System.currentTimeMillis() - start) + "ms");

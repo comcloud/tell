@@ -181,10 +181,13 @@
           and sg.`state` != #{state} and sg.open_id = #{openId}
         group by sg.id
     </select>
-    <select id="selectAllSpitForSelfNonState" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
-        select *
-        from spitting_grooves
-        where state!=#{state} and open_id=#{openId}
+    <select id="selectAllSpitForSelfNonState" resultMap="SpittingGroovesVoMap">
+        select sg.id, sg.avatar_url, sg.pen_name,sg.content ,(select count(*) from comments where sg_id=sg.id) number
+        from spitting_grooves sg LEFT join
+             comments c
+             on sg.id = c.sg_id
+        where  sg.`state` = 1 and c.open_id=#{openId} and sg.state!=#{state}
+        group by sg.id;
     </select>
 
     <select id="selectNumberOfLetSpitByOpenIdNonState" resultType="java.lang.Integer">

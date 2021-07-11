@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService {
         HistoryDataVo data = new HistoryDataVo();
         List<Letter> letterList = letterMapper.selectAllLetterByOpenIdNonState(openId, 4);
         List<Diarys> diaryList = diaryMapper.selectAllDiaryByOpenIdAndNonState(openId, "4");
-        List<SpittingGrooves> spittingGroovesList = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
+        List<SpittingGroovesVo> spittingGroovesList = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
 
         data.setLetterList(GeneralDataProcessUtil.configDataFromList(letterList, Letter.class, LetterVo.class));
         data.setDiaryList(GeneralDataProcessUtil.configDataFromList(diaryList, Diarys.class, DiaryReturnVo.class));
@@ -200,19 +200,18 @@ public class UserServiceImpl implements UserService {
         return ResultGenerator.genSuccessResult(data);
     }
 
-    private List<SpittingGroovesVo> resolveTitle(List<SpittingGrooves> spittingGroovesList) {
+    /**
+     * 返回一个吐槽对象vo列表，为了解决标题问题
+     * @param voList 吐槽对象集合
+     * @return 吐槽对象vo
+     */
+    private List<SpittingGroovesVo> resolveTitle(List<SpittingGroovesVo> voList) {
         Random random = new Random();
-        List<SpittingGroovesVo> spittingGroovesVoList = new ArrayList<>();
-        spittingGroovesList.forEach(spittingGrooves -> {
-            String content = spittingGrooves.getContent();
-            spittingGroovesVoList.add(
-                    new SpittingGroovesVo(
-                            spittingGrooves.getId()
-                            , spittingGrooves.getNumber()
-                            , content.length() > 30 ? content.substring(0, 20 + (random.nextInt(10))) : content
-                            , spittingGrooves.getAvatarUrl(), spittingGrooves.getPenName()));
+        voList.forEach(vo -> {
+            String content = vo.getTitle();
+            vo.setTitle(content.length() > 30 ? content.substring(0, 20 + (random.nextInt(10))) : content);
         });
-        return spittingGroovesVoList;
+        return voList;
     }
 
     @Override
