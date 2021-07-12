@@ -1,7 +1,9 @@
 package com.yundingxi.tell.common.listener;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
 import com.yundingxi.tell.bean.entity.Achieve;
+import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.UserAchieve;
 import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.TimelineVo;
@@ -9,6 +11,7 @@ import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.ResourceInit;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
+import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.mapper.TaskMapper;
 import org.slf4j.Logger;
@@ -55,14 +58,17 @@ public class CustomListenerConfig {
 
     private final ResourceInit resourceInit;
 
+    private final LetterMapper letterMapper;
+
     @Autowired
-    public CustomListenerConfig(RedisUtil redisUtil, AchieveMapper achieveMapper, StampMapper stampMapper, TaskMapper taskMapper, JdbcTemplate jdbcTemplate, ResourceInit resourceInit) {
+    public CustomListenerConfig(RedisUtil redisUtil, AchieveMapper achieveMapper, StampMapper stampMapper, TaskMapper taskMapper, JdbcTemplate jdbcTemplate, ResourceInit resourceInit, LetterMapper letterMapper) {
         this.redisUtil = redisUtil;
         this.achieveMapper = achieveMapper;
         this.stampMapper = stampMapper;
         this.taskMapper = taskMapper;
         this.jdbcTemplate = jdbcTemplate;
         this.resourceInit = resourceInit;
+        this.letterMapper = letterMapper;
     }
 
     /**
@@ -105,7 +111,14 @@ public class CustomListenerConfig {
     public void handleReply(PublishReplyEvent replyEvent) {
         LOG.info("触发保存回信事件，此时应该更新关于回信的成就内容");
         LOG.info(replyEvent.getLetterReplyDto().toString());
-        EXECUTOR.execute(getRunnable(replyEvent.getLetterReplyDto().getRecipient(), "reply", replyEvent.getLetterReplyDto().getMessage()));
+        //处理用户回复信件的行为
+        LetterReplyDto replyDto = replyEvent.getLetterReplyDto();
+        String letterId = replyDto.getLetterId();
+        Letter letter = letterMapper.selectLetterById(letterId);
+        String[] tapIds = letter.getTapIds().split(",");
+        updateRedisContentForUserBehavior(replyDto.getSender(), (JSONObject) redisUtil.get("listener:" + replyDto.getSender() + ":userBehavior"), tapIds);
+        //处理用户回复信件对成就邮票的影响
+        EXECUTOR.execute(getRunnable(replyDto.getRecipient(), "reply", replyDto.getMessage()));
     }
 
     public void handleStampAchieve(String openId) {
@@ -155,7 +168,7 @@ public class CustomListenerConfig {
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
             //更新redis内容
-            updateRedisContent(openId, achieveType, jsonObject, achieve.getId());
+            updateRedisContentForOffset(openId, achieveType, jsonObject, achieve.getId());
             insertUserStampAndAchieve(openId, achieve);
         }
     }
@@ -215,11 +228,36 @@ public class CustomListenerConfig {
      * @param jsonObject     redis中存储用户的成就偏移量json对象
      * @param alreadyExistId 已经获取到的事件ID
      */
-    private void updateRedisContent(String openId, String achieveType, JSONObject jsonObject, String alreadyExistId) {
+    private void updateRedisContentForOffset(String openId, String achieveType, JSONObject jsonObject, String alreadyExistId) {
         @SuppressWarnings("unchecked") ArrayList<String> list = (ArrayList<String>) jsonObject.get(achieveType);
         list.add(alreadyExistId);
         jsonObject.put(achieveType, list);
         redisUtil.set("listener:" + openId + ":offset", jsonObject);
+    }
+
+    /**
+     * 更新redis缓存中的用户行为内容，其中存储的键值对分别是，标签名：数量
+     *
+     * @param openId     用户open id
+     * @param jsonObject 存储数据的JSON对象
+     * @param tapNames   标签名数组
+     */
+    private void updateRedisContentForUserBehavior(String openId, JSONObject jsonObject, String... tapNames) {
+        String userBehaviorKey = "listener:" + openId + ":userBehavior";
+        for (String tapName : tapNames) {
+            if (jsonObject == null || jsonObject.isEmpty()) {
+                //初始化缓存说明此时这个用户没有进行过行为操作
+                JSONObject newJsonObject = new JSONObject();
+                newJsonObject.put(tapName, 1);
+                jsonObject = newJsonObject;
+                redisUtil.set(userBehaviorKey, newJsonObject);
+            } else {
+                Object o = jsonObject.get(tapName);
+                int tapNameCount = o == null ? 1 : ((Integer) o) + 1;
+                jsonObject.put(tapName, tapNameCount);
+                redisUtil.set(userBehaviorKey, jsonObject);
+            }
+        }
     }
 
     /**
@@ -245,4 +283,8 @@ public class CustomListenerConfig {
             redisUtil.set(timelineKey, timelineVoLinkedList);
         }
     }
+
+
+    //------------------------- 用户行为监听 ----------------------
+
 }

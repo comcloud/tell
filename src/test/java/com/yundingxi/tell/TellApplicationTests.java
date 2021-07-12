@@ -67,6 +67,17 @@ class TellApplicationTests {
 //        }
     }
 
+    private void giveAllAchieveAndAllStamp(String openId) {
+        List<Stamp> stamps = stampMapper.selectAllStamp();
+        List<Achieve> achieves = achieveMapper.selectAllAchieve();
+        achieves.forEach(achieve -> {
+            achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "0"));
+        });
+        stamps.forEach(stamp -> {
+            stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stamp.getId(), openId, "0", new Date(), 0));
+        });
+    }
+
     private List<UserStamp> getUserStamps(String openId) {
         //每个人赋予默认邮票
         List<Stamp> baseStamp = stampMapper.selectBaseStamp();

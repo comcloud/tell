@@ -142,6 +142,9 @@ public class LetterServiceImpl implements LetterService {
             JsonNode letterInfoJsonNode = JsonUtil.parseJson(letterInfoJson);
             String lastDate = letterInfoJsonNode.findPath("date").toString();
             String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            //-----------------这里不该是总数，为了体现出没有被回复的信件优先被推荐、时间较新原则，应该是一个数量区间
+            //待解决
             int totalNumber = letterMapper.selectTotalNumberNonSelf(openId);
             int visibleNumber = letterInfoJsonNode.findPath("visitNumber").asInt();
             if (lastDate.equals(currentDate) || visibleNumber >= totalNumber) {
@@ -150,6 +153,7 @@ public class LetterServiceImpl implements LetterService {
                 return indexLetterDtoList;
             } else {
                 //此时需要从数据库获取内容,随机三个数字获取数据库中最新的十条数据中的位置
+                //------------------ 更改为通过算法计算出来要获取2个信件，第三封信件为其他类型信件同时为最为积极性的信件
                 int gainLetterNumber = totalNumber == 1 || totalNumber == 2 ? totalNumber : 3;
                 List<IndexLetterDto> indexLetterDtoList = new ArrayList<>(3);
                 //用来解决生成随机数重复问题，以防出现相同的信件，当然如果数据库的数据比较少，进行randomInt+1之后还是会有重复
@@ -170,7 +174,7 @@ public class LetterServiceImpl implements LetterService {
      *
      * @param key         此缓存中对应redis的key名
      * @param visitNumber 此时访问数据库时候数据库中的数据量
-     * @param currentDate 当前日记字符串
+     * @param currentDate 当前日期字符串
      * @param list        存储着信件的列表
      */
     private void updateRedisLetterInfo(String key, int visitNumber, String currentDate, List<IndexLetterDto> list) {
@@ -183,7 +187,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     /**
-     * 获取length个不同数字的数字
+     * 获取length个不同数字的数组
      *
      * @param surplusThreshold 求余的阈值
      * @param length           要获取的长度

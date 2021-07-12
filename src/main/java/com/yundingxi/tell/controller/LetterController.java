@@ -5,15 +5,13 @@ import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.common.listener.PublishLetterEvent;
 import com.yundingxi.tell.common.listener.PublishReplyEvent;
+import com.yundingxi.tell.common.listener.UserBehaviorEvent;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +31,14 @@ import java.util.Map;
 @Api(value = "/letter", tags = "信件接口")
 public class LetterController {
 
-    @Autowired
-    private LetterService letterService;
+    private final LetterService letterService;
 
-    private final Logger log = LoggerFactory.getLogger(LetterController.class);
+    private final ApplicationEventPublisher publisher;
 
-    @Autowired
-    private ApplicationEventPublisher publisher;
+    public LetterController(ApplicationEventPublisher publisher,LetterService letterService) {
+        this.publisher = publisher;
+        this.letterService = letterService;
+    }
 
     /**
      * 普通发送
@@ -54,7 +53,7 @@ public class LetterController {
         if (letterService.saveSingleLetter(letterStorageDto) == 1) {
             publisher.publishEvent(new PublishLetterEvent(this, letterStorageDto));
             return ResultGenerator.genSuccessResult("保存信件成功");
-        }else{
+        } else {
             return ResultGenerator.genFailResult("保存信件失败");
         }
     }
@@ -66,6 +65,7 @@ public class LetterController {
         String successResult = "success";
         if (successResult.equals(letterService.replyLetter(letterReplyDto))) {
             publisher.publishEvent(new PublishReplyEvent(this, letterReplyDto));
+            publisher.publishEvent(new UserBehaviorEvent<>(this, letterReplyDto));
             return ResultGenerator.genSuccessResult(successResult);
         } else {
             return ResultGenerator.genFailResult("回复失败");
@@ -109,7 +109,9 @@ public class LetterController {
     @GetMapping("/getDetailOfLetterById")
     public Result<IndexLetterDto> getIndexLetterById(@Parameter(description = "信件id") String letterId,
                                                      @Parameter(description = "open id") String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getLetterById(new IndexLetterVo(openId, letterId)));
+        IndexLetterVo indexLetterVo = new IndexLetterVo(openId, letterId);
+        publisher.publishEvent(new UserBehaviorEvent<>(this, indexLetterVo));
+        return ResultGenerator.genSuccessResult(letterService.getLetterById(indexLetterVo));
     }
 
     @GetMapping("/getLetterOfHistory")
