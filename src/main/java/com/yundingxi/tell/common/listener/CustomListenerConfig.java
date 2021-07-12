@@ -1,11 +1,10 @@
 package com.yundingxi.tell.common.listener;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yundingxi.tell.bean.dto.DiaryDto;
 import com.yundingxi.tell.bean.dto.LetterReplyDto;
-import com.yundingxi.tell.bean.entity.Achieve;
-import com.yundingxi.tell.bean.entity.Letter;
-import com.yundingxi.tell.bean.entity.UserAchieve;
-import com.yundingxi.tell.bean.entity.UserStamp;
+import com.yundingxi.tell.bean.dto.LetterStorageDto;
+import com.yundingxi.tell.bean.entity.*;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.CenterThreadPool;
@@ -78,10 +77,10 @@ public class CustomListenerConfig {
      * @param letterEvent 信件事件
      */
     @EventListener
-    public void handleSaveLetterEvent(PublishLetterEvent letterEvent) {
+    public void handleSaveLetterEvent(UserBehaviorEvent<LetterStorageDto> letterEvent) {
         LOG.info("触发保存信件事件，此时应该更新关于信件的成就内容");
-        LOG.info(letterEvent.getLetterStorageDto().toString());
-        EXECUTOR.execute(getRunnable(letterEvent.getLetterStorageDto().getOpenId(), "letter", letterEvent.getLetterStorageDto().getContent()));
+        LOG.info(letterEvent.getT().toString());
+        EXECUTOR.execute(getRunnable(letterEvent.getT().getOpenId(), "letter", letterEvent.getT().getContent()));
     }
 
     /**
@@ -90,10 +89,10 @@ public class CustomListenerConfig {
      * @param diaryEvent 日记事件
      */
     @EventListener
-    public void handleSaveDiary(PublishDiaryEvent diaryEvent) {
+    public void handleSaveDiary(UserBehaviorEvent<DiaryDto> diaryEvent) {
         LOG.info("触发保存日记事件，此时应该更新关于日记的成就内容");
-        LOG.info(diaryEvent.getDiaryDto().toString());
-        EXECUTOR.execute(getRunnable(diaryEvent.getDiaryDto().getOpenId(), "diary", diaryEvent.getDiaryDto().getContent()));
+        LOG.info(diaryEvent.getT().toString());
+        EXECUTOR.execute(getRunnable(diaryEvent.getT().getOpenId(), "diary", diaryEvent.getT().getContent()));
     }
 
     /**
@@ -102,20 +101,19 @@ public class CustomListenerConfig {
      * @param spitEvent 吐槽事件
      */
     @EventListener
-    public void handleSaveSpit(PublishSpitEvent spitEvent) {
+    public void handleSaveSpit(UserBehaviorEvent<SpittingGrooves> spitEvent) {
         LOG.info("触发保存吐槽事件，此时应该更新关于吐槽的成就内容");
-        LOG.info(spitEvent.getSpittingGrooves().toString());
-        EXECUTOR.execute(getRunnable(spitEvent.getSpittingGrooves().getOpenId(), "spit", spitEvent.getSpittingGrooves().getContent()));
+        LOG.info(spitEvent.getT().toString());
+        EXECUTOR.execute(getRunnable(spitEvent.getT().getOpenId(), "spit", spitEvent.getT().getContent()));
     }
 
     @EventListener
-    public void handleReply(PublishReplyEvent replyEvent) {
+    public void handleReply(UserBehaviorEvent<LetterReplyDto> replyEvent) {
         LOG.info("触发保存回信事件，此时应该更新关于回信的成就内容");
-        LOG.info(replyEvent.getLetterReplyDto().toString());
+        LOG.info(replyEvent.getT().toString());
         //处理用户回复信件的行为
-        LetterReplyDto replyDto = replyEvent.getLetterReplyDto();
-        String letterId = replyDto.getLetterId();
-        updateRedisContentForUserBehavior(replyDto.getSender(), letterId);
+        LetterReplyDto replyDto = replyEvent.getT();
+        updateRedisContentForUserBehavior(replyDto.getSender(), replyDto.getLetterId());
         //处理用户回复信件对成就邮票的影响
         EXECUTOR.execute(getRunnable(replyDto.getRecipient(), "reply", replyDto.getMessage()));
     }

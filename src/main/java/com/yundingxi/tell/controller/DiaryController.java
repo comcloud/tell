@@ -2,25 +2,20 @@ package com.yundingxi.tell.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.DiaryDto;
-import com.yundingxi.tell.bean.dto.DiaryViewDto;
 import com.yundingxi.tell.bean.entity.Diarys;
-import com.yundingxi.tell.common.listener.PublishDiaryEvent;
+import com.yundingxi.tell.common.listener.UserBehaviorEvent;
 import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @version v1.0
@@ -45,7 +40,7 @@ public class DiaryController {
     public Result<Object> saveDiary(@Parameter(description = "日记对象")
                                             DiaryDto diaryDto) {
         if (diaryService.saveDiary(diaryDto) == 1) {
-            publisher.publishEvent(new PublishDiaryEvent(this, diaryDto));
+            publisher.publishEvent(new UserBehaviorEvent<>(this, diaryDto));
             return ResultGenerator.genSuccessResult();
         }else{
             return ResultGenerator.genFailResult(new Object());
