@@ -6,6 +6,7 @@ import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.Letter;
 import com.yundingxi.tell.bean.entity.UserAchieve;
 import com.yundingxi.tell.bean.entity.UserStamp;
+import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.ResourceInit;
@@ -114,12 +115,11 @@ public class CustomListenerConfig {
         //处理用户回复信件的行为
         LetterReplyDto replyDto = replyEvent.getLetterReplyDto();
         String letterId = replyDto.getLetterId();
-        Letter letter = letterMapper.selectLetterById(letterId);
-        String[] tapIds = letter.getTapIds().split(",");
-        updateRedisContentForUserBehavior(replyDto.getSender(), (JSONObject) redisUtil.get("listener:" + replyDto.getSender() + ":userBehavior"), tapIds);
+        updateRedisContentForUserBehavior(replyDto.getSender(), letterId);
         //处理用户回复信件对成就邮票的影响
         EXECUTOR.execute(getRunnable(replyDto.getRecipient(), "reply", replyDto.getMessage()));
     }
+
 
     public void handleStampAchieve(String openId) {
         LOG.info("触发邮票事件，此时应该更新关于邮票的成就内容");
@@ -287,4 +287,20 @@ public class CustomListenerConfig {
 
     //------------------------- 用户行为监听 ----------------------
 
+    @EventListener
+    public void handleGetLetterBehavior(UserBehaviorEvent<IndexLetterVo> userBehaviorEvent){
+        IndexLetterVo indexLetterVo = userBehaviorEvent.getT();
+        updateRedisContentForUserBehavior(indexLetterVo.getOpenId(),indexLetterVo.getLetterId());
+    }
+
+    /**
+     * 更新用户行为到redis缓存中，传入信件id用于获取标签
+     * @param openId 用户open id
+     * @param letterId letter id
+     */
+    private void updateRedisContentForUserBehavior(String openId, String letterId) {
+        Letter letter = letterMapper.selectLetterById(letterId);
+        String[] tapIds = letter.getTapIds().split(",");
+        updateRedisContentForUserBehavior(openId, (JSONObject) redisUtil.get("listener:" + openId + ":userBehavior"), tapIds);
+    }
 }
