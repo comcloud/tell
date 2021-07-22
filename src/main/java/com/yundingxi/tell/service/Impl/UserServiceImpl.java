@@ -13,6 +13,9 @@ import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.*;
+import com.yundingxi.tell.util.pipeline.context.Context;
+import com.yundingxi.tell.util.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.tell.util.pipeline.executor.PipelineExecutor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -158,6 +161,14 @@ public class UserServiceImpl implements UserService {
         return ResultGenerator.genSuccessResult(profileVo);
     }
 
+    /**
+     * 计算给定时间戳之前四周的用户数据分析记录
+     * 返回结果中是一个ModelUtil，第一个值List<List<String>>表示用户的历史发布内容
+     * 第二个是用户的数据分析，使用Map<String,List<ProfileNumVo>>>存储
+     * @param openId           open Id
+     * @param currentTimeStamp 当前时间戳
+     * @return 用户分析数据结果
+     */
     @SneakyThrows
     @Override
     public Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId, Long currentTimeStamp) {
@@ -167,12 +178,14 @@ public class UserServiceImpl implements UserService {
         @SuppressWarnings("unchecked") ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> model
                 = (ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>) redisUtil.get(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + ":data");
         if (model == null) {
-            ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> result = new ModelUtil<>();
-            Date currentDate = new Date(currentTimeStamp);
-            CompletableFuture
-                    .runAsync(() -> result.setFirstValue(configureReview(openId, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentDate))))
-                    .thenRunAsync(() -> result.setLastValue(configureDataAnalysis(openId, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentDate))))
-                    .get();
+            //此时缓存中没有数据，所以需要进行重新计算，这里计算的方式使用管道模式，一种Pipeline设计模式
+            //将每个需要计算的内容进行设置为单个的value，然后组成一个管道使用
+            PipelineExecutor<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> executor = new PipelineExecutor<>();
+            UserDataAnalysisContext context = UserDataAnalysisContext.builder().openId(openId).currentTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(currentTimeStamp))).build();
+            executor.acceptSync(context);
+            ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>> result = context.getResult();
+            //这个位置为设计漏洞，也就是将变量单独存储，然后执行完成之后再自己赋值
+            result.setLastValue(context.getAnalysis());
             redisUtil.set(RedisEnums.USER_DATA_ANALYSIS_MODEL.getRedisKey() + "_" + openId + ":data", result, TimeUnit.DAYS.toSeconds(30));
             return ResultGenerator.genSuccessResult(result);
         }
@@ -232,61 +245,5 @@ public class UserServiceImpl implements UserService {
         int result = userMapper.insertQuestionnaire(questionnaire);
         return result == 1 ? ResultGenerator.genSuccessResult("保存成功") : ResultGenerator.genFailResult("保存失败");
     }
-
-    /**
-     * 配置历史发布
-     */
-    private List<List<String>> configureReview(String openId, String currentTime) {
-        List<List<String>> review = new ArrayList<>();
-        review.add(Arrays.asList("发布数量", "解忧", "日记", "吐槽"));
-        for (int i = 0; i < 4; i++) {
-            review.add(Arrays.asList("第" + (i + 1) + "周"
-                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, currentTime, "letter", i, 7) + ""
-                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, currentTime, "diarys", i, 7) + ""
-                    , letterMapper.selectWeeklyQuantityThroughOpenId(openId, currentTime, "spitting_grooves", i, 7) + "")
-            );
-        }
-        return review;
-    }
-
-    /**
-     * 配置数据分析内容
-     */
-    @SneakyThrows
-    private Map<String, List<ProfileNumVo>> configureDataAnalysis(String openId, String currentTime) {
-        Map<String, List<ProfileNumVo>> analysis = new HashMap<>(3);
-
-        List<String> letterContentList = letterMapper.selectAllLetterContentByOpenId(openId, currentTime);
-        List<String> diaryContentList = diaryMapper.selectAllDiaryContentByOpenId(openId, currentTime);
-        List<String> spittingGroovesContentList = spittingGroovesMapper.selectAllSpitContentByOpenId(openId, currentTime);
-        CompletableFuture
-                .runAsync(() -> analysis.put("letter", singleAnalysis(letterContentList)))
-                .thenRunAsync(() -> analysis.put("diary", singleAnalysis(diaryContentList)))
-                .thenRunAsync(() -> analysis.put("spit_groove", singleAnalysis(spittingGroovesContentList)))
-                .get();
-        return analysis;
-    }
-
-    /**
-     * @param analysisContentList 要被分析的内容集合
-     * @return 分析的单个结果
-     */
-    private List<ProfileNumVo> singleAnalysis(List<String> analysisContentList) {
-        List<ProfileNumVo> universalList = new ArrayList<>();
-        universalList.add(new ProfileNumVo("愤怒", 0));
-        universalList.add(new ProfileNumVo("低落", 0));
-        universalList.add(new ProfileNumVo("温和", 0));
-        universalList.add(new ProfileNumVo("喜悦", 0));
-        int[] gradeArray = new int[4];
-        analysisContentList.forEach(content -> {
-            Integer analysisResult = NaturalLanguageUtil.emotionAnalysis(content);
-            gradeArray[analysisResult] = gradeArray[analysisResult] + 1;
-        });
-        for (int i = 0; i < gradeArray.length; i++) {
-            universalList.get(i).setValue(gradeArray[i]);
-        }
-        return universalList;
-    }
-
 
 }

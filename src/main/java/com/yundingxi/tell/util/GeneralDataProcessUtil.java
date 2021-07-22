@@ -155,4 +155,25 @@ public class GeneralDataProcessUtil {
         objectNode.put("miniprogram_state", param.getVersion().getValue());
         return objectNode.toString();
     }
+
+    /**
+     * @param analysisContentList 要被分析的内容集合
+     * @return 分析的单个结果
+     */
+    public static List<ProfileNumVo> singleAnalysis(List<String> analysisContentList) {
+        List<ProfileNumVo> universalList = new ArrayList<>();
+        universalList.add(new ProfileNumVo("愤怒", 0));
+        universalList.add(new ProfileNumVo("低落", 0));
+        universalList.add(new ProfileNumVo("温和", 0));
+        universalList.add(new ProfileNumVo("喜悦", 0));
+        int[] gradeArray = new int[4];
+        analysisContentList.forEach(content -> {
+            Integer analysisResult = NaturalLanguageUtil.emotionAnalysis(content);
+            gradeArray[analysisResult] = gradeArray[analysisResult] + 1;
+        });
+        for (int i = 0; i < gradeArray.length; i++) {
+            universalList.get(i).setValue(gradeArray[i]);
+        }
+        return universalList;
+    }
 }

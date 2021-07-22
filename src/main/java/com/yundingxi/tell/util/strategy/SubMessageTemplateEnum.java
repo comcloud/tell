@@ -14,11 +14,11 @@ public enum SubMessageTemplateEnum {
     /**
      * 订阅消息评论模版ID
      */
-    SUB_MESSAGE_COMMENT_TEMPLATE_ID("mghtoN9x1YBMmyWg9RtBlt8-XxHxMvEo8eAtHIazD34","com.yundingxi.tell.util.strategy.SubMessageStrategyContext$CommentSubMessageStrategy"),
+    SUB_MESSAGE_COMMENT_TEMPLATE_ID("mghtoN9x1YBMmyWg9RtBlt8-XxHxMvEo8eAtHIazD34", "com.yundingxi.tell.util.strategy.SubMessageStrategyContext$CommentSubMessageStrategy"),
     /**
      * 订阅消息回信ID
      */
-    SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID("vuxCjKVvzbUWW1iHbMkSCmsBrpXWkXFPJ81S8nVWJdw","com.yundingxi.tell.util.strategy.SubMessageStrategyContext$ReplySubMessageStrategy");
+    SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID("vuxCjKVvzbUWW1iHbMkSCmsBrpXWkXFPJ81S8nVWJdw", "com.yundingxi.tell.util.strategy.SubMessageStrategyContext$ReplySubMessageStrategy");
 
     private final String templateId;
     private final String className;
@@ -35,10 +35,11 @@ public enum SubMessageTemplateEnum {
     public String getClassName() {
         return className;
     }
-    public static Map<String,String> getAllClazz(){
+
+    public static Map<String, String> getAllClazz() {
         Map<String, String> map = new HashMap<>(4);
         for (SubMessageTemplateEnum value : SubMessageTemplateEnum.values()) {
-            map.put(value.getTemplateId(),value.getClassName());
+            map.put(value.getTemplateId(), value.getClassName());
         }
         return map;
     }
