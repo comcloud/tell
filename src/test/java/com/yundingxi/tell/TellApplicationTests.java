@@ -1,12 +1,12 @@
 package com.yundingxi.tell;
 
-import com.yundingxi.tell.bean.dto.WeChatEnum;
 import com.yundingxi.tell.bean.entity.Diarys;
 import com.yundingxi.tell.bean.entity.Letter;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
+import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
+import com.yundingxi.tell.common.ResourceInit;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.*;
 import com.yundingxi.tell.service.AchieveService;
@@ -14,8 +14,6 @@ import com.yundingxi.tell.service.DiaryService;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
-import com.yundingxi.tell.util.strategy.SubMessageStrategy;
-import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,11 +49,26 @@ class TellApplicationTests {
     private DiaryMapper diaryMapper;
     @Autowired
     private SpittingGroovesMapper spittingGroovesMapper;
+    @Autowired
+    private StampMapper stampMapper;
+    @Autowired
+    private AchieveMapper achieveMapper;
+
+    @Autowired
+    private ResourceInit resourceInit;
 
     @Test
     void contextLoads() throws IllegalAccessException {
+
     }
 
+    private List<UserStamp> getUserStamps(String openId) {
+        //每个人赋予默认邮票
+        List<Stamp> baseStamp = stampMapper.selectBaseStamp();
+        List<UserStamp> userStampList = new ArrayList<>();
+        baseStamp.forEach(stamp -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), stamp.getId(), openId, "1", new Date(), 1)));
+        return userStampList;
+    }
 
     void giveEveryoneToDefaultStamp() {
         List<String> allOpenId = userMapper.selectAllOpenId();
@@ -88,10 +101,10 @@ class TellApplicationTests {
                 update(openId, "diary", sdf.format(diarys.getDate()), diarys.getContent());
             });
 
-            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
-            spittingGrooves.forEach(spittingGrooves1 -> {
-                update(openId, "spit", sdf.format(spittingGrooves1.getDate()), spittingGrooves1.getContent());
-            });
+//            List<SpittingGrooves> spittingGrooves = spittingGroovesMapper.selectAllSpitForSelfNonState(openId, "4");
+//            spittingGrooves.forEach(spittingGrooves1 -> {
+//                update(openId, "spit", sdf.format(spittingGrooves1.getDate()), spittingGrooves1.getContent());
+//            });
 
         });
         System.out.println((System.currentTimeMillis() - start) + "ms");
@@ -120,7 +133,6 @@ class TellApplicationTests {
     void fileUtilTest() {
         List<Diarys> allPublicDiary = diaryService.getAllPublicDiary();
         List<DiaryReturnVo> diaryReturnVos = GeneralDataProcessUtil.configDataFromList(allPublicDiary, Diarys.class, DiaryReturnVo.class);
-        System.out.println(diaryReturnVos);
     }
 
     @Test

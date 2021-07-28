@@ -38,6 +38,10 @@ public class SubMessageParam {
      */
     private String touser;
     /**
+     * 发送者open id
+     */
+    private String sender;
+    /**
      * 补充对象，可以用来存放其他内容
      */
     private Object obj;

@@ -25,10 +25,10 @@
     <select id="selectAllStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
         select * from stamp
     </select>
-    <select id="selectBaseStamp" resultType="com.yundingxi.tell.bean.entity.UserStamp">
+
+    <select id="selectBaseStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
         select * from stamp where stamp_edition='Edition 1.0'
     </select>
-
     <insert id="insertSingleNewUserStamp">
         insert into user_stamp value(#{userStamp.id},#{userStamp.stampId},#{userStamp.openId},#{userStamp.state},#{userStamp.obtainTime},#{userStamp.number})
     </insert>

@@ -36,5 +36,5 @@ public interface StampMapper {
 
     List<Stamp> selectAllStamp();
 
-    List<UserStamp> selectBaseStamp();
+    List<Stamp> selectBaseStamp();
 }

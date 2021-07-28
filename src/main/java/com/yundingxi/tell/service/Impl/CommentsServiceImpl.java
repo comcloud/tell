@@ -62,6 +62,7 @@ public class CommentsServiceImpl implements CommentsService {
                         .showContent(entity.getContent())
                         .title(spittingGrooves.getContent())
                         .touser(spittingGrooves.getOpenId())
+                        .sender(entity.getOpenId())
                         .nickname(userMapper.selectPenNameByOpenId(entity.getOpenId()))
                         .templateId(WeChatEnum.SUB_MESSAGE_COMMENT_TEMPLATE_ID)
                         .version(WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION).page(WeChatEnum.SUB_MESSAGE_COMMENT_PAGE).build();

@@ -1,4 +1,5 @@
 package com.yundingxi.tell.service.Impl;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sun.xml.bind.v2.model.core.ID;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  吐槽实现类
+ * 吐槽实现类
  * </p>
  *
  * @author houdongsheng
@@ -41,38 +42,39 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     private RedisUtil redisUtil;
     @Autowired
     private CommentsService commentsService;
+
     @Override
     public Result<String> insert(SpittingGrooves entity) {
         int state = spittingGroovesMapper.insert(entity);
-        if (state>0){
-            log.info("===================> {} 数据保存成功" ,entity);
+        if (state > 0) {
+            log.info("===================> {} 数据保存成功", entity);
             return ResultGenerator.genSuccessResult("发布成功");
-        }else {
-            log.info("===================> {} 数据保存失败" ,entity);
+        } else {
+            log.info("===================> {} 数据保存失败", entity);
             return ResultGenerator.genFailResult("发布失败");
         }
     }
 
     @Override
     public Result<String> deleteById(Serializable id) {
-        int  state= spittingGroovesMapper.deleteById(id);
-        if (state>0){
-                log.info("=====================> id 为 {} 的数据删除成功",id);
-                return ResultGenerator.genSuccessResult("删除成功");
-            }else {
-                log.info("=====================> id 为 {} 的数据删除失败",id);
-                return ResultGenerator.genFailResult("删除失败");
+        int state = spittingGroovesMapper.deleteById(id);
+        if (state > 0) {
+            log.info("=====================> id 为 {} 的数据删除成功", id);
+            return ResultGenerator.genSuccessResult("删除成功");
+        } else {
+            log.info("=====================> id 为 {} 的数据删除失败", id);
+            return ResultGenerator.genFailResult("删除失败");
         }
     }
 
     @Override
     public Result<String> updateById(Serializable entity) {
-        int  state= spittingGroovesMapper.updateById(entity);
-        if (state>0){
-            log.info("=====================>  为 {} 的数据更新成功",entity);
+        int state = spittingGroovesMapper.updateById(entity);
+        if (state > 0) {
+            log.info("=====================>  为 {} 的数据更新成功", entity);
             return ResultGenerator.genSuccessResult("更改成功");
-        }else {
-            log.info("=====================>  为 {} 的数据更新失败",entity);
+        } else {
+            log.info("=====================>  为 {} 的数据更新失败", entity);
             return ResultGenerator.genFailResult("更改失败");
         }
     }
@@ -80,33 +82,27 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     @Override
     public Result<PageInfo<SpittingGroovesVo>> selectAllVo(Integer pageNum) {
         String orderBy = "sg.date desc";
-        PageHelper.startPage(pageNum,10,orderBy);
+        PageHelper.startPage(pageNum, 10, orderBy);
         List<SpittingGroovesVo> spittingGroovesVos = spittingGroovesMapper.selectAllVo();
-        for (SpittingGroovesVo spittingGroovesVo : spittingGroovesVos) {
-            System.out.println(spittingGroovesVo.getTitle());
-        }
         spittingGroovesVos.forEach(this::subStringTitle);
-        System.out.println("=============================================================");
-        for (SpittingGroovesVo spittingGroovesVo : spittingGroovesVos) {
-            System.out.println(spittingGroovesVo.getTitle());
-        }
-            PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
-        log.info("=====================> 查询数据成功 {}","");
+        PageInfo<SpittingGroovesVo> pageInfo = new PageInfo<>(spittingGroovesVos);
+        log.info("=====================> 查询数据成功 {}", "");
         return ResultGenerator.genSuccessResult(pageInfo);
     }
+
     @Override
     public void subStringTitle(SpittingGroovesVo spittingGroovesVo) {
         String title = spittingGroovesVo.getTitle();
         int i = title.indexOf("。", 20);
 
-        if (i==-1){
-            if (title.length()>31){
+        if (i == -1) {
+            if (title.length() > 31) {
                 spittingGroovesVo.setTitle(title.substring(0, 25));
             }
-        }else {
+        } else {
             if (i > 20 && i <= 30) {
                 spittingGroovesVo.setTitle(title.substring(0, i));
-            } else if(i>30){
+            } else if (i > 30) {
                 spittingGroovesVo.setTitle(title.substring(0, 25));
             }
         }
@@ -117,8 +113,8 @@ public class SpittingGroovesServiceImpl implements SpittingGroovesService {
     public Result<SpittingGrooves> selectDetailsById(String id) {
         redisUtil.select(RedisEnums.USER_SPITTINGGROOVES_JSON.getRedisDbIndex());
 
-            SpittingGrooves spittingGroove= spittingGroovesMapper.selectDetailsById(id);
-            return ResultGenerator.genSuccessResult(spittingGroove);
+        SpittingGrooves spittingGroove = spittingGroovesMapper.selectDetailsById(id);
+        return ResultGenerator.genSuccessResult(spittingGroove);
 
     }
 

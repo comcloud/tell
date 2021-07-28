@@ -1,17 +1,16 @@
 package com.yundingxi.tell.common.listener;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.entity.UserAchieve;
 import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.CenterThreadPool;
+import com.yundingxi.tell.common.ResourceInit;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.mapper.TaskMapper;
-import com.yundingxi.tell.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +53,16 @@ public class CustomListenerConfig {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final ResourceInit resourceInit;
+
     @Autowired
-    public CustomListenerConfig(RedisUtil redisUtil, AchieveMapper achieveMapper, StampMapper stampMapper, TaskMapper taskMapper, JdbcTemplate jdbcTemplate) {
+    public CustomListenerConfig(RedisUtil redisUtil, AchieveMapper achieveMapper, StampMapper stampMapper, TaskMapper taskMapper, JdbcTemplate jdbcTemplate, ResourceInit resourceInit) {
         this.redisUtil = redisUtil;
         this.achieveMapper = achieveMapper;
         this.stampMapper = stampMapper;
         this.taskMapper = taskMapper;
         this.jdbcTemplate = jdbcTemplate;
+        this.resourceInit = resourceInit;
     }
 
     /**
@@ -126,6 +128,11 @@ public class CustomListenerConfig {
             updateRedisTimeline(openId, eventType, content);
             JSONObject jsonObject = (JSONObject) redisUtil.get("listener:" + openId + ":offset");
             @SuppressWarnings("unchecked") ArrayList<String> list = (ArrayList<String>) jsonObject.get(eventType);
+            if (list == null) {
+                resourceInit.stampAndAchieveInitForEveryone(openId, true);
+                jsonObject = (JSONObject) redisUtil.get("listener:" + openId + ":offset");
+                list = (ArrayList<String>) jsonObject.get(eventType);
+            }
             //此时通过获取到的位置以及属于的类型查询成就表然后判断对应的任务是否满足
             List<Achieve> achieveList = achieveMapper.selectAllTaskIdAndIdByAchieveTypeAndNonId(list, eventType);
             achieveList.forEach(achieve -> judgeAchieve(openId, eventType, (JSONObject) redisUtil.get("listener:" + openId + ":offset"), achieve));
@@ -142,6 +149,9 @@ public class CustomListenerConfig {
      */
     private void judgeAchieve(String openId, String achieveType, JSONObject jsonObject, Achieve achieve) {
         String sqlStr = combineSqlString(openId, achieve);
+        if ("".equals(sqlStr)) {
+            return;
+        }
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
             //更新redis内容
@@ -158,7 +168,7 @@ public class CustomListenerConfig {
      */
     private void insertUserStampAndAchieve(String openId, Achieve achieve) {
         //成就完成，这时候给予成就对应的奖励，添加邮票到数据库，添加成就到数据库，然后缓存中成就参数加1
-        achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "1"));
+        achieveMapper.insertSingleNewUserAchieve(new UserAchieve(UUID.randomUUID().toString(), openId, achieve.getId(), new Date(), "0"));
         String achieveUnreadNumKey = "listener:" + openId + ":achieve_unread_num";
         String stampUnreadNumKey = "listener:" + openId + ":stamp_unread_num";
         Integer achieveNum = (Integer) redisUtil.get(achieveUnreadNumKey);
@@ -172,9 +182,10 @@ public class CustomListenerConfig {
         }
         redisUtil.set(stampUnreadNumKey, stampNum == null ? 1 : (stampNum + stampIdArray.length));
         //检测邮票
+        //查看邮票是否满足
         String nonAchieveType = "stamp";
         if (!nonAchieveType.equals(achieve.getAchieveType())) {
-            //查看邮票是否满足
+            //此时不是邮票成就，奖励邮票
             handleStampAchieve(openId);
         }
     }
@@ -190,6 +201,9 @@ public class CustomListenerConfig {
     private String combineSqlString(String openId, Achieve achieve) {
         //此时根据json串拼接sql语句查询是否满足条件
         String taskSql = taskMapper.selectTaskJsonByTaskId(achieve.getTaskId());
+        if (taskSql == null) {
+            return "";
+        }
         taskSql = taskSql.replace("\"", "").replace("#{openId}", "'" + openId + "'");
         return taskSql;
     }
@@ -216,8 +230,8 @@ public class CustomListenerConfig {
      * @param eventType 事件类型
      */
     private void updateRedisTimeline(String openId, String eventType, String content) {
-        String nonAchieveType = "stamp";
-        if (nonAchieveType.equals(eventType)) {
+        String isAchieveType = "letter,spit,diary";
+        if (!isAchieveType.contains(eventType)) {
             return;
         }
         String timelineKey = "user:" + openId + ":timeline";

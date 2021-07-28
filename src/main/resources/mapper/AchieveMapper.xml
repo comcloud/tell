@@ -2,32 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yundingxi.tell.mapper.AchieveMapper">
 
-<resultMap id="AchieveVoMap" type="com.yundingxi.tell.bean.vo.AchieveVo">
-    <result column="achieve_url"   property="achieveUrl"/>
-    <result column="achieve_desc"   property="achieveDesc"/>
-    <result column="achieve_edition"   property="achieveEdition"/>
-    <result column="obtain_time"   property="obtainTime"/>
-    <result column="achieve_name"   property="achieveName"/>
+    <resultMap id="AchieveVoMap" type="com.yundingxi.tell.bean.vo.AchieveVo">
+        <result column="achieve_url" property="achieveUrl"/>
+        <result column="achieve_desc" property="achieveDesc"/>
+        <result column="achieve_edition" property="achieveEdition"/>
+        <result column="obtain_time" property="obtainTime"/>
+        <result column="achieve_name" property="achieveName"/>
 
-</resultMap>
+    </resultMap>
     <select id="haveListMeAll" resultMap="AchieveVoMap">
-        select * from user_achieve ua,achieve a where ua.achieve_id=a.id and ua.open_id=#{openId}
+        select *
+        from user_achieve ua,
+             achieve a
+        where ua.achieve_id = a.id
+          and ua.open_id = #{openId}
     </select>
     <select id="notHaveListMeAll" resultMap="AchieveVoMap">
-        select *  from achieve aa where aa.id not in  (select a.id from user_achieve ua
+        select *
+        from achieve aa
+        where aa.id not in (select a.id
+                            from user_achieve ua
 
-				INNER JOIN achieve a
+                                     INNER JOIN achieve a
+                                                on ua.achieve_id = a.id
 
-				on ua.achieve_id=a.id
-
-				where   ua.open_id=#{openId})
-</select>
+                            where ua.open_id = #{openId})
+    </select>
     <insert id="insertSingleNewUserAchieve">
-        insert into user_achieve value(#{userAchieve.id},#{userAchieve.openId},#{userAchieve.achieveId},#{userAchieve.obtainTime},#{userAchieve.state})
+        insert into user_achieve value (#{userAchieve.id},#{userAchieve.openId},#{userAchieve.achieveId},#{userAchieve.obtainTime},#{userAchieve.state})
     </insert>
 
     <select id="selectAllAchieveType" resultType="java.lang.String">
-        select achieve_type
+        select distinct achieve_type
         from achieve
     </select>
     <select id="selectAllTaskIdByAchieveTypeAndLocation" resultType="java.lang.String">
@@ -38,7 +44,7 @@
     </select>
     <select id="selectAllTaskIdAndIdByAchieveTypeAndLocation"
             resultType="com.yundingxi.tell.bean.entity.Achieve">
-        select id,task_id,achieve_type
+        select id, task_id, achieve_type
         from achieve
         where achieve_type = #{achieveType} limit 10
         offset #{locationObtained}
@@ -46,10 +52,11 @@
     <select id="selectAchieveRewardById" resultType="java.lang.String">
         select achieve_reward
         from achieve
-        where id=#{id}
+        where id = #{id}
     </select>
     <select id="selectAllAchieve" resultType="com.yundingxi.tell.bean.entity.Achieve">
-        select * from achieve
+        select *
+        from achieve
     </select>
     <select id="selectAllTaskIdAndIdByAchieveTypeAndNonId" resultType="com.yundingxi.tell.bean.entity.Achieve">
         select id,task_id,achieve_type

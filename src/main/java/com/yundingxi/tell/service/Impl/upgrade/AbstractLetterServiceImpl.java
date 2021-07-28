@@ -172,7 +172,7 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
             //回信订阅消息
-            SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION);
+            SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto.getSender(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION);
             SubMessageStrategyContext.getSubMessageStrategy(WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID).processSubMessage(param, replyId);
 
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());

@@ -66,7 +66,6 @@ public class UserController {
     @PostMapping("/updateUser")
     @Operation(description = "修改用户信息 ", summary = "修改用户信息")
     public Result<String> updateUser(@Parameter(description = "user 对象", required = true) User user) {
-        System.out.println(user);
         return userService.updateUser(user);
     }
 
