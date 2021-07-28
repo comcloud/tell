@@ -10,6 +10,7 @@ import com.yundingxi.tell.service.LetterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class ResourceInit implements CommandLineRunner {
     private final LetterService letterService;
 
     @Autowired
-    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper, LetterService letterService, AchieveMapper achieveMapper) {
+    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper, @Qualifier("upgradeLetterServiceImpl") LetterService letterService, AchieveMapper achieveMapper) {
         this.redisUtil = redisUtil;
         this.userMapper = userMapper;
         this.letterService = letterService;

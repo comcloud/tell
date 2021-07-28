@@ -11,9 +11,7 @@ import com.yundingxi.tell.util.ResultGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +31,14 @@ import java.util.Map;
 @Api(value = "/letter", tags = "信件接口")
 public class LetterController {
 
-    @Autowired
-    private LetterService letterService;
+    private final LetterService letterService;
 
-    private final Logger log = LoggerFactory.getLogger(LetterController.class);
+    private final ApplicationEventPublisher publisher;
 
-    @Autowired
-    private ApplicationEventPublisher publisher;
+    public LetterController(@Qualifier("upgradeLetterServiceImpl") LetterService letterService, ApplicationEventPublisher publisher) {
+        this.letterService = letterService;
+        this.publisher = publisher;
+    }
 
     /**
      * 普通发送
@@ -82,7 +81,7 @@ public class LetterController {
     @Cacheable("letters")
     @Operation(description = "获取信件的用户的open id", summary = "获取三封信件")
     public Result<List<IndexLetterDto>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getRandomLettersAndLatestByOpenId(openId));
+        return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
     }
 
     @Operation(description = "获取未读内容的数量,这里设定1为回信，2为评论，3为成就，4为邮票", summary = "获取未读内容数量")

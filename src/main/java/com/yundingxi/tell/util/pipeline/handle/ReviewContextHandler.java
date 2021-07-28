@@ -41,7 +41,6 @@ public class ReviewContextHandler implements ContextHandler<UserDataAnalysisCont
                     , letterMapper.selectWeeklyQuantityThroughOpenId(context.getOpenId(), context.getCurrentTime(), "spitting_grooves", i, 7) + "")
             );
         }
-        context.getResult().setFirstValue(review);
-        return true;
+        return context.getResult().setFirstValue(review) != null;
     }
 }
