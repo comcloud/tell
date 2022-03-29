@@ -181,7 +181,8 @@ public class CustomListenerConfig {
             stampMapper.insertSingleNewUserStamp(new UserStamp(UUID.randomUUID().toString(), stampId, openId, "1", new Date(), 1));
         }
         redisUtil.set(stampUnreadNumKey, stampNum == null ? 1 : (stampNum + stampIdArray.length));
-        //奖励是一些邮票内容
+        //检测邮票
+        //查看邮票是否满足
         String nonAchieveType = "stamp";
         if (!nonAchieveType.equals(achieve.getAchieveType())) {
             //此时不是邮票成就，奖励邮票

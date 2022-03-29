@@ -1,4 +1,4 @@
-package com.yundingxi.tell.service.Impl;
+package com.yundingxi.tell.service.Impl.upgrade;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -19,17 +19,15 @@ import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.ReplyMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
-import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import com.yundingxi.tell.util.message.ScheduledUtil;
 import com.yundingxi.tell.util.message.SendMailUtil;
+import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,30 +36,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version v1.0
- * @ClassName LetterServiceImpl
+ * @ClassName AbstractLetterServiceImpl
  * @Author rayss
- * @Datetime 2021/3/24 6:31 下午
+ * @Datetime 2021/7/28 3:44 下午
  */
+@Component
+public abstract class AbstractLetterServiceImpl implements LetterService {
+    public final LetterMapper letterMapper;
 
-@Service
-public class LetterServiceImpl implements LetterService {
-
-    private final Logger log = LoggerFactory.getLogger(LetterServiceImpl.class);
-
-    private final LetterMapper letterMapper;
-
-    private final RedisUtil redisUtil;
+    public final RedisUtil redisUtil;
 
     private final ReplyMapper replyMapper;
 
     private final UserMapper userMapper;
 
     @Autowired
-    public LetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil, ReplyMapper replyMapper, UserMapper userMapper) {
+    public AbstractLetterServiceImpl(LetterMapper letterMapper, RedisUtil redisUtil, ReplyMapper replyMapper, UserMapper userMapper) {
         this.letterMapper = letterMapper;
         this.redisUtil = redisUtil;
         this.replyMapper = replyMapper;
@@ -70,8 +63,8 @@ public class LetterServiceImpl implements LetterService {
 
     @SneakyThrows
     @Override
-    public int saveSingleLetter(LetterStorageDto letterStorageDto) {
-        Integer result = CompletableFuture.supplyAsync(() -> {
+    public Integer saveSingleLetter(LetterStorageDto letterStorageDto) {
+        return CompletableFuture.supplyAsync(() -> {
             Letter letter = new Letter(UUID.randomUUID().toString()
                     , letterStorageDto.getStampUrl()
                     , letterStorageDto.getOpenId()
@@ -86,7 +79,6 @@ public class LetterServiceImpl implements LetterService {
             }
             return letterMapper.insertSingleLetter(letter);
         }).get();
-        return result;
         //459399250
         //166799250
     }
@@ -105,27 +97,15 @@ public class LetterServiceImpl implements LetterService {
         }).get();
     }
 
+
     /**
-     * 这里需要做出优化
-     * 1.优先根据标签获取信件，如何判断
-     * - "letter:" + openId + ":letter_info"这个缓存中存储每个用户的喜爱(此用户回信的信标签)的对应标签数量
-     * 获取两则占比最大的，然后这个表示最有可能推荐的，查询数据库时候按照标签进行分组，获取数据库中这个标签组中两片信件
-     * - 如果上述条件获取的是两封，然后这个是获取其他不相干类型的一封，以来扩展
-     * - 都要保证时间优先，也就是优先把最新的信件推送出去
-     * - 随机获取，不可以排着数据库获取，而是随机获取，当然每日不可以重复
-     * <p>
-     * 1.从缓存中获取已经读取到的位置数据，用来判断数据库中的数据是否是最新的
-     * <p>
-     * <p>
-     * - 设计一个算法计算阈值
-     * - 添加权重比值判断到获取随机数中，在计算随机数时候将此因素考虑进去
-     *
+     * 获取信件的模版方法，不允许重写，对于获取具体三封信件的逻辑可以进行对customGetLettersByOpenId的方法重写
      * @param openId 用户 open id
-     * @return 获取三封信件
+     * @return 顺序获取三封信件
      */
     @SneakyThrows
     @Override
-    public List<IndexLetterDto> getRandomLettersAndLatestByOpenId(String openId) {
+    public final List<IndexLetterDto> getLettersByOpenId(String openId){
         return CompletableFuture.supplyAsync(() -> {
             /*
              * 1.从缓存获取此用户已经获取到的信件信息，包括获取时间、上次访问数据库时候的信件数量(最开始时候默认为0)
@@ -149,21 +129,20 @@ public class LetterServiceImpl implements LetterService {
                 @SuppressWarnings("unchecked") List<IndexLetterDto> indexLetterDtoList = (List<IndexLetterDto>) JSONObject.parse(letterInfoJsonNode.findPath(listKey).toString());
                 return indexLetterDtoList;
             } else {
-                //此时需要从数据库获取内容,随机三个数字获取数据库中最新的十条数据中的位置
-                int gainLetterNumber = totalNumber == 1 || totalNumber == 2 ? totalNumber : 3;
-                List<IndexLetterDto> indexLetterDtoList = new ArrayList<>(3);
-                //用来解决生成随机数重复问题，以防出现相同的信件，当然如果数据库的数据比较少，进行randomInt+1之后还是会有重复
-                int[] randomIntArray = getDifferentArray(totalNumber, gainLetterNumber);
-                for (int i = 0; i < gainLetterNumber; i++) {
-                    int randomInt = randomIntArray[i];
-                    Letter letter = letterMapper.selectRandomLatestLetter(openId, randomInt % totalNumber, 1, 1);
-                    GeneralDataProcessUtil.configLetterDataFromSingleObject(letter, openId, indexLetterDtoList);
-                }
+                List<IndexLetterDto> indexLetterDtoList = customGetLettersByOpenId(openId,totalNumber);
                 updateRedisLetterInfo(letterInfoKey, totalNumber, currentDate, indexLetterDtoList);
                 return indexLetterDtoList;
             }
         }).get();
     }
+
+    /**
+     * 此方法是自定义获取三封信件的方法，交给子类完成
+     * @param openId 用户 open id
+     * @param totalNumber 数据库信件的总数
+     * @return 三封信件
+     */
+    protected abstract List<IndexLetterDto> customGetLettersByOpenId(String openId,int totalNumber);
 
     /**
      * 更新redis中letter info的缓存内容
@@ -182,82 +161,6 @@ public class LetterServiceImpl implements LetterService {
         redisUtil.set(key, object.toJSONString());
     }
 
-    /**
-     * 获取length个不同数字的数字
-     *
-     * @param surplusThreshold 求余的阈值
-     * @param length           要获取的长度
-     * @return 不同数字数组
-     */
-    private int[] getDifferentArray(int surplusThreshold, int length) {
-        Random random = new Random();
-        int[] differentArray = new int[length];
-        for (int i = 0; i < differentArray.length; i++) {
-            differentArray[i] = spinRandomNumberToNonExist(random.nextInt(surplusThreshold), surplusThreshold, i, differentArray);
-        }
-        return differentArray;
-    }
-
-    /**
-     * 自旋直到产生没有出现过的数字
-     *
-     * @param randomNumber  随机数字
-     * @param spinThreshold 自旋阈值，表示每次对哪个数字进行取余
-     * @param length        已经有的数字长度
-     * @param alreadyNumber 已经出现的数字
-     * @return 自旋数字结果
-     */
-    private int spinRandomNumberToNonExist(int randomNumber, int spinThreshold, int length, int... alreadyNumber) {
-        for (; ; ) {
-            //成功标记，表示着是否已经不存在重复数字
-            boolean successFlag = true;
-            for (int i = 0; i < length; i++) {
-                if (alreadyNumber[i] == randomNumber) {
-                    randomNumber = (randomNumber + 1) % spinThreshold;
-                    successFlag = false;
-                }
-            }
-            if (successFlag) {
-                return randomNumber;
-            }
-        }
-    }
-
-    /**
-     * @param openId 用户 open id
-     * @return 顺序获取三封信件
-     */
-    @Deprecated
-    @SneakyThrows
-    @Override
-    public List<IndexLetterDto> getLettersByOpenId(String openId) {
-        return CompletableFuture.supplyAsync(() -> {
-            Object o = redisUtil.get("letter:" + openId + ":letter_info");
-            if (o == null) {
-                setLetterInitInfoByOpenId(openId);
-            }
-            Object obj = redisUtil.get("letter:" + openId + ":letter_info");
-            String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            int letterCountLocation = 0;
-            if (obj != null) {
-                JsonNode letterInfo = JsonUtil.parseJson((String) obj);
-                String date = letterInfo.findPath("date").toString().replace("\"", "");
-                letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
-                if (!currentDate.equals(date)) {
-                    letterCountLocation = letterCountLocation + 3;
-                }
-            }
-            if (letterCountLocation != 0 || obj == null) {
-                ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
-                newValue.put("date", currentDate);
-                newValue.put("letter_count_location", letterCountLocation);
-                redisUtil.set("letter:" + openId + ":letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
-            }
-            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId, 1);
-            return GeneralDataProcessUtil.configLetterDataFromList(letters, openId);
-        }).get();
-    }
-
     @Override
     public void saveReplyFromSenderToRecipient(Reply reply) {
         CompletableFuture.runAsync(() -> letterMapper.insertReply(reply));
@@ -270,7 +173,7 @@ public class LetterServiceImpl implements LetterService {
             String replyId = UUID.randomUUID().toString();
             //回信订阅消息
             SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto.getSender(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION);
-            GeneralDataProcessUtil.subMessage(param, replyId);
+            SubMessageStrategyContext.getSubMessageStrategy(WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID).processSubMessage(param, replyId);
 
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
             String replyTime = LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

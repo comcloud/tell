@@ -1,13 +1,18 @@
 package com.yundingxi.tell;
 
-import com.alibaba.fastjson.JSONObject;
-import com.yundingxi.tell.bean.entity.*;
+import com.yundingxi.tell.bean.entity.Diarys;
+import com.yundingxi.tell.bean.entity.Letter;
+import com.yundingxi.tell.bean.entity.Stamp;
+import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.DiaryReturnVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.ResourceInit;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.*;
-import com.yundingxi.tell.service.*;
+import com.yundingxi.tell.service.AchieveService;
+import com.yundingxi.tell.service.DiaryService;
+import com.yundingxi.tell.service.SpittingGroovesService;
+import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.Executors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TellApplicationTests {
@@ -53,18 +57,9 @@ class TellApplicationTests {
     @Autowired
     private ResourceInit resourceInit;
 
-    @Autowired
-    private LetterService letterService;
-
     @Test
     void contextLoads() throws IllegalAccessException {
-        JSONObject jsonObject = (JSONObject) redisUtil.get("listener:" + "oUGur5NFcTHkjrPDDnRpSEGDVX5s" + ":offset");
-        System.out.println(jsonObject.toJSONString());
-        @SuppressWarnings("unchecked") ArrayList<String> list = (ArrayList<String>) jsonObject.get("diary");
-        System.out.println(list);
-//        for (int i = 0; i < 20; i++) {
-//            System.out.println(UUID.randomUUID().toString());
-//        }
+
     }
 
     private List<UserStamp> getUserStamps(String openId) {

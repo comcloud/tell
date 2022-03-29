@@ -25,6 +25,7 @@
     <select id="selectAllStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
         select * from stamp
     </select>
+
     <select id="selectBaseStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
         select * from stamp where stamp_edition='Edition 1.0'
     </select>
