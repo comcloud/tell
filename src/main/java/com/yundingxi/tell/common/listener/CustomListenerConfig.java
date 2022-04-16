@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -44,7 +45,8 @@ public class CustomListenerConfig {
     /**
      * 线程池
      */
-    private final ThreadPoolExecutor EXECUTOR = CenterThreadPool.getSTAMP_ACHIEVE_POOL();
+    @Resource
+    private ThreadPoolExecutor stampAchievePool;
 
     private final RedisUtil redisUtil;
 
@@ -80,7 +82,7 @@ public class CustomListenerConfig {
     public void handleSaveLetterEvent(UserBehaviorEvent<LetterStorageDto> letterEvent) {
         LOG.info("触发保存信件事件，此时应该更新关于信件的成就内容");
         LOG.info(letterEvent.getT().toString());
-        EXECUTOR.execute(getRunnable(letterEvent.getT().getOpenId(), "letter", letterEvent.getT().getContent()));
+        stampAchievePool.execute(getRunnable(letterEvent.getT().getOpenId(), "letter", letterEvent.getT().getContent()));
     }
 
     /**
@@ -92,7 +94,7 @@ public class CustomListenerConfig {
     public void handleSaveDiary(UserBehaviorEvent<DiaryDto> diaryEvent) {
         LOG.info("触发保存日记事件，此时应该更新关于日记的成就内容");
         LOG.info(diaryEvent.getT().toString());
-        EXECUTOR.execute(getRunnable(diaryEvent.getT().getOpenId(), "diary", diaryEvent.getT().getContent()));
+        stampAchievePool.execute(getRunnable(diaryEvent.getT().getOpenId(), "diary", diaryEvent.getT().getContent()));
     }
 
     /**
@@ -104,7 +106,7 @@ public class CustomListenerConfig {
     public void handleSaveSpit(UserBehaviorEvent<SpittingGrooves> spitEvent) {
         LOG.info("触发保存吐槽事件，此时应该更新关于吐槽的成就内容");
         LOG.info(spitEvent.getT().toString());
-        EXECUTOR.execute(getRunnable(spitEvent.getT().getOpenId(), "spit", spitEvent.getT().getContent()));
+        stampAchievePool.execute(getRunnable(spitEvent.getT().getOpenId(), "spit", spitEvent.getT().getContent()));
     }
 
     @EventListener
@@ -115,13 +117,13 @@ public class CustomListenerConfig {
         LetterReplyDto replyDto = replyEvent.getT();
         updateRedisContentForUserBehavior(replyDto.getSender(), replyDto.getLetterId());
         //处理用户回复信件对成就邮票的影响
-        EXECUTOR.execute(getRunnable(replyDto.getRecipient(), "reply", replyDto.getMessage()));
+        stampAchievePool.execute(getRunnable(replyDto.getRecipient(), "reply", replyDto.getMessage()));
     }
 
 
     public void handleStampAchieve(String openId) {
         LOG.info("触发邮票事件，此时应该更新关于邮票的成就内容");
-        EXECUTOR.execute(getRunnable(openId, "stamp", ""));
+        stampAchievePool.execute(getRunnable(openId, "stamp", ""));
     }
 
     private Runnable getRunnable(String openId, String eventType, String content) {

@@ -13,6 +13,7 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -47,8 +48,8 @@ public class SendMailUtil {
     @Getter
     private static final ReentrantLock LOCK = new ReentrantLock();
 
-    @Getter
-    private static final ThreadPoolExecutor POOL = CenterThreadPool.getWEBSOCKET_POOL();
+    @Resource
+    private static ThreadPoolExecutor websocketPool;
 
     /**
      * 何时会新建一个线程来发送邮件
@@ -66,7 +67,7 @@ public class SendMailUtil {
                 for (int i = 0; i < LETTER_THRESHOLD; i++) {
                     letterWebsocketVos.add(WAIT_QUEUE.peek());
                 }
-                POOL.execute(new LetterTask(letterWebsocketVos));
+                websocketPool.execute(new LetterTask(letterWebsocketVos));
                 log.info("开启一个线程");
             }finally {
                 LOCK.unlock();

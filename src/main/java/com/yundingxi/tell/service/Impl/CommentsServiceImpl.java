@@ -7,14 +7,12 @@ import com.yundingxi.tell.bean.entity.Comments;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.bean.vo.submessage.SubMessageParam;
-import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.CommentsMapper;
 import com.yundingxi.tell.mapper.SpittingGroovesMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.CommentsService;
 import com.yundingxi.tell.service.SpittingGroovesService;
-import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
@@ -22,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -49,13 +48,14 @@ public class CommentsServiceImpl implements CommentsService {
     @Autowired
     private UserMapper userMapper;
 
-    private final ThreadPoolExecutor EXECUTOR = CenterThreadPool.getBUSINESS_POOL();
+    @Resource
+    private ThreadPoolExecutor businessPool;
 
     @Override
     public Result<String> insert(Comments entity) {
         int state = commentsMapper.insert(entity);
         if (state > 0) {
-            EXECUTOR.execute(() -> {
+            businessPool.execute(() -> {
                 SpittingGrooves spittingGrooves = spittingGroovesMapper.selectOpenIdAndContentById(entity.getSgId());
                 SubMessageParam param = SubMessageParam.builder()
                         .parentId(entity.getSgId())

@@ -2,7 +2,6 @@ package com.yundingxi.tell.common;
 
 import com.yundingxi.tell.bean.vo.LetterWebsocketVo;
 import com.yundingxi.tell.util.message.SendMailUtil;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.BlockingDeque;
@@ -30,7 +29,7 @@ public class ScheduledSyncService {
         if(waitQueue.isEmpty()) {
             return;
         }
-        ThreadPoolExecutor pool = SendMailUtil.getPOOL();
+        ThreadPoolExecutor pool = SendMailUtil.getWebsocketPool();
         ReentrantLock mainLock = SendMailUtil.getLOCK();
         mainLock.lock();
         try {
