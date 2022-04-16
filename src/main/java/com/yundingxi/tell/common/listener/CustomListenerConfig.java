@@ -1,14 +1,17 @@
 package com.yundingxi.tell.common.listener;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yundingxi.tell.bean.entity.Achieve;
-import com.yundingxi.tell.bean.entity.UserAchieve;
-import com.yundingxi.tell.bean.entity.UserStamp;
+import com.yundingxi.tell.bean.dto.DiaryDto;
+import com.yundingxi.tell.bean.dto.LetterReplyDto;
+import com.yundingxi.tell.bean.dto.LetterStorageDto;
+import com.yundingxi.tell.bean.entity.*;
+import com.yundingxi.tell.bean.vo.IndexLetterVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.common.CenterThreadPool;
 import com.yundingxi.tell.common.ResourceInit;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
+import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.mapper.TaskMapper;
 import org.slf4j.Logger;
@@ -55,14 +58,17 @@ public class CustomListenerConfig {
 
     private final ResourceInit resourceInit;
 
+    private final LetterMapper letterMapper;
+
     @Autowired
-    public CustomListenerConfig(RedisUtil redisUtil, AchieveMapper achieveMapper, StampMapper stampMapper, TaskMapper taskMapper, JdbcTemplate jdbcTemplate, ResourceInit resourceInit) {
+    public CustomListenerConfig(RedisUtil redisUtil, AchieveMapper achieveMapper, StampMapper stampMapper, TaskMapper taskMapper, JdbcTemplate jdbcTemplate, ResourceInit resourceInit, LetterMapper letterMapper) {
         this.redisUtil = redisUtil;
         this.achieveMapper = achieveMapper;
         this.stampMapper = stampMapper;
         this.taskMapper = taskMapper;
         this.jdbcTemplate = jdbcTemplate;
         this.resourceInit = resourceInit;
+        this.letterMapper = letterMapper;
     }
 
     /**
@@ -71,10 +77,10 @@ public class CustomListenerConfig {
      * @param letterEvent 信件事件
      */
     @EventListener
-    public void handleSaveLetterEvent(PublishLetterEvent letterEvent) {
+    public void handleSaveLetterEvent(UserBehaviorEvent<LetterStorageDto> letterEvent) {
         LOG.info("触发保存信件事件，此时应该更新关于信件的成就内容");
-        LOG.info(letterEvent.getLetterStorageDto().toString());
-        EXECUTOR.execute(getRunnable(letterEvent.getLetterStorageDto().getOpenId(), "letter", letterEvent.getLetterStorageDto().getContent()));
+        LOG.info(letterEvent.getT().toString());
+        EXECUTOR.execute(getRunnable(letterEvent.getT().getOpenId(), "letter", letterEvent.getT().getContent()));
     }
 
     /**
@@ -83,10 +89,10 @@ public class CustomListenerConfig {
      * @param diaryEvent 日记事件
      */
     @EventListener
-    public void handleSaveDiary(PublishDiaryEvent diaryEvent) {
+    public void handleSaveDiary(UserBehaviorEvent<DiaryDto> diaryEvent) {
         LOG.info("触发保存日记事件，此时应该更新关于日记的成就内容");
-        LOG.info(diaryEvent.getDiaryDto().toString());
-        EXECUTOR.execute(getRunnable(diaryEvent.getDiaryDto().getOpenId(), "diary", diaryEvent.getDiaryDto().getContent()));
+        LOG.info(diaryEvent.getT().toString());
+        EXECUTOR.execute(getRunnable(diaryEvent.getT().getOpenId(), "diary", diaryEvent.getT().getContent()));
     }
 
     /**
@@ -95,18 +101,23 @@ public class CustomListenerConfig {
      * @param spitEvent 吐槽事件
      */
     @EventListener
-    public void handleSaveSpit(PublishSpitEvent spitEvent) {
+    public void handleSaveSpit(UserBehaviorEvent<SpittingGrooves> spitEvent) {
         LOG.info("触发保存吐槽事件，此时应该更新关于吐槽的成就内容");
-        LOG.info(spitEvent.getSpittingGrooves().toString());
-        EXECUTOR.execute(getRunnable(spitEvent.getSpittingGrooves().getOpenId(), "spit", spitEvent.getSpittingGrooves().getContent()));
+        LOG.info(spitEvent.getT().toString());
+        EXECUTOR.execute(getRunnable(spitEvent.getT().getOpenId(), "spit", spitEvent.getT().getContent()));
     }
 
     @EventListener
-    public void handleReply(PublishReplyEvent replyEvent) {
+    public void handleReply(UserBehaviorEvent<LetterReplyDto> replyEvent) {
         LOG.info("触发保存回信事件，此时应该更新关于回信的成就内容");
-        LOG.info(replyEvent.getLetterReplyDto().toString());
-        EXECUTOR.execute(getRunnable(replyEvent.getLetterReplyDto().getRecipient(), "reply", replyEvent.getLetterReplyDto().getMessage()));
+        LOG.info(replyEvent.getT().toString());
+        //处理用户回复信件的行为
+        LetterReplyDto replyDto = replyEvent.getT();
+        updateRedisContentForUserBehavior(replyDto.getSender(), replyDto.getLetterId());
+        //处理用户回复信件对成就邮票的影响
+        EXECUTOR.execute(getRunnable(replyDto.getRecipient(), "reply", replyDto.getMessage()));
     }
+
 
     public void handleStampAchieve(String openId) {
         LOG.info("触发邮票事件，此时应该更新关于邮票的成就内容");
@@ -155,7 +166,7 @@ public class CustomListenerConfig {
         Integer result = jdbcTemplate.queryForObject(sqlStr, Integer.class);
         if (result != null && result == 1) {
             //更新redis内容
-            updateRedisContent(openId, achieveType, jsonObject, achieve.getId());
+            updateRedisContentForOffset(openId, achieveType, jsonObject, achieve.getId());
             insertUserStampAndAchieve(openId, achieve);
         }
     }
@@ -216,11 +227,36 @@ public class CustomListenerConfig {
      * @param jsonObject     redis中存储用户的成就偏移量json对象
      * @param alreadyExistId 已经获取到的事件ID
      */
-    private void updateRedisContent(String openId, String achieveType, JSONObject jsonObject, String alreadyExistId) {
+    private void updateRedisContentForOffset(String openId, String achieveType, JSONObject jsonObject, String alreadyExistId) {
         @SuppressWarnings("unchecked") ArrayList<String> list = (ArrayList<String>) jsonObject.get(achieveType);
         list.add(alreadyExistId);
         jsonObject.put(achieveType, list);
         redisUtil.set("listener:" + openId + ":offset", jsonObject);
+    }
+
+    /**
+     * 更新redis缓存中的用户行为内容，其中存储的键值对分别是，标签名：数量
+     *
+     * @param openId     用户open id
+     * @param jsonObject 存储数据的JSON对象
+     * @param tapNames   标签名数组
+     */
+    private void updateRedisContentForUserBehavior(String openId, JSONObject jsonObject, String... tapNames) {
+        String userBehaviorKey = "listener:" + openId + ":userBehavior";
+        for (String tapName : tapNames) {
+            if (jsonObject == null || jsonObject.isEmpty()) {
+                //初始化缓存说明此时这个用户没有进行过行为操作
+                JSONObject newJsonObject = new JSONObject();
+                newJsonObject.put(tapName, 1);
+                jsonObject = newJsonObject;
+                redisUtil.set(userBehaviorKey, newJsonObject);
+            } else {
+                Object o = jsonObject.get(tapName);
+                int tapNameCount = o == null ? 1 : ((Integer) o) + 1;
+                jsonObject.put(tapName, tapNameCount);
+                redisUtil.set(userBehaviorKey, jsonObject);
+            }
+        }
     }
 
     /**
@@ -245,5 +281,25 @@ public class CustomListenerConfig {
             timelineVoLinkedList.addFirst(timelineVo);
             redisUtil.set(timelineKey, timelineVoLinkedList);
         }
+    }
+
+
+    //------------------------- 用户行为监听 ----------------------
+
+    @EventListener
+    public void handleGetLetterBehavior(UserBehaviorEvent<IndexLetterVo> userBehaviorEvent){
+        IndexLetterVo indexLetterVo = userBehaviorEvent.getT();
+        updateRedisContentForUserBehavior(indexLetterVo.getOpenId(),indexLetterVo.getLetterId());
+    }
+
+    /**
+     * 更新用户行为到redis缓存中，传入信件id用于获取标签
+     * @param openId 用户open id
+     * @param letterId letter id
+     */
+    private void updateRedisContentForUserBehavior(String openId, String letterId) {
+        Letter letter = letterMapper.selectLetterById(letterId);
+        String[] tapIds = letter.getTapIds().split(",");
+        updateRedisContentForUserBehavior(openId, (JSONObject) redisUtil.get("listener:" + openId + ":userBehavior"), tapIds);
     }
 }

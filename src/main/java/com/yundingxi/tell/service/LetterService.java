@@ -36,7 +36,10 @@ public interface LetterService {
      * @param openId 用户 open id
      * @return 结果集
      */
+    @Deprecated
     List<IndexLetterDto> getLettersByOpenId(String openId);
+
+    List<IndexLetterDto> getLettersUpgrade(String openId);
 
     void saveReplyFromSenderToRecipient(Reply reply);
 

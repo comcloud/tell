@@ -3,8 +3,7 @@ package com.yundingxi.tell.controller;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;
-import com.yundingxi.tell.common.listener.PublishLetterEvent;
-import com.yundingxi.tell.common.listener.PublishReplyEvent;
+import com.yundingxi.tell.common.listener.UserBehaviorEvent;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -51,9 +50,9 @@ public class LetterController {
     @Operation(description = "保存信件", summary = "保存信件")
     public Result<String> saveLetter(@Parameter(description = "信件对象", required = true) LetterStorageDto letterStorageDto) {
         if (letterService.saveSingleLetter(letterStorageDto) == 1) {
-            publisher.publishEvent(new PublishLetterEvent(this, letterStorageDto));
+            publisher.publishEvent(new UserBehaviorEvent<>(this, letterStorageDto));
             return ResultGenerator.genSuccessResult("保存信件成功");
-        }else{
+        } else {
             return ResultGenerator.genFailResult("保存信件失败");
         }
     }
@@ -64,7 +63,8 @@ public class LetterController {
                                               LetterReplyDto letterReplyDto) {
         String successResult = "success";
         if (successResult.equals(letterService.replyLetter(letterReplyDto))) {
-            publisher.publishEvent(new PublishReplyEvent(this, letterReplyDto));
+            publisher.publishEvent(new UserBehaviorEvent<>(this, letterReplyDto));
+            publisher.publishEvent(new UserBehaviorEvent<>(this, letterReplyDto));
             return ResultGenerator.genSuccessResult(successResult);
         } else {
             return ResultGenerator.genFailResult("回复失败");
@@ -81,7 +81,7 @@ public class LetterController {
     @Cacheable("letters")
     @Operation(description = "获取信件的用户的open id", summary = "获取三封信件")
     public Result<List<IndexLetterDto>> getLetters(@Parameter(description = "open id", required = true) @RequestParam String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getLettersByOpenId(openId));
+        return ResultGenerator.genSuccessResult(letterService.getLettersUpgrade(openId));
     }
 
     @Operation(description = "获取未读内容的数量,这里设定1为回信，2为评论，3为成就，4为邮票", summary = "获取未读内容数量")
@@ -108,7 +108,9 @@ public class LetterController {
     @GetMapping("/getDetailOfLetterById")
     public Result<IndexLetterDto> getIndexLetterById(@Parameter(description = "信件id") String letterId,
                                                      @Parameter(description = "open id") String openId) {
-        return ResultGenerator.genSuccessResult(letterService.getLetterById(new IndexLetterVo(openId, letterId)));
+        IndexLetterVo indexLetterVo = new IndexLetterVo(openId, letterId);
+        publisher.publishEvent(new UserBehaviorEvent<>(this, indexLetterVo));
+        return ResultGenerator.genSuccessResult(letterService.getLetterById(indexLetterVo));
     }
 
     @GetMapping("/getLetterOfHistory")

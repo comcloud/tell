@@ -19,6 +19,7 @@ import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.ReplyMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.service.LetterService;
+import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import com.yundingxi.tell.util.JsonUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version v1.0
@@ -105,7 +107,7 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
      */
     @SneakyThrows
     @Override
-    public final List<IndexLetterDto> getLettersByOpenId(String openId){
+    public final List<IndexLetterDto> getLettersUpgrade(String openId){
         return CompletableFuture.supplyAsync(() -> {
             /*
              * 1.从缓存获取此用户已经获取到的信件信息，包括获取时间、上次访问数据库时候的信件数量(最开始时候默认为0)
@@ -122,6 +124,9 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
             JsonNode letterInfoJsonNode = JsonUtil.parseJson(letterInfoJson);
             String lastDate = letterInfoJsonNode.findPath("date").toString();
             String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            //-----------------这里不该是总数，为了体现出没有被回复的信件优先被推荐、时间较新原则，应该是一个数量区间
+            //待解决
             int totalNumber = letterMapper.selectTotalNumberNonSelf(openId);
             int visibleNumber = letterInfoJsonNode.findPath("visitNumber").asInt();
             if (lastDate.equals(currentDate) || visibleNumber >= totalNumber) {
@@ -130,6 +135,7 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
                 return indexLetterDtoList;
             } else {
                 List<IndexLetterDto> indexLetterDtoList = customGetLettersByOpenId(openId,totalNumber);
+
                 updateRedisLetterInfo(letterInfoKey, totalNumber, currentDate, indexLetterDtoList);
                 return indexLetterDtoList;
             }
@@ -149,7 +155,7 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
      *
      * @param key         此缓存中对应redis的key名
      * @param visitNumber 此时访问数据库时候数据库中的数据量
-     * @param currentDate 当前日记字符串
+     * @param currentDate 当前日期字符串
      * @param list        存储着信件的列表
      */
     private void updateRedisLetterInfo(String key, int visitNumber, String currentDate, List<IndexLetterDto> list) {
@@ -159,6 +165,82 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
         object.put("date", currentDate);
         object.put("IndexLetterDtoList", list);
         redisUtil.set(key, object.toJSONString());
+    }
+
+    /**
+     * 获取length个不同数字的数组
+     *
+     * @param surplusThreshold 求余的阈值
+     * @param length           要获取的长度
+     * @return 不同数字数组
+     */
+    private int[] getDifferentArray(int surplusThreshold, int length) {
+        Random random = new Random();
+        int[] differentArray = new int[length];
+        for (int i = 0; i < differentArray.length; i++) {
+            differentArray[i] = spinRandomNumberToNonExist(random.nextInt(surplusThreshold), surplusThreshold, i, differentArray);
+        }
+        return differentArray;
+    }
+
+    /**
+     * 自旋直到产生没有出现过的数字
+     *
+     * @param randomNumber  随机数字
+     * @param spinThreshold 自旋阈值，表示每次对哪个数字进行取余
+     * @param length        已经有的数字长度
+     * @param alreadyNumber 已经出现的数字
+     * @return 自旋数字结果
+     */
+    private int spinRandomNumberToNonExist(int randomNumber, int spinThreshold, int length, int... alreadyNumber) {
+        for (; ; ) {
+            //成功标记，表示着是否已经不存在重复数字
+            boolean successFlag = true;
+            for (int i = 0; i < length; i++) {
+                if (alreadyNumber[i] == randomNumber) {
+                    randomNumber = (randomNumber + 1) % spinThreshold;
+                    successFlag = false;
+                }
+            }
+            if (successFlag) {
+                return randomNumber;
+            }
+        }
+    }
+
+    /**
+     * @param openId 用户 open id
+     * @return 顺序获取三封信件
+     */
+    @Deprecated
+    @SneakyThrows
+    @Override
+    public List<IndexLetterDto> getLettersByOpenId(String openId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Object o = redisUtil.get("letter:" + openId + ":letter_info");
+            if (o == null) {
+                setLetterInitInfoByOpenId(openId);
+            }
+            Object obj = redisUtil.get("letter:" + openId + ":letter_info");
+            String currentDate = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            int letterCountLocation = 0;
+            if (obj != null) {
+                JsonNode letterInfo = JsonUtil.parseJson((String) obj);
+                String date = letterInfo.findPath("date").toString().replace("\"", "");
+                letterCountLocation = Integer.parseInt(letterInfo.findPath("letter_count_location").toString().trim().replace("\"", ""));
+                if (!currentDate.equals(date)) {
+                    letterCountLocation = letterCountLocation + 3;
+                }
+            }
+            if (letterCountLocation != 0 || obj == null) {
+                ObjectNode newValue = JsonNodeFactory.instance.objectNode().putObject("letter_info");
+                newValue.put("date", currentDate);
+                newValue.put("letter_count_location", letterCountLocation);
+                redisUtil.set("letter:" + openId + ":letter_info", newValue.toPrettyString(), TimeUnit.HOURS.toSeconds(12));
+            }
+            List<Letter> letters = letterMapper.selectLetterLimit(letterCountLocation, openId, 1);
+            return GeneralDataProcessUtil.configLetterDataFromList(letters, openId);
+        }).get();
     }
 
     @Override

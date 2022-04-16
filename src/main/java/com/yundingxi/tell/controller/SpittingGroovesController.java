@@ -4,7 +4,7 @@ package com.yundingxi.tell.controller;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
-import com.yundingxi.tell.common.listener.PublishSpitEvent;
+import com.yundingxi.tell.common.listener.UserBehaviorEvent;
 import com.yundingxi.tell.service.SpittingGroovesService;
 import com.yundingxi.tell.util.Result;
 import io.swagger.annotations.Api;
@@ -47,7 +47,7 @@ public class SpittingGroovesController {
         Result<String> result = spittingGroovesService.insert(entity);
         String success = "发布成功";
         if (success.equals(result.getMessage())) {
-            publisher.publishEvent(new PublishSpitEvent(this, entity));
+            publisher.publishEvent(new UserBehaviorEvent<>(this, entity));
         }
         return result;
     }
