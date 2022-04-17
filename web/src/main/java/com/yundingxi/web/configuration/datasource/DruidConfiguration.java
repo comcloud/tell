@@ -1,4 +1,4 @@
-package com.yundingxi.tell.common.datasource;
+package com.yundingxi.web.configuration.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;

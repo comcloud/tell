@@ -2,7 +2,6 @@ package com.yundingxi.tell.util.pipeline.handle;
 
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.util.pipeline.context.UserDataAnalysisContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -2,9 +2,11 @@ package com.yundingxi.tell.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.QuestionnaireDto;
-import com.yundingxi.tell.bean.entity.Questionnaire;
 import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.bean.vo.*;
+import com.yundingxi.tell.bean.vo.HistoryDataVo;
+import com.yundingxi.tell.bean.vo.ProfileNumVo;
+import com.yundingxi.tell.bean.vo.ProfileVo;
+import com.yundingxi.tell.bean.vo.TimelineVo;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.util.Result;

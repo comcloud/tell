@@ -1,7 +1,6 @@
 package com.yundingxi.tell.service;
 
 
-import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.entity.UserStamp;
 import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.util.Result;

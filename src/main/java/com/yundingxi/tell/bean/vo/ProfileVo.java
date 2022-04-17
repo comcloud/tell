@@ -1,6 +1,5 @@
 package com.yundingxi.tell.bean.vo;
 
-import com.yundingxi.tell.util.ModelUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @version v1.0

@@ -1,6 +1,5 @@
 package com.yundingxi.tell.bean.vo;
 
-import com.yundingxi.tell.bean.dto.IndexLetterDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

@@ -6,7 +6,6 @@ import com.yundingxi.tell.util.Result;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * <p>

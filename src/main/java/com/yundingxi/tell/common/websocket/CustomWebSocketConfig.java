@@ -2,16 +2,8 @@ package com.yundingxi.tell.common.websocket;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.*;
-import org.springframework.web.socket.server.HandshakeFailureException;
-import org.springframework.web.socket.server.HandshakeHandler;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
-
-import java.util.Map;
 
 /**
  * websocket的配置类

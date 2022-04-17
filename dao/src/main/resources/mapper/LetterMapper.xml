@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yundingxi.tell.mapper.LetterMapper">
+
+
+    <insert id="insertSingleLetter">
+        insert into letter
+            value (#{letter.id},#{letter.stampUrl},#{letter.openId},#{letter.content},#{letter.state},
+            #{letter.penName},#{letter.tapIds},#{letter.releaseTime})
+    </insert>
+    <insert id="insertReply">
+        insert into reply
+            value (#{reply.id},#{reply.letterId},#{reply.replyTime},#{reply.content},#{reply.openId},#{reply.penName})
+    </insert>
+    <update id="updateLetterTap">
+        update letter_tap
+        set count=count + 1
+        where id = #{tabId}
+    </update>
+    <update id="updateLetterState">
+        update letter
+        set state=#{state}
+        where id = #{id}
+    </update>
+    <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        where open_id!=#{openId}
+          and state =#{state}
+            limit #{letterCountLocation}
+            , 3;
+    </select>
+    <select id="selectLetterById" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        where id = #{letterId}
+    </select>
+    <select id="selectPenNameByOpenId" resultType="java.lang.String">
+        select pen_name
+        from letter
+        where open_id = #{openId}
+    </select>
+    <select id="selectContentByLetterId" resultType="java.lang.String">
+        select content
+        from letter
+        where id = #{letterId}
+    </select>
+    <select id="selectWeeklyQuantityThroughOpenId" resultType="java.lang.Integer">
+        select count(*)
+        from ${tableName}
+        where open_id = #{openId}
+        <choose>
+            <when test="tableName == 'letter'">
+                and (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(release_time) &lt;= #{interval} *
+                (#{period} + 1)
+                and 0 &lt;= (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(release_time);
+            </when>
+            <otherwise>
+                and (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(date) &lt;= #{interval} * (#{period} +
+                1)
+                and 0 &lt;= (to_days(#{currentTime}) - #{interval} * #{period}) - to_days(date);
+            </otherwise>
+        </choose>
+    </select>
+    <select id="selectAllLetterContentByOpenId" resultType="java.lang.String">
+        select content
+        from letter
+        where open_id = #{openId}
+          and to_days(#{currentTime}) &gt;= to_days(release_time)
+    </select>
+    <select id="selectPenNameById" resultType="java.lang.String">
+        select pen_name
+        from letter
+        where id = #{letterId}
+    </select>
+    <select id="selectAllLetterByOpenIdNonState" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        where open_id = #{openId}
+          and state!=#{state}
+        order by release_time desc;
+    </select>
+    <select id="selectNumberOfReply" resultType="java.lang.Integer">
+        select count(*)
+        from reply
+        where open_id=#{openId}
+    </select>
+
+    <select id="selectNumberOfLetterByOpenIdNonState" resultType="java.lang.Integer">
+        select count(*)
+        from letter
+        where open_id=#{openId}
+          and state!=#{state}
+    </select>
+    <select id="selectRandomLatestLetter" resultType="com.yundingxi.tell.bean.entity.Letter">
+        select *
+        from letter
+        where open_id != #{openId} and state=#{state}
+        order by release_time desc
+            limit #{number} offset #{offset}
+
+    </select>
+    <select id="selectTotalNumberNonSelf" resultType="java.lang.Integer">
+        select count(*) from letter where open_id!=#{openId} and state!=4
+    </select>
+</mapper>

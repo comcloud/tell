@@ -2,10 +2,10 @@ package com.yundingxi.tell.service.Impl;
 
 import java.util.*;
 
-import com.yundingxi.tell.common.enums.FileEnums;
-import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.util.ReptileUtils;
+import com.yundingxi.tell.common.enums.FileEnums;
+import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.service.BeautyArticleService;
 import com.yundingxi.tell.util.FileUtil;
 import com.yundingxi.tell.util.Result;

@@ -1,6 +1,5 @@
 package com.yundingxi.tell.controller;
 
-import com.yundingxi.tell.bean.entity.Stamp;
 import com.yundingxi.tell.bean.vo.AchieveVo;
 import com.yundingxi.tell.bean.vo.StampVo;
 import com.yundingxi.tell.service.AchieveService;

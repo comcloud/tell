@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yundingxi.tell.mapper.DiaryMapper">
+
+
+    <insert id="insertSingleDiary">
+        insert into diarys
+            value (#{diarys.id},#{diarys.content},#{diarys.date},#{diarys.number},#{diarys.penName},
+            #{diarys.weather},#{diarys.state},#{diarys.openId})
+    </insert>
+    <update id="updateDiaryNumber">
+        update diarys
+        set number=#{viewNum}
+        where id = #{id}
+    </update>
+    <update id="updateDiaryState">
+        update diarys
+        set state=#{state}
+        where id=#{id}
+    </update>
+    <delete id="deleteSingleDiaryById">
+        delete
+        from diarys
+        where id = #{id}
+    </delete>
+    <select id="selectAllDiaryByOpenIdAndNonState" resultType="com.yundingxi.tell.bean.entity.Diarys">
+        select *
+        from diarys
+        where open_id = #{openId}
+            and state!=#{state}
+        order by date desc;
+    </select>
+    <select id="selectSingleDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
+        select *
+        from diarys
+        where id = #{id}
+    </select>
+    <select id="selectAllPublicDiary" resultType="com.yundingxi.tell.bean.entity.Diarys">
+        select id, content, date, number, pen_name, weather, state, open_id
+        from diarys
+        where state = #{state};
+    </select>
+    <select id="selectAllDiaryContentByOpenId" resultType="java.lang.String">
+        select content
+        from diarys
+        where open_id = #{openId}
+          and to_days(#{currentTime}) &gt;= to_days(date)
+    </select>
+
+    <select id="selectNumberOfDiaryByOpenIdNonState" resultType="java.lang.Integer">
+        select count(*)
+        from diarys
+        where open_id = #{openId}
+          and state!=#{state}
+    </select>
+    <select id="selectAllDiaryForSelfNonState" resultType="com.yundingxi.tell.bean.entity.Diarys">
+        select id, content, date, number, pen_name, weather, state, open_id
+        from diarys
+        where state != #{state} and open_id=#{openId};
+    </select>
+</mapper>

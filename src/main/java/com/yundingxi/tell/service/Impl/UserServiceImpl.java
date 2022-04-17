@@ -4,18 +4,20 @@ import cn.hutool.http.HttpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.dto.QuestionnaireDto;
-import com.yundingxi.tell.bean.entity.*;
 import com.yundingxi.tell.bean.vo.*;
 import com.yundingxi.tell.common.enums.RedisEnums;
 import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.*;
 import com.yundingxi.tell.service.SpittingGroovesService;
-import com.yundingxi.tell.service.StampService;
 import com.yundingxi.tell.service.UserService;
 import com.yundingxi.tell.util.*;
-import com.yundingxi.tell.util.pipeline.context.Context;
 import com.yundingxi.tell.util.pipeline.context.UserDataAnalysisContext;
 import com.yundingxi.tell.util.pipeline.executor.PipelineExecutor;
+import com.yundingxi.web.tell.bean.entity.*;
+import com.yundingxi.web.tell.bean.vo.*;
+import com.yundingxi.web.tell.mapper.*;
+import com.yundingxi.web.tell.util.*;
+import com.yundingxi.tell.bean.entity.*;
+import com.yundingxi.tell.mapper.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -23,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**

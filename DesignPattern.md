@@ -32,11 +32,11 @@ public enum SubMessageTemplateEnum {
     /**
      * 订阅消息评论模版ID
      */
-    SUB_MESSAGE_COMMENT_TEMPLATE_ID("mghtoN9x1YBMmyWg9RtBlt8-XxHxMvEo8eAtHIazD34", "com.yundingxi.tell.util.strategy.SubMessageStrategyContext$CommentSubMessageStrategy"),
+    SUB_MESSAGE_COMMENT_TEMPLATE_ID("mghtoN9x1YBMmyWg9RtBlt8-XxHxMvEo8eAtHIazD34", "SubMessageStrategyContext$CommentSubMessageStrategy"),
     /**
      * 订阅消息回信ID
      */
-    SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID("vuxCjKVvzbUWW1iHbMkSCmsBrpXWkXFPJ81S8nVWJdw", "com.yundingxi.tell.util.strategy.SubMessageStrategyContext$ReplySubMessageStrategy");
+    SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID("vuxCjKVvzbUWW1iHbMkSCmsBrpXWkXFPJ81S8nVWJdw", "SubMessageStrategyContext$ReplySubMessageStrategy");
 
     //模版ID
     private final String templateId;

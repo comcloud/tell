@@ -1,7 +1,6 @@
 package com.yundingxi.tell.mapper;
 
 import com.yundingxi.tell.bean.entity.Comments;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.CommentVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

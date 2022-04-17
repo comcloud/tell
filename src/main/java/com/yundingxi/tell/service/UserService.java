@@ -1,13 +1,12 @@
 package com.yundingxi.tell.service;
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.bean.dto.QuestionnaireDto;
-import com.yundingxi.tell.bean.entity.Questionnaire;
 import com.yundingxi.tell.bean.entity.User;
 import com.yundingxi.tell.bean.vo.HistoryDataVo;
 import com.yundingxi.tell.bean.vo.ProfileNumVo;
 import com.yundingxi.tell.bean.vo.ProfileVo;
 import com.yundingxi.tell.bean.vo.TimelineVo;
-import com.yundingxi.tell.util.ModelUtil;
 import com.yundingxi.tell.util.Result;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,7 @@ public interface UserService {
      * @param openId open Id
      * @return 返回样式内容，包含两块内容，所以使用了ModelUtil作为容器，第一个值是一个二维数组，这里使用集合表示，第二个是键值对
      */
-    Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId,Long currentTimeStamp);
+    Result<ModelUtil<List<List<String>>, Map<String, List<ProfileNumVo>>>> getDataAnalysis(String openId, Long currentTimeStamp);
 
     Result<Integer> isTextLegal(String textContent);
 

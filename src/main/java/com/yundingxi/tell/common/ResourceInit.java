@@ -1,8 +1,6 @@
 package com.yundingxi.tell.common;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.mapper.UserMapper;
@@ -15,7 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

@@ -2,11 +2,11 @@ package com.yundingxi.tell.service.Impl.upgrade;
 
 import com.yundingxi.tell.bean.dto.IndexLetterDto;
 import com.yundingxi.tell.bean.entity.Letter;
-import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.ReplyMapper;
 import com.yundingxi.tell.mapper.UserMapper;
 import com.yundingxi.tell.util.GeneralDataProcessUtil;
+import com.yundingxi.tell.common.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +47,7 @@ public class UpgradeLetterServiceImpl extends AbstractLetterServiceImpl {
      * @return 获取三封信件
      */
     @Override
-    protected List<IndexLetterDto> customGetLettersByOpenId(String openId,int totalNumber) {
+    protected List<IndexLetterDto> customGetLettersByOpenId(String openId, int totalNumber) {
         //此时需要从数据库获取内容,随机三个数字获取数据库中最新的十条数据中的位置
         int gainLetterNumber = totalNumber == 1 || totalNumber == 2 ? totalNumber : 3;
         List<IndexLetterDto> indexLetterDtoList = new ArrayList<>(3);

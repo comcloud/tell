@@ -2,13 +2,10 @@ package com.yundingxi.tell.service;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.tell.bean.entity.Comments;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
 import com.yundingxi.tell.bean.vo.CommentVo;
 import com.yundingxi.tell.util.Result;
-import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author hds
@@ -23,7 +20,7 @@ public interface CommentsService {
      *
      * @param entity 实体对象
      */
-    Result<String> insert(com.yundingxi.tell.bean.entity.Comments entity);
+    Result<String> insert(Comments entity);
 
     /**
      * 根据 ID 删除

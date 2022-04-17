@@ -1,6 +1,5 @@
 package com.yundingxi.tell.common.swagger;
 
-import io.swagger.models.auth.In;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

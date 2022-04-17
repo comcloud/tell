@@ -1,12 +1,9 @@
 package com.yundingxi.tell.service.Impl;
 
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.bean.entity.Achieve;
 import com.yundingxi.tell.bean.vo.AchieveVo;
-import com.yundingxi.tell.bean.vo.StampVo;
-import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.service.AchieveService;
 import com.yundingxi.tell.util.Result;
@@ -15,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
