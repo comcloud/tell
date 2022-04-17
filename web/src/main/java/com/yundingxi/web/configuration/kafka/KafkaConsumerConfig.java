@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 对于消费者工厂的创建方式需要注意一点，其实对于不同类型的消费者他们的消费者配置应该是不同的，所以这里可以做出优化
+ * 优化点其实就是将消费者配置抽离出去，然后其他可以用于不变的内容放出去就行，得以复用
  * @version v1.0
  * @ClassName KafkaConsumerConfig
  * @Author rayss
@@ -77,6 +79,8 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        //使用成就邮票分区分配策略
+        props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, AchieveStampAssignor.class);
 
         return props;
     }

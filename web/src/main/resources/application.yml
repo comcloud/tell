@@ -18,7 +18,7 @@ kafka:
     session-timeout: 20000                              #连接超时时间
     max-poll-interval: 15000                            #手动提交设置与poll的心跳数,如果消息队列中没有消息，等待毫秒后，调用poll()方法。如果队列中有消息，立即消费消息，每次消费的消息的多少可以通过max.poll.records配置。
     max-partition-fetch-bytes: 1048576                  #设置拉取数据的大小,1M
-    group-id: achieve_and_stamp                                #消费组
+    group-id: achieveAndStamp                                #消费组
   #    username: admin                                    #连接消费用户名
   #    password: admin                               #消费连接用户密码
   listener:
