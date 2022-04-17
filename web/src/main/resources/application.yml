@@ -61,9 +61,9 @@ spring:
   datasource:
     #druid基本属性
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://8.136.1.98:3306/tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/tell?serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useUnicode=true&useSSL=false
     username: root
-    password: yundingxi
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
     #druid相关配置
     druid:
@@ -95,10 +95,8 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   redis:
-    #    host: 121.5.39.223
-    host: 118.25.7.31
-    #    host: 127.0.0.1
-    port: 6366
+    host: 127.0.0.1
+    port: 6379
     timeout: 300000
     password: hds521666
     database: 1
