@@ -1,7 +1,6 @@
 package com.yundingxi.web.configuration.datasource;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.yundingxi.web.util.message.ResizableCapacityLinkedBlockingQueue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

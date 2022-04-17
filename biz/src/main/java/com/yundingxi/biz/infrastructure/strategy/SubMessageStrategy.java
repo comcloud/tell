@@ -1,4 +1,4 @@
-package com.yundingxi.common.util.strategy;
+package com.yundingxi.biz.infrastructure.strategy;
 
 
 import com.yundingxi.model.vo.submessage.SubMessageParam;

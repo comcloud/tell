@@ -5,7 +5,6 @@ import com.yundingxi.common.util.Result;
 import com.yundingxi.dao.model.Reply;
 import com.yundingxi.model.dto.letter.*;
 import com.yundingxi.model.vo.IndexLetterVo;
-import com.yundingxi.tell.bean.dto.*;
 
 
 import java.util.List;

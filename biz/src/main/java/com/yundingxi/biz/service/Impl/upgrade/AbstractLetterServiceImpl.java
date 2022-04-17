@@ -13,7 +13,7 @@ import com.yundingxi.biz.util.GeneralDataProcessUtil;
 import com.yundingxi.common.util.JsonUtil;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.common.util.ResultGenerator;
-import com.yundingxi.common.util.strategy.SubMessageStrategyContext;
+import com.yundingxi.biz.infrastructure.strategy.SubMessageStrategyContext;
 import com.yundingxi.dao.mapper.LetterMapper;
 import com.yundingxi.dao.mapper.ReplyMapper;
 import com.yundingxi.dao.mapper.UserMapper;

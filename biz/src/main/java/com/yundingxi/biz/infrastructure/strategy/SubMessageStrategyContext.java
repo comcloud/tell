@@ -1,8 +1,8 @@
-package com.yundingxi.common.util.strategy;
+package com.yundingxi.biz.infrastructure.strategy;
 
 import cn.hutool.http.HttpUtil;
-import com.yundingxi.model.vo.submessage.WeChatEnum;
-import com.yundingxi.common.util.GeneralDataProcessUtil;
+import com.yundingxi.biz.util.GeneralDataProcessUtil;
+import com.yundingxi.common.model.enums.WeChatEnum;
 import com.yundingxi.model.vo.submessage.SubMessageCommentDataVo;
 import com.yundingxi.model.vo.submessage.SubMessageParam;
 import com.yundingxi.model.vo.submessage.SubMessageReplyVo;

@@ -6,7 +6,7 @@ import com.yundingxi.common.model.enums.WeChatEnum;
 import com.yundingxi.common.redis.RedisUtil;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.common.util.ResultGenerator;
-import com.yundingxi.common.util.strategy.SubMessageStrategyContext;
+import com.yundingxi.biz.infrastructure.strategy.SubMessageStrategyContext;
 import com.yundingxi.dao.mapper.CommentsMapper;
 import com.yundingxi.dao.mapper.SpittingGroovesMapper;
 import com.yundingxi.dao.mapper.UserMapper;
