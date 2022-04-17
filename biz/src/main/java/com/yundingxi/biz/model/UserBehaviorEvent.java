@@ -1,4 +1,4 @@
-package com.yundingxi.common.model.listener;
+package com.yundingxi.biz.model;
 
 import org.springframework.context.ApplicationEvent;
 

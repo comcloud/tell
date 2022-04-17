@@ -2,7 +2,7 @@ package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.biz.service.LetterService;
-import com.yundingxi.common.model.listener.UserBehaviorEvent;
+import com.yundingxi.biz.model.UserBehaviorEvent;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.common.util.ResultGenerator;
 import com.yundingxi.model.dto.letter.*;

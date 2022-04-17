@@ -1,7 +1,7 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.common.model.listener.UserBehaviorEvent;
+import com.yundingxi.biz.model.UserBehaviorEvent;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.dao.model.SpittingGrooves;
 import com.yundingxi.model.vo.SpittingGroovesVo;
