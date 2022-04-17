@@ -1,6 +1,6 @@
 package com.yundingxi.dao.mapper;
 
-import com.yundingxi.tell.bean.entity.Reply;
+import com.yundingxi.dao.model.Reply;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

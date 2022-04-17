@@ -1,12 +1,13 @@
-package com.yundingxi.web.biz.service.Impl;
-import com.yundingxi.tell.bean.entity.Stamp;
-import com.yundingxi.tell.bean.entity.UserStamp;
-import com.yundingxi.tell.bean.vo.StampVo;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.StampMapper;
-import com.yundingxi.web.biz.service.StampService;
-import com.yundingxi.tell.util.Result;
-import com.yundingxi.tell.util.ResultGenerator;
+package com.yundingxi.biz.service.Impl;
+
+import com.yundingxi.biz.service.StampService;
+import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.dao.mapper.StampMapper;
+import com.yundingxi.dao.model.Stamp;
+import com.yundingxi.dao.model.UserStamp;
+import com.yundingxi.model.vo.StampVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

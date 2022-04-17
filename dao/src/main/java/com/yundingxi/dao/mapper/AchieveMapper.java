@@ -1,8 +1,8 @@
 package com.yundingxi.dao.mapper;
 
-import com.yundingxi.tell.bean.entity.Achieve;
-import com.yundingxi.tell.bean.entity.UserAchieve;
-import com.yundingxi.tell.bean.vo.AchieveVo;
+import com.yundingxi.dao.model.Achieve;
+import com.yundingxi.dao.model.UserAchieve;
+import com.yundingxi.model.vo.AchieveVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,7 +30,7 @@ public interface AchieveMapper {
 
     List<String> selectAllTaskIdByAchieveTypeAndLocation(@Param("locationObtained") int locationObtained,@Param("achieveType") String achieveType);
 
-    List<Achieve> selectAllTaskIdAndIdByAchieveTypeAndLocation(@Param("locationObtained") int locationObtained,@Param("achieveType") String achieveType);
+    List<Achieve> selectAllTaskIdAndIdByAchieveTypeAndLocation(@Param("locationObtained") int locationObtained, @Param("achieveType") String achieveType);
 
     String selectAchieveRewardById(@Param("id") String id);
 

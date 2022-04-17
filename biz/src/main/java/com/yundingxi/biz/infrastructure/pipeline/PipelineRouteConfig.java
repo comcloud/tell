@@ -1,9 +1,8 @@
-package com.yundingxi.common.util.pipeline;
+package com.yundingxi.biz.infrastructure.pipeline;
 
-import com.yundingxi.web.util.pipeline.context.Context;
-import com.yundingxi.web.util.pipeline.context.UserDataAnalysisContext;
-import com.yundingxi.web.util.pipeline.handle.*;
-import com.yundingxi.tell.util.pipeline.handle.*;
+import com.yundingxi.biz.infrastructure.pipeline.context.Context;
+import com.yundingxi.biz.infrastructure.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.biz.infrastructure.pipeline.handle.*;
 import lombok.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

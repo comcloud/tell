@@ -1,7 +1,7 @@
 package com.yundingxi.tell.service;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.web.tell.bean.dto.*;
+import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.entity.Reply;
 import com.yundingxi.tell.bean.vo.IndexLetterVo;

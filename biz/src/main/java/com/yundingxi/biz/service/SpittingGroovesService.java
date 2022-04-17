@@ -1,8 +1,9 @@
-package com.yundingxi.web.biz.service;
+package com.yundingxi.biz.service;
+
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
-import com.yundingxi.tell.util.Result;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.dao.model.SpittingGrooves;
+import com.yundingxi.model.vo.SpittingGroovesVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;

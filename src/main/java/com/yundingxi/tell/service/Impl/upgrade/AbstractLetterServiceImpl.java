@@ -20,7 +20,7 @@ import com.yundingxi.tell.util.GeneralDataProcessUtil;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
 import com.yundingxi.tell.util.strategy.SubMessageStrategyContext;
-import com.yundingxi.web.tell.bean.dto.*;
+import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.common.redis.RedisUtil;
 import com.yundingxi.tell.common.websocket.WebSocketServer;

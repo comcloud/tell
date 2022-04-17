@@ -7,13 +7,22 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.common.model.enums.WeChatEnum;
 import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.biz.util.GeneralDataProcessUtil;
+import com.yundingxi.common.util.JsonUtil;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.common.util.strategy.SubMessageStrategyContext;
 import com.yundingxi.dao.mapper.LetterMapper;
 import com.yundingxi.dao.mapper.ReplyMapper;
 import com.yundingxi.dao.mapper.UserMapper;
 import com.yundingxi.dao.model.Letter;
-import com.yundingxi.model.dto.letter.LetterStorageDto;
-import com.yundingxi.web.biz.service.LetterService;
+import com.yundingxi.dao.model.Reply;
+import com.yundingxi.model.dto.letter.*;
+import com.yundingxi.biz.service.LetterService;
+import com.yundingxi.model.vo.IndexLetterVo;
+import com.yundingxi.model.vo.submessage.SubMessageParam;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +33,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -242,7 +250,16 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
         CompletableFuture.runAsync(() -> {
             String replyId = UUID.randomUUID().toString();
             //回信订阅消息
-            SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId(), letterReplyDto.getMessage(), "", letterReplyDto.getSenderPenName(), letterReplyDto.getRecipient(), letterReplyDto.getSender(), letterReplyDto, WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID, WeChatEnum.SUB_MESSAGE_REPLY_PAGE, WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION);
+            SubMessageParam param = new SubMessageParam(letterReplyDto.getLetterId()
+                    , letterReplyDto.getMessage()
+                    , "", letterReplyDto.getSenderPenName()
+                    , letterReplyDto.getRecipient()
+                    , letterReplyDto.getSender()
+                    , letterReplyDto
+                    , WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID
+                    , WeChatEnum.SUB_MESSAGE_REPLY_PAGE
+                    , WeChatEnum.SUB_MESSAGE_MINI_PROGRAM_STATE_FORMAL_VERSION
+            );
             SubMessageStrategyContext.getSubMessageStrategy(WeChatEnum.SUB_MESSAGE_REPLY_LETTER_TEMPLATE_ID).processSubMessage(param, replyId);
 
             Reply reply = new Reply(replyId, letterReplyDto.getLetterId(), new Date(), letterReplyDto.getMessage(), letterReplyDto.getSender(), letterReplyDto.getSenderPenName());
@@ -374,20 +391,4 @@ public abstract class AbstractLetterServiceImpl implements LetterService {
         return letterMapper.updateLetterState(id, state);
     }
 
-    public String replyLetterByWebSocket(LetterReplyDto letterReplyDto) {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        int nextInt = random.nextInt(2, 7);
-        String recipientPenName = userMapper.selectPenNameByOpenId(letterReplyDto.getRecipient());
-        String arrivalTime = JsonNodeFactory.instance.objectNode().put("arrivalTime", nextInt).toPrettyString();
-        ScheduledUtil.delayNewTask(() -> SendMailUtil.enMessageToQueue(
-                new LetterWebsocketVo(letterReplyDto.getSender()
-                        , letterReplyDto.getRecipient()
-                        , letterReplyDto.getLetterId()
-                        , letterReplyDto.getSenderPenName()
-                        , recipientPenName
-                        , letterReplyDto.getMessage().length() > 25 ? letterReplyDto.getMessage().substring(0, 25) + "..." : letterReplyDto.getMessage() + "..."
-                        , WebSocketServer.getServerByOpenId(letterReplyDto.getRecipient())
-                )), 0);
-        return arrivalTime;
-    }
 }

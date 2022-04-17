@@ -1,8 +1,9 @@
-package com.yundingxi.web.biz.service;
+package com.yundingxi.biz.service;
 
 
-import com.yundingxi.tell.bean.vo.AchieveVo;
-import com.yundingxi.tell.util.Result;
+
+import com.yundingxi.common.util.Result;
+import com.yundingxi.model.vo.AchieveVo;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
 package com.yundingxi.dao.mapper;
 
-import com.yundingxi.tell.bean.entity.Questionnaire;
-import com.yundingxi.tell.bean.entity.User;
-import com.yundingxi.tell.bean.vo.UserCommentVo;
-import com.yundingxi.tell.bean.vo.UserVo;
+import com.yundingxi.dao.model.Questionnaire;
+import com.yundingxi.dao.model.User;
+import com.yundingxi.model.vo.UserCommentVo;
+import com.yundingxi.model.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

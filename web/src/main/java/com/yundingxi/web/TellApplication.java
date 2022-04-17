@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @ComponentScans(@ComponentScan(basePackages = {
-        "com.yundingxi.biz", "com.yundingxi.web", "com.yundingxi.dao"})
+        "com.yundingxi.biz", "com.yundingxi.web", "com.yundingxi.dao", "com.yundingxi.web"})
 )
 public class TellApplication {
 

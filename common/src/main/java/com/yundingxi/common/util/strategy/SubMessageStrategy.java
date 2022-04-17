@@ -1,6 +1,7 @@
 package com.yundingxi.common.util.strategy;
 
-import com.yundingxi.tell.bean.vo.submessage.SubMessageParam;
+
+import com.yundingxi.model.vo.submessage.SubMessageParam;
 
 /**
  * 订阅消息策略接口

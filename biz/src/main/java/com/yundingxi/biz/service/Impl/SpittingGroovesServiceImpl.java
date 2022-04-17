@@ -1,17 +1,16 @@
-package com.yundingxi.web.biz.service.Impl;
+package com.yundingxi.biz.service.Impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.entity.Comments;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
-import com.yundingxi.tell.common.enums.RedisEnums;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.SpittingGroovesMapper;
-import com.yundingxi.web.biz.service.CommentsService;
-import com.yundingxi.web.biz.service.SpittingGroovesService;
-import com.yundingxi.tell.util.Result;
-import com.yundingxi.tell.util.ResultGenerator;
+import com.yundingxi.biz.service.CommentsService;
+import com.yundingxi.biz.service.SpittingGroovesService;
+import com.yundingxi.common.model.enums.redis.RedisEnums;
+import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.dao.mapper.SpittingGroovesMapper;
+import com.yundingxi.dao.model.SpittingGrooves;
+import com.yundingxi.model.vo.SpittingGroovesVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

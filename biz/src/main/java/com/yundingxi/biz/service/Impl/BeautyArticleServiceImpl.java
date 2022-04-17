@@ -1,15 +1,15 @@
-package com.yundingxi.web.biz.service.Impl;
+package com.yundingxi.biz.service.Impl;
 
 import java.util.*;
 
-import com.yundingxi.tell.common.enums.FileEnums;
-import com.yundingxi.tell.common.enums.RedisEnums;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.common.util.ReptileUtils;
-import com.yundingxi.web.biz.service.BeautyArticleService;
-import com.yundingxi.tell.util.FileUtil;
-import com.yundingxi.tell.util.Result;
-import com.yundingxi.tell.util.ResultGenerator;
+import com.yundingxi.biz.service.BeautyArticleService;
+import com.yundingxi.common.model.enums.FileEnums;
+import com.yundingxi.common.model.enums.redis.RedisEnums;
+import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.FileUtil;
+import com.yundingxi.common.util.ReptileUtils;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class BeautyArticleServiceImpl implements BeautyArticleService {
     private RedisUtil redisUtil;
 
     @Override
-    public Result<String> saveCrawlObject(int head,int end) {
+    public Result<String> saveCrawlObject(int head, int end) {
         List<Object> list = new ArrayList<>();
         List<Map<String, Object>> lis = ReptileUtils.getElements(head,end);
         int num = 0;

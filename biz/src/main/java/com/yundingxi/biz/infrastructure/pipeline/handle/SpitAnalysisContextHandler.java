@@ -1,9 +1,9 @@
-package com.yundingxi.common.util.pipeline.handle;
+package com.yundingxi.biz.infrastructure.pipeline.handle;
 
-import com.yundingxi.web.util.GeneralDataProcessUtil;
-import com.yundingxi.tell.bean.vo.ProfileNumVo;
-import com.yundingxi.tell.mapper.SpittingGroovesMapper;
-import com.yundingxi.web.util.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.biz.util.GeneralDataProcessUtil;
+import com.yundingxi.biz.infrastructure.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.dao.mapper.SpittingGroovesMapper;
+import com.yundingxi.model.vo.ProfileNumVo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

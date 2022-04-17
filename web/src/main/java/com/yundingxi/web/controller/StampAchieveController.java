@@ -1,10 +1,10 @@
 package com.yundingxi.web.controller;
 
-import com.yundingxi.tell.bean.vo.AchieveVo;
-import com.yundingxi.tell.bean.vo.StampVo;
-import com.yundingxi.web.biz.service.AchieveService;
-import com.yundingxi.web.biz.service.StampService;
-import com.yundingxi.web.util.Result;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.model.vo.AchieveVo;
+import com.yundingxi.model.vo.StampVo;
+import com.yundingxi.biz.service.AchieveService;
+import com.yundingxi.biz.service.StampService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

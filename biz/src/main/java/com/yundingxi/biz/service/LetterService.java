@@ -1,6 +1,7 @@
 package com.yundingxi.biz.service;
 
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.common.util.Result;
 import com.yundingxi.dao.model.Reply;
 import com.yundingxi.model.dto.letter.*;
 import com.yundingxi.model.vo.IndexLetterVo;
@@ -63,7 +64,7 @@ public interface LetterService {
 
     IndexLetterDto getLetterById(IndexLetterVo indexLetterVo);
 
-    com.yundingxi.web.util.Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(String openId, Integer pageNum);
+    Result<PageInfo<UnreadMessageDto>> getLetterOfHistory(String openId, Integer pageNum);
 
     int changeLetterState(String id, int state);
 }

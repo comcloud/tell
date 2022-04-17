@@ -1,4 +1,4 @@
-package com.yundingxi.web.biz.service;
+package com.yundingxi.biz.service;
 
 
 /**

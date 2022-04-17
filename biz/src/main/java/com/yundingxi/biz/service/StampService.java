@@ -1,10 +1,10 @@
-package com.yundingxi.web.biz.service;
+package com.yundingxi.biz.service;
 
 
-import com.yundingxi.tell.bean.entity.Stamp;
-import com.yundingxi.tell.bean.entity.UserStamp;
-import com.yundingxi.tell.bean.vo.StampVo;
-import com.yundingxi.tell.util.Result;
+
+import com.yundingxi.common.util.Result;
+import com.yundingxi.dao.model.UserStamp;
+import com.yundingxi.model.vo.StampVo;
 
 import java.util.List;
 

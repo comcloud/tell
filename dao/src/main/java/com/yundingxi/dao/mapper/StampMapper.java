@@ -1,9 +1,9 @@
 package com.yundingxi.dao.mapper;
 
 
-import com.yundingxi.tell.bean.entity.Stamp;
-import com.yundingxi.tell.bean.entity.UserStamp;
-import com.yundingxi.tell.bean.vo.StampVo;
+import com.yundingxi.dao.model.Stamp;
+import com.yundingxi.dao.model.UserStamp;
+import com.yundingxi.model.vo.StampVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,7 +1,7 @@
 package com.yundingxi.dao.mapper;
 
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
+import com.yundingxi.dao.model.SpittingGrooves;
+import com.yundingxi.model.vo.SpittingGroovesVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

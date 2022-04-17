@@ -1,7 +1,7 @@
-package com.yundingxi.common.util.pipeline.executor;
+package com.yundingxi.biz.infrastructure.pipeline.executor;
 
-import com.yundingxi.web.util.pipeline.handle.ContextHandler;
-import com.yundingxi.web.util.pipeline.context.Context;
+import com.yundingxi.biz.infrastructure.pipeline.context.Context;
+import com.yundingxi.biz.infrastructure.pipeline.handle.ContextHandler;
 import org.apache.cxf.common.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

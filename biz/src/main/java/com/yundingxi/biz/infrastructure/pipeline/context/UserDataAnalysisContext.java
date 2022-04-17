@@ -1,7 +1,7 @@
-package com.yundingxi.common.util.pipeline.context;
+package com.yundingxi.biz.infrastructure.pipeline.context;
 
-import com.yundingxi.web.util.ModelUtil;
-import com.yundingxi.tell.bean.vo.ProfileNumVo;
+import com.yundingxi.common.util.ModelUtil;
+import com.yundingxi.model.vo.ProfileNumVo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

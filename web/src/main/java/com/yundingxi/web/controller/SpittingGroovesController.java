@@ -1,12 +1,11 @@
 package com.yundingxi.web.controller;
 
-
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.entity.SpittingGrooves;
-import com.yundingxi.tell.bean.vo.SpittingGroovesVo;
-import com.yundingxi.tell.common.listener.UserBehaviorEvent;
-import com.yundingxi.web.biz.service.SpittingGroovesService;
-import com.yundingxi.web.util.Result;
+import com.yundingxi.common.model.listener.UserBehaviorEvent;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.dao.model.SpittingGrooves;
+import com.yundingxi.model.vo.SpittingGroovesVo;
+import com.yundingxi.biz.service.SpittingGroovesService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +29,7 @@ import java.io.Serializable;
 @Api(value = "/spitting-grooves", tags = "吐槽接口")
 
 public class SpittingGroovesController {
+
     @Autowired
     private SpittingGroovesService spittingGroovesService;
 

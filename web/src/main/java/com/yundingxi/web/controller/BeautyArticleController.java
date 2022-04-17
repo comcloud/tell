@@ -1,8 +1,8 @@
 package com.yundingxi.web.controller;
 
-import com.yundingxi.web.biz.service.BeautyArticleService;
-import com.yundingxi.web.util.Result;
-import com.yundingxi.web.util.ResultGenerator;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.biz.service.BeautyArticleService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -1,10 +1,10 @@
 package com.yundingxi.web.component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yundingxi.web.biz.service.LetterService;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.AchieveMapper;
-import com.yundingxi.tell.mapper.UserMapper;
+import com.yundingxi.biz.service.LetterService;
+import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.dao.mapper.AchieveMapper;
+import com.yundingxi.dao.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

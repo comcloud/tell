@@ -1,7 +1,7 @@
-package com.yundingxi.web.biz.service;
+package com.yundingxi.biz.service;
 
 
-import com.yundingxi.tell.util.Result;
+import com.yundingxi.common.util.Result;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,7 @@ public interface BeautyArticleService {
     /**
      * 保存 获取的对象到指定文件目录
      */
-    Result<String> saveCrawlObject(int index,int end);
+    Result<String> saveCrawlObject(int index, int end);
 
     /**
      * 更新美文数据

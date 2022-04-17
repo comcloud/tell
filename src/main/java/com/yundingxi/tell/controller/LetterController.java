@@ -6,7 +6,7 @@ import com.yundingxi.tell.common.listener.UserBehaviorEvent;
 import com.yundingxi.tell.service.LetterService;
 import com.yundingxi.tell.util.Result;
 import com.yundingxi.tell.util.ResultGenerator;
-import com.yundingxi.web.tell.bean.dto.*;
+import com.yundingxi.tell.bean.dto.*;
 import com.yundingxi.tell.bean.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;

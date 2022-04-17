@@ -1,7 +1,7 @@
-package com.yundingxi.common.util.pipeline.handle;
+package com.yundingxi.biz.infrastructure.pipeline.handle;
 
-import com.yundingxi.tell.mapper.LetterMapper;
-import com.yundingxi.web.util.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.biz.infrastructure.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.dao.mapper.LetterMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -1,9 +1,12 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.web.biz.service.LetterService;
-import com.yundingxi.web.util.Result;
-import com.yundingxi.web.util.ResultGenerator;
+import com.yundingxi.biz.service.LetterService;
+import com.yundingxi.common.model.listener.UserBehaviorEvent;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.model.dto.letter.*;
+import com.yundingxi.model.vo.IndexLetterVo;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

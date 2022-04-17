@@ -11,7 +11,7 @@ import com.yundingxi.tell.mapper.AchieveMapper;
 import com.yundingxi.tell.mapper.LetterMapper;
 import com.yundingxi.tell.mapper.StampMapper;
 import com.yundingxi.tell.mapper.TaskMapper;
-import com.yundingxi.web.tell.bean.entity.*;
+import com.yundingxi.tell.bean.entity.*;
 import com.yundingxi.tell.bean.entity.*;
 import com.yundingxi.tell.common.ResourceInit;
 import org.slf4j.Logger;

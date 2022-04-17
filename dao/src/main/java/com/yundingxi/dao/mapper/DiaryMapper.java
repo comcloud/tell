@@ -1,6 +1,6 @@
 package com.yundingxi.dao.mapper;
 
-import com.yundingxi.tell.bean.entity.Diarys;
+import com.yundingxi.dao.model.Diarys;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

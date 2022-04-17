@@ -1,12 +1,12 @@
 package com.yundingxi.common.util.strategy;
 
 import cn.hutool.http.HttpUtil;
-import com.yundingxi.web.util.GeneralDataProcessUtil;
-import com.yundingxi.tell.bean.dto.WeChatEnum;
-import com.yundingxi.tell.bean.vo.submessage.SubMessageCommentDataVo;
-import com.yundingxi.tell.bean.vo.submessage.SubMessageParam;
-import com.yundingxi.tell.bean.vo.submessage.SubMessageReplyVo;
-import com.yundingxi.tell.bean.vo.submessage.SubMessageValueVo;
+import com.yundingxi.model.vo.submessage.WeChatEnum;
+import com.yundingxi.common.util.GeneralDataProcessUtil;
+import com.yundingxi.model.vo.submessage.SubMessageCommentDataVo;
+import com.yundingxi.model.vo.submessage.SubMessageParam;
+import com.yundingxi.model.vo.submessage.SubMessageReplyVo;
+import com.yundingxi.model.vo.submessage.SubMessageValueVo;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

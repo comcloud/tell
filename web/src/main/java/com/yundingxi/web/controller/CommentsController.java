@@ -1,10 +1,10 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.entity.Comments;
-import com.yundingxi.tell.bean.vo.CommentVo;
-import com.yundingxi.web.biz.service.CommentsService;
-import com.yundingxi.web.util.Result;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.dao.model.Comments;
+import com.yundingxi.model.vo.CommentVo;
+import com.yundingxi.biz.service.CommentsService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class CommentsController {
      */
     @PostMapping("/insert")
     @Operation(description = "保存/发布 吐槽 评论" ,summary = "保存/发布 吐槽 评论")
-    Result<String> insert(@Parameter(description = "吐槽评论类对象",required = true)Comments entity) {
+    Result<String> insert(@Parameter(description = "吐槽评论类对象",required = true) Comments entity) {
         return commentsService.insert(entity);
     }
 

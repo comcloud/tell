@@ -2,7 +2,7 @@ package com.yundingxi.biz.service.Impl.upgrade;
 
 
 import com.yundingxi.common.redis.RedisUtil;
-import com.yundingxi.common.util.GeneralDataProcessUtil;
+import com.yundingxi.biz.util.GeneralDataProcessUtil;
 import com.yundingxi.dao.mapper.LetterMapper;
 import com.yundingxi.dao.mapper.ReplyMapper;
 import com.yundingxi.dao.mapper.UserMapper;

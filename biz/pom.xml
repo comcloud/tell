@@ -17,6 +17,13 @@
     </properties>
 
     <dependencies>
+        <!--        临时方案，实体类非常不规范，目前先将dto ,vo单独放到MODEL模块中，有机会改-->
+        <dependency>
+            <groupId>com.yundingxi</groupId>
+            <artifactId>model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>com.yundingxi</groupId>
             <artifactId>dao</artifactId>
@@ -26,6 +33,12 @@
         <dependency>
             <groupId>com.yundingxi</groupId>
             <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yundingxi</groupId>
+            <artifactId>model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

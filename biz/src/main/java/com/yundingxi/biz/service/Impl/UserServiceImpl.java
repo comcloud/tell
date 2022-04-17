@@ -1,20 +1,20 @@
-package com.yundingxi.web.biz.service.Impl;
+package com.yundingxi.biz.service.Impl;
 
 import cn.hutool.http.HttpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.tell.bean.dto.QuestionnaireDto;
-import com.yundingxi.tell.bean.entity.*;
-import com.yundingxi.tell.bean.vo.*;
-import com.yundingxi.tell.common.enums.RedisEnums;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.*;
-import com.yundingxi.web.biz.service.SpittingGroovesService;
-import com.yundingxi.web.biz.service.UserService;
-import com.yundingxi.tell.util.*;
-import com.yundingxi.tell.util.pipeline.context.Context;
-import com.yundingxi.tell.util.pipeline.context.UserDataAnalysisContext;
-import com.yundingxi.tell.util.pipeline.executor.PipelineExecutor;
+import com.yundingxi.biz.util.GeneralDataProcessUtil;
+import com.yundingxi.common.model.enums.redis.RedisEnums;
+import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.*;
+import com.yundingxi.biz.infrastructure.pipeline.context.UserDataAnalysisContext;
+import com.yundingxi.biz.infrastructure.pipeline.executor.PipelineExecutor;
+import com.yundingxi.dao.mapper.*;
+import com.yundingxi.dao.model.*;
+import com.yundingxi.model.vo.*;
+import com.yundingxi.model.dto.*;
+import com.yundingxi.biz.service.SpittingGroovesService;
+import com.yundingxi.biz.service.UserService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -81,7 +81,6 @@ public class UserServiceImpl implements UserService {
      */
     private List<UserStamp> getUserStamps(String openId) {
         //每个人赋予默认邮票
-//        return stampMapper.selectBaseStamp();
         List<Stamp> baseStamp = stampMapper.selectBaseStamp();
         List<UserStamp> userStampList = new ArrayList<>();
         baseStamp.forEach(stamp -> userStampList.add(new UserStamp(UUID.randomUUID().toString(), stamp.getId(), openId, "1", new Date(), 1)));

@@ -1,14 +1,13 @@
-package com.yundingxi.web.biz.service.Impl;
+package com.yundingxi.biz.service.Impl;
 
 
-import com.yundingxi.tell.bean.entity.Achieve;
-import com.yundingxi.tell.bean.vo.AchieveVo;
-import com.yundingxi.tell.bean.vo.StampVo;
-import com.yundingxi.tell.common.redis.RedisUtil;
-import com.yundingxi.tell.mapper.AchieveMapper;
-import com.yundingxi.web.biz.service.AchieveService;
-import com.yundingxi.tell.util.Result;
-import com.yundingxi.tell.util.ResultGenerator;
+import com.yundingxi.biz.service.AchieveService;
+import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.dao.mapper.AchieveMapper;
+import com.yundingxi.dao.model.Achieve;
+import com.yundingxi.model.vo.AchieveVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
