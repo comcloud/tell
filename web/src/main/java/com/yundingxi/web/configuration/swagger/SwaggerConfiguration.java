@@ -48,7 +48,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
                 // 选择哪些接口作为swagger的doc发布
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .apis(RequestHandlerSelectors.basePackage("com.yundingxi.tell"))
+                .apis(RequestHandlerSelectors.basePackage("com.yundingxi.web"))
                 .paths(PathSelectors.any())
                 .build()
                 .globalResponses(HttpMethod.GET, getGlobalResponseMessage())
