@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yundingxi.tell.mapper.StampMapper">
-    <resultMap id="StampVoMap" type="com.yundingxi.tell.bean.vo.StampVo">
+    <resultMap id="StampVoMap" type="com.yundingxi.model.vo.StampVo">
         <result column="stamp_url"   property="stampUrl"/>
         <result column="stamp_name"   property="stampName"/>
         <result column="stamp_number"   property="stampNumber"/>
@@ -22,11 +22,11 @@
 
 				where   us.open_id=#{openId})
     </select>
-    <select id="selectAllStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
+    <select id="selectAllStamp" resultType="com.yundingxi.dao.model.Stamp">
         select * from stamp
     </select>
 
-    <select id="selectBaseStamp" resultType="com.yundingxi.tell.bean.entity.Stamp">
+    <select id="selectBaseStamp" resultType="com.yundingxi.dao.model.Stamp">
         select * from stamp where stamp_edition='Edition 1.0'
     </select>
     <insert id="insertSingleNewUserStamp">

@@ -1,10 +1,10 @@
 package com.yundingxi.web.component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yundingxi.biz.service.AchieveService;
 import com.yundingxi.biz.service.LetterService;
+import com.yundingxi.biz.service.UserService;
 import com.yundingxi.common.redis.RedisUtil;
-import com.yundingxi.dao.mapper.AchieveMapper;
-import com.yundingxi.dao.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +28,24 @@ public class ResourceInit implements CommandLineRunner {
 
     private final RedisUtil redisUtil;
 
-    private final UserMapper userMapper;
-
-    private final AchieveMapper achieveMapper;
     private final LetterService letterService;
 
+    private final AchieveService achieveService;
+
+    private final UserService userService;
+
     @Autowired
-    public ResourceInit(RedisUtil redisUtil, UserMapper userMapper, @Qualifier("upgradeLetterServiceImpl") LetterService letterService, AchieveMapper achieveMapper) {
+    public ResourceInit(RedisUtil redisUtil, UserService userService, @Qualifier("upgradeLetterServiceImpl") LetterService letterService, AchieveService achieveService) {
         this.redisUtil = redisUtil;
-        this.userMapper = userMapper;
+        this.userService = userService;
         this.letterService = letterService;
-        this.achieveMapper = achieveMapper;
+        this.achieveService = achieveService;
     }
 
     @Override
     public void run(String... args) {
         log.info("项目初始化");
-        List<String> openIdList = userMapper.selectAllOpenId();
+        List<String> openIdList = userService.selectAllOpenId();
         letterInitForEveryOpenId(openIdList);
         stampAndAchieveInitForEveryone(openIdList);
     }
@@ -65,7 +66,7 @@ public class ResourceInit implements CommandLineRunner {
      * @param isForce 是否强制进行初始化，true表示即使用户存在缓存但是依旧重新初始化
      */
     public void stampAndAchieveInitForEveryone(String openId,boolean isForce) {
-        List<String> achieveTypeList = achieveMapper.selectAllAchieveType();
+        List<String> achieveTypeList = achieveService.selectAllAchieveType();
         String offsetKey = "listener:" + openId + ":offset";
         if (redisUtil.get(offsetKey) == null || isForce) {
             JSONObject jsonObject = new JSONObject();

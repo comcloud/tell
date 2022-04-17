@@ -3,7 +3,7 @@
 <mapper namespace="com.yundingxi.tell.mapper.CommentsMapper">
     <!--开启二级缓存,使用Ehcache缓存框架-->
     <!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
-    <resultMap id="CommentsMap" type="com.yundingxi.tell.bean.entity.Comments">
+    <resultMap id="CommentsMap" type="com.yundingxi.dao.model.Comments">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="date" jdbcType="TIMESTAMP" property="date"/>
@@ -94,10 +94,10 @@
         set c.state=4
         where c.id=#{id}
     </update>
-    <resultMap id="CommentsVoMap" type="com.yundingxi.tell.bean.vo.CommentVo">
+    <resultMap id="CommentsVoMap" type="com.yundingxi.model.vo.CommentVo">
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="date" jdbcType="TIMESTAMP" property="date"/>
-        <association property="userVo" javaType="com.yundingxi.tell.bean.vo.UserVo">
+        <association property="userVo" javaType="com.yundingxi.model.vo.UserVo">
             <result column="pen_name" property="penName"/>
             <result column="avatar_url" property="avatarUrl"/>
         </association>

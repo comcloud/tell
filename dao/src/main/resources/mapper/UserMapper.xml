@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yundingxi.tell.mapper.UserMapper">
-    <resultMap id="UserMap" type="com.yundingxi.tell.bean.entity.User">
+    <resultMap id="UserMap" type="com.yundingxi.dao.model.User">
         <id column="open_id" jdbcType="VARCHAR" property="openId"/>
         <result column="gender"  property="gender"/>
         <result column="date_birth" jdbcType="TIMESTAMP" property="dateBirth"/>
@@ -120,12 +120,12 @@
         select open_id
         from `user`
     </select>
-    <resultMap id="CommentsVoMap" type="com.yundingxi.tell.bean.vo.UserCommentVo">
+    <resultMap id="CommentsVoMap" type="com.yundingxi.model.vo.UserCommentVo">
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="date" jdbcType="TIMESTAMP" property="date"/>
         <result column="sg_id" jdbcType="TIMESTAMP" property="sgId"/>
         <result column="title" jdbcType="TIMESTAMP" property="title"/>
-        <association property="userVo" javaType="com.yundingxi.tell.bean.vo.UserVo">
+        <association property="userVo" javaType="com.yundingxi.model.vo.UserVo">
             <result column="pen_name" property="penName"/>
             <result column="avatar_url" property="avatarUrl"/>
         </association>
@@ -139,7 +139,7 @@
 
         order by c.date asc
     </select>
-    <select id="getUserVoById" resultType="com.yundingxi.tell.bean.vo.UserVo">
+    <select id="getUserVoById" resultType="com.yundingxi.model.vo.UserVo">
         select pen_name ,avatar_url from `user` where  open_id=#{openId}
     </select>
     <select id="selectPenNameByOpenId" resultType="java.lang.String">
@@ -155,7 +155,7 @@
 
 
 
-    <select id="selectNameAndUrlByOpenId" resultType="com.yundingxi.tell.bean.entity.User">
+    <select id="selectNameAndUrlByOpenId" resultType="com.yundingxi.dao.model.User">
         select pen_name,avatar_url
         from user
         where open_id=#{openId}

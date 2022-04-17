@@ -22,7 +22,7 @@
         set state=#{state}
         where id = #{id}
     </update>
-    <select id="selectLetterLimit" resultType="com.yundingxi.tell.bean.entity.Letter">
+    <select id="selectLetterLimit" resultType="com.yundingxi.dao.model.Letter">
         select *
         from letter
         where open_id!=#{openId}
@@ -30,7 +30,7 @@
             limit #{letterCountLocation}
             , 3;
     </select>
-    <select id="selectLetterById" resultType="com.yundingxi.tell.bean.entity.Letter">
+    <select id="selectLetterById" resultType="com.yundingxi.dao.model.Letter">
         select *
         from letter
         where id = #{letterId}
@@ -73,7 +73,7 @@
         from letter
         where id = #{letterId}
     </select>
-    <select id="selectAllLetterByOpenIdNonState" resultType="com.yundingxi.tell.bean.entity.Letter">
+    <select id="selectAllLetterByOpenIdNonState" resultType="com.yundingxi.dao.model.Letter">
         select *
         from letter
         where open_id = #{openId}
@@ -92,7 +92,7 @@
         where open_id=#{openId}
           and state!=#{state}
     </select>
-    <select id="selectRandomLatestLetter" resultType="com.yundingxi.tell.bean.entity.Letter">
+    <select id="selectRandomLatestLetter" resultType="com.yundingxi.dao.model.Letter">
         select *
         from letter
         where open_id != #{openId} and state=#{state}

@@ -49,11 +49,12 @@ springfox:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.yundingxi.tell.mapper
+  type-aliases-package: com.yundingxi.dao.mapper
   configuration:
     map-underscore-to-camel-case: true
 #    开启执行sql日志打印###ll
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 spring:
   #  profiles:
   #    active: @profileActive@
@@ -115,9 +116,4 @@ spring:
 time:
   cron: 0 0 12 * * ?
 
-wechat:
-  baseUrl: "https://api.weixin.qq.com/sns/jscode2session?js_code="
-  appid: "wxdfdc52e8d8e3bc70"
-  secret: "1095a2e2ecc12767b1f7920aa526a7dd"
-  grantType: "authorization_code"
 

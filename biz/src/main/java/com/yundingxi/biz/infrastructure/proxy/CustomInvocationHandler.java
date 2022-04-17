@@ -1,4 +1,4 @@
-package com.yundingxi.common.util.proxy;
+package com.yundingxi.biz.infrastructure.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -3,7 +3,7 @@
 <mapper namespace="com.yundingxi.tell.mapper.SpittingGroovesMapper">
     <!--开启二级缓存,使用Ehcache缓存框架-->
     <!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
-    <resultMap id="SpittingGroovesMap" type="com.yundingxi.tell.bean.entity.SpittingGrooves">
+    <resultMap id="SpittingGroovesMap" type="com.yundingxi.dao.model.SpittingGrooves">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="date" jdbcType="TIMESTAMP" property="date"/>
@@ -103,7 +103,7 @@
             pen_name=#{entity.penName},
         </if>
     </sql>
-    <insert id="insert" parameterType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+    <insert id="insert" parameterType="com.yundingxi.dao.model.SpittingGrooves">
         insert into spitting_grooves
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <include refid="Base_Insert_Key_List"/>
@@ -129,7 +129,7 @@
         set sg.state=4
         where sg.id = #{id}
     </update>
-    <resultMap id="SpittingGroovesVoMap" type="com.yundingxi.tell.bean.vo.SpittingGroovesVo">
+    <resultMap id="SpittingGroovesVoMap" type="com.yundingxi.model.vo.SpittingGroovesVo">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="pen_name" jdbcType="VARCHAR" property="penName"/>
         <result column="content" jdbcType="VARCHAR" property="title"/>
@@ -196,7 +196,7 @@
         where open_id = #{openId}
           and state!=#{state}
     </select>
-    <select id="selectOpenIdAndContentById" resultType="com.yundingxi.tell.bean.entity.SpittingGrooves">
+    <select id="selectOpenIdAndContentById" resultType="com.yundingxi.dao.model.SpittingGrooves">
         select open_id,content
         from spitting_grooves
         where id=#{id}

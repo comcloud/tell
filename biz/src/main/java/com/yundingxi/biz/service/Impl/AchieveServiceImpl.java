@@ -48,4 +48,9 @@ public class AchieveServiceImpl implements AchieveService {
         });
         return ResultGenerator.genSuccessResult(achieveVos);
     }
+
+    @Override
+    public List<String> selectAllAchieveType() {
+        return achieveMapper.selectAllAchieveType();
+    }
 }

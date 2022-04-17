@@ -18,4 +18,5 @@ import java.util.List;
 public interface AchieveService {
     Result<List<AchieveVo>> getAllAchieve(String openId);
 
+    List<String> selectAllAchieveType();
 }

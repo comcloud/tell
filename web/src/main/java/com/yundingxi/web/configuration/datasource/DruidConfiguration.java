@@ -3,12 +3,16 @@ package com.yundingxi.web.configuration.datasource;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 
@@ -28,6 +32,20 @@ public class DruidConfiguration {
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource druidDataSource() {
         return new DruidDataSource();
+    }
+
+    //mybatis配置
+
+    @Value("${mybatis.mapper-locations}")
+    private String mapperLocationPattern;
+
+    @Bean(name="sqlSessionFactory")
+    public SqlSessionFactory sqlSessionFactory() throws  Exception{
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(druidDataSource());
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        sqlSessionFactoryBean.setMapperLocations(resolver.getResources(mapperLocationPattern));
+        return sqlSessionFactoryBean.getObject();
     }
 
     /**

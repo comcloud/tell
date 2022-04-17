@@ -64,4 +64,7 @@ public interface UserService {
     Result<PageInfo<TimelineVo>> getTimelineData(String openId, Integer pageNum);
 
     Result<String> saveQuestionnaire(QuestionnaireDto questionnaireDto);
+
+    List<String> selectAllOpenId();
+
 }

@@ -41,11 +41,9 @@ public class UserServiceImpl implements UserService {
     private final SpittingGroovesMapper spittingGroovesMapper;
     private final StampMapper stampMapper;
 
-    private final SpittingGroovesService spittingGroovesService;
-
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper, RedisUtil redisUtil, OpenIdVo openIdVo, LetterMapper letterMapper, DiaryMapper diaryMapper, SpittingGroovesMapper spittingGroovesMapper, StampMapper stampMapper, SpittingGroovesService spittingGroovesService) {
+    public UserServiceImpl(UserMapper userMapper, RedisUtil redisUtil, OpenIdVo openIdVo, LetterMapper letterMapper, DiaryMapper diaryMapper, SpittingGroovesMapper spittingGroovesMapper, StampMapper stampMapper) {
         this.userMapper = userMapper;
         this.redisUtil = redisUtil;
         this.openIdVo = openIdVo;
@@ -53,7 +51,6 @@ public class UserServiceImpl implements UserService {
         this.diaryMapper = diaryMapper;
         this.spittingGroovesMapper = spittingGroovesMapper;
         this.stampMapper = stampMapper;
-        this.spittingGroovesService = spittingGroovesService;
     }
 
     @Override
@@ -243,6 +240,11 @@ public class UserServiceImpl implements UserService {
         Questionnaire questionnaire = new Questionnaire(questionnaireDto.getOpenId(), questionnaireDto.getIsIllegal(), questionnaireDto.getIsHelp(), questionnaireDto.getInterestScore(), questionnaireDto.getPageScore(), questionnaireDto.getOtherSpeech(), new Date());
         int result = userMapper.insertQuestionnaire(questionnaire);
         return result == 1 ? ResultGenerator.genSuccessResult("保存成功") : ResultGenerator.genFailResult("保存失败");
+    }
+
+    @Override
+    public List<String> selectAllOpenId() {
+        return userMapper.selectAllOpenId();
     }
 
 }

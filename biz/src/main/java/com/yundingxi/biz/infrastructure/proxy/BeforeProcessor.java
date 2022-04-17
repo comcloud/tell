@@ -1,4 +1,4 @@
-package com.yundingxi.common.util.proxy;
+package com.yundingxi.biz.infrastructure.proxy;
 
 /**
  * 前置增强
