@@ -40,12 +40,6 @@ public class KafkaProducerConfig {
     @Value("${kafka.producer.acks}")
     private String acks;
 
-//    @Value("${kafka.producer.username}")
-//    private String username;
-//
-//    @Value("${kafka.producer.password}")
-//    private String password;
-
     private Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>(16);
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -61,10 +55,6 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         //使用自定义分区器
 //        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class);
-//        props.put("security.protocol","SASL_PLAINTEXT");
-//        props.put("sasl.mechanism","SCRAM-SHA-512");
-//        props.put("sasl.jaas.config",
-//                "org.apache.kafka.common.security.scram.ScramLoginModule required username=\""+username+"\" password=\""+password+"\";");
         return props;
     }
 
