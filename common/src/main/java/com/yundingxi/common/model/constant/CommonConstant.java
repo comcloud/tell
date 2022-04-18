@@ -13,11 +13,15 @@ public class CommonConstant {
 
     public static final String ACHIEVE_STAMP_TOPIC = "achieveAndStamp";
 
-    public static final String LETTER_GROUP_ID = "letter";
+    public static final String LETTER = "letter";
 
-    public static final String DIARY_GROUP_ID = "diary";
+    public static final String DIARY = "diary";
 
-    public static final String SPIT_GROUP_ID = "spit";
+    public static final String SPIT = "spit";
 
-    public static final String REPLY_GROUP_ID = "reply";
+    public static final String REPLY = "reply";
+
+    public static final String STAMP = "stamp";
+
+    public static final String EMPTY_STRING = "";
 }

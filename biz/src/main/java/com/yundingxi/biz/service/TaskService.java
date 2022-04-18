@@ -11,4 +11,5 @@ package com.yundingxi.biz.service;
  */
 public interface TaskService {
 
+    void stampAndAchieveInitForEveryone(String openId, boolean isForce);
 }

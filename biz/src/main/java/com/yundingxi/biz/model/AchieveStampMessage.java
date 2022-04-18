@@ -1,6 +1,7 @@
 package com.yundingxi.biz.model;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @Datetime 2022/4/17 9:40 下午
  */
 @Builder
+@Data
 public class AchieveStampMessage<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;

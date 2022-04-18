@@ -55,7 +55,7 @@ public class SpittingGroovesController {
         Result<String> result = spittingGroovesService.insert(entity);
         String success = "发布成功";
         if (success.equals(result.getMessage())) {
-            publisher.publishEvent(new UserBehaviorEvent<>(this, entity));
+//            publisher.publishEvent(new UserBehaviorEvent<>(this, entity));
             kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.SPIT_TYPE, AchieveStampMessage.builder().object(entity).build());
         }
         return result;
