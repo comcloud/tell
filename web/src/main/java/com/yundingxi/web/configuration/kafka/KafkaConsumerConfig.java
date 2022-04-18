@@ -1,5 +1,6 @@
 package com.yundingxi.web.configuration.kafka;
 
+import com.yundingxi.web.configuration.kafka.achievestamp.AchieveStampAssignor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;

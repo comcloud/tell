@@ -1,20 +1,19 @@
 package com.yundingxi.biz.infrastructure.mq;
 
 import com.yundingxi.biz.model.AchieveStampMessage;
-import com.yundingxi.biz.model.UserBehaviorEvent;
 import com.yundingxi.common.model.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.annotation.PartitionOffset;
-import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static com.yundingxi.common.model.constant.CommonConstant.*;
 
 /**
  * 消息接收
@@ -29,7 +28,7 @@ public class KafkaConsumer {
      * containerFactory:定义批处理器，批处理消费的线程数由kafka.listener.concurrencys控制
      * topics：消费的消息队列的topic
      */
-    @KafkaListener(containerFactory = "kafkaBatchListener", topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = LETTER_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
     public void letterAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {
@@ -47,7 +46,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = DIARY_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
     public void diaryAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {
@@ -65,7 +64,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = SPIT_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
     public void spitAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {
@@ -83,7 +82,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", topics = {"achieveAndStamp"})
+    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = REPLY_GROUP_ID, topics = {"achieveAndStamp"})
     public void replyAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {

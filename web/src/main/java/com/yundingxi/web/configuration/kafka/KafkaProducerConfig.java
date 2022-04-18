@@ -1,5 +1,6 @@
 package com.yundingxi.web.configuration.kafka;
 
+import com.yundingxi.web.configuration.kafka.achievestamp.AchieveStampPartitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ public class KafkaProducerConfig {
         //指定value序列化器
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         //使用自定义分区器
-//        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class);
+        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, AchieveStampPartitioner.class);
         return props;
     }
 
