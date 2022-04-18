@@ -1,7 +1,11 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.biz.infrastructure.mq.KafkaProducer;
+import com.yundingxi.biz.model.AchieveStampMessage;
 import com.yundingxi.biz.model.UserBehaviorEvent;
+import com.yundingxi.common.model.constant.CommonConstant;
+import com.yundingxi.common.model.enums.AchieveStampEnum;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.common.util.ResultGenerator;
 import com.yundingxi.dao.model.Diarys;
@@ -15,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -36,14 +41,18 @@ public class DiaryController {
     @Autowired
     private ApplicationEventPublisher publisher;
 
+    @Resource
+    private KafkaProducer<AchieveStampMessage<?>> kafkaProducer;
+
     @Operation(description = "保存用户日记", summary = "保存日记")
     @PostMapping("/saveDiary")
     public Result<Object> saveDiary(@Parameter(description = "日记对象")
                                             DiaryDto diaryDto) {
         if (diaryService.saveDiary(diaryDto) == 1) {
-            publisher.publishEvent(new UserBehaviorEvent<>(this, diaryDto));
+//            publisher.publishEvent(new UserBehaviorEvent<>(this, diaryDto));
+            kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.DIARY_TYPE, AchieveStampMessage.builder().object(diaryDto).build());
             return ResultGenerator.genSuccessResult();
-        }else{
+        } else {
             return ResultGenerator.genFailResult(new Object());
         }
 

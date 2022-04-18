@@ -1,7 +1,11 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.biz.infrastructure.mq.KafkaProducer;
+import com.yundingxi.biz.model.AchieveStampMessage;
 import com.yundingxi.biz.model.UserBehaviorEvent;
+import com.yundingxi.common.model.constant.CommonConstant;
+import com.yundingxi.common.model.enums.AchieveStampEnum;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.dao.model.SpittingGrooves;
 import com.yundingxi.model.vo.SpittingGroovesVo;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 
 /**
@@ -36,6 +41,9 @@ public class SpittingGroovesController {
     @Autowired
     private ApplicationEventPublisher publisher;
 
+    @Resource
+    private KafkaProducer<AchieveStampMessage<?>> kafkaProducer;
+
     /**
      * 插入一条记录
      *
@@ -48,6 +56,7 @@ public class SpittingGroovesController {
         String success = "发布成功";
         if (success.equals(result.getMessage())) {
             publisher.publishEvent(new UserBehaviorEvent<>(this, entity));
+            kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.SPIT_TYPE, AchieveStampMessage.builder().object(entity).build());
         }
         return result;
     }

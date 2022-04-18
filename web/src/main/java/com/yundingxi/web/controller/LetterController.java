@@ -1,8 +1,12 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.yundingxi.biz.infrastructure.mq.KafkaProducer;
+import com.yundingxi.biz.model.AchieveStampMessage;
 import com.yundingxi.biz.service.LetterService;
 import com.yundingxi.biz.model.UserBehaviorEvent;
+import com.yundingxi.common.model.constant.CommonConstant;
+import com.yundingxi.common.model.enums.AchieveStampEnum;
 import com.yundingxi.common.util.Result;
 import com.yundingxi.common.util.ResultGenerator;
 import com.yundingxi.model.dto.letter.*;
@@ -15,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +39,9 @@ public class LetterController {
 
     private final ApplicationEventPublisher publisher;
 
+    @Resource
+    private KafkaProducer<AchieveStampMessage<?>> kafkaProducer;
+
     public LetterController(@Qualifier("upgradeLetterServiceImpl") LetterService letterService, ApplicationEventPublisher publisher) {
         this.letterService = letterService;
         this.publisher = publisher;
@@ -50,7 +58,8 @@ public class LetterController {
     @Operation(description = "保存信件", summary = "保存信件")
     public Result<String> saveLetter(@Parameter(description = "信件对象", required = true) LetterStorageDto letterStorageDto) {
         if (letterService.saveSingleLetter(letterStorageDto) == 1) {
-            publisher.publishEvent(new UserBehaviorEvent<>(this, letterStorageDto));
+//            publisher.publishEvent(new UserBehaviorEvent<>(this, letterStorageDto));
+            kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.LETTER_TYPE, AchieveStampMessage.builder().object(letterStorageDto).build());
             return ResultGenerator.genSuccessResult("保存信件成功");
         } else {
             return ResultGenerator.genFailResult("保存信件失败");
@@ -63,8 +72,8 @@ public class LetterController {
                                               LetterReplyDto letterReplyDto) {
         String successResult = "success";
         if (successResult.equals(letterService.replyLetter(letterReplyDto))) {
-            publisher.publishEvent(new UserBehaviorEvent<>(this, letterReplyDto));
-            publisher.publishEvent(new UserBehaviorEvent<>(this, letterReplyDto));
+//            publisher.publishEvent(new UserBehaviorEvent<>(this, letterReplyDto));
+            kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.REPLY_TYPE, AchieveStampMessage.builder().object(letterReplyDto).build());
             return ResultGenerator.genSuccessResult(successResult);
         } else {
             return ResultGenerator.genFailResult("回复失败");

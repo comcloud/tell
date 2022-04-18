@@ -1,5 +1,7 @@
 package com.yundingxi.biz.infrastructure.mq;
 
+import com.yundingxi.common.model.enums.AchieveStampEnum;
+import com.yundingxi.common.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ import org.springframework.util.concurrent.ListenableFuture;
  */
 @Component
 @Slf4j
-public class KafkaProducer {
+public class KafkaProducer<T> {
 
     private final KafkaTemplate<String, String> KAFKA_TEMPLATE;
 
@@ -24,12 +26,12 @@ public class KafkaProducer {
         this.KAFKA_TEMPLATE = kafkaTemplate;
     }
 
-    public void sendMessage(String topic, String message) {
+    public void sendMessage(String topic, AchieveStampEnum key, T message) {
         log.info("Send msg:{}", message);
 
         //结果是一个Future
         ListenableFuture<SendResult<String, String>> sender =
-                KAFKA_TEMPLATE.send(new ProducerRecord<>(topic, message));
+                KAFKA_TEMPLATE.send(topic, key.getGroupId(), JsonUtil.toJsonString(message));
         sender.addCallback(
                 result -> {
                     assert result != null;
