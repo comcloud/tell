@@ -28,7 +28,7 @@ public class KafkaConsumer {
      * containerFactory:定义批处理器，批处理消费的线程数由kafka.listener.concurrencys控制
      * topics：消费的消息队列的topic
      */
-    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = LETTER_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", id = LETTER_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
     public void letterAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {
@@ -46,7 +46,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = DIARY_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", id = DIARY_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
     public void diaryAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {
@@ -64,7 +64,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = SPIT_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", id = SPIT_GROUP_ID, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
     public void spitAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {
@@ -82,7 +82,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", groupId = REPLY_GROUP_ID, topics = {"achieveAndStamp"})
+    @KafkaListener(containerFactory = "kafkaBatchListener", id = REPLY_GROUP_ID, topics = {"achieveAndStamp"})
     public void replyAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<?>>> records, Acknowledgment ack) {
 
         try {

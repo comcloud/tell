@@ -1,8 +1,6 @@
 package com.yundingxi.web.configuration.kafka.more;
 
 import com.google.common.collect.Maps;
-import com.yundingxi.common.model.constant.CommonConstant;
-import com.yundingxi.common.model.enums.AchieveStampEnum;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +22,6 @@ public class AchieveStampContext implements KafkaContext {
      * key   : 类型
      * value : 此类型的分区都有哪些
      */
-    public Map<AchieveStampEnum, List<TopicPartition>> typePartitions = Maps.newHashMap();
+    public Map<String, List<TopicPartition>> typePartitions = Maps.newHashMap();
 
 }

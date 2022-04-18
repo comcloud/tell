@@ -36,18 +36,18 @@ public enum AchieveStampEnum {
     /**
      * 类型对应的hash code值
      */
-    private final int hashCode;
+    private final int partitionIndex;
 
-    AchieveStampEnum(String groupId, int hashCode){
+    AchieveStampEnum(String groupId, int partitionIndex){
         this.groupId = groupId;
-        this.hashCode = hashCode;
+        this.partitionIndex = partitionIndex;
     }
 
     public String getGroupId() {
         return groupId;
     }
 
-    public int getHashCode() {
-        return hashCode;
+    public int getPartitionIndex() {
+        return partitionIndex;
     }
 }
