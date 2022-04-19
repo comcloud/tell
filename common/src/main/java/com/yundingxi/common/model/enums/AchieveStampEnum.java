@@ -1,10 +1,13 @@
 package com.yundingxi.common.model.enums;
 
+import java.util.Arrays;
+
 /**
  * 对于成就邮票他们的hash code应该这样去理解
  * partition 0  1 2 3 4 5 6 7
  * type      l  d s r l d s r
  * 也就是有这样轮训的方式
+ *
  * @version v1.0
  * @ClassName AchieveStampEnum
  * @Author rayss
@@ -27,7 +30,12 @@ public enum AchieveStampEnum {
     /**
      * 回信类型，这里信件对应Hashcode设置为0
      */
-    REPLY_TYPE("reply", 3);
+    REPLY_TYPE("reply", 3),
+
+    /**
+     * 空类型
+     */
+    EMPTY_TYPE("empty", -1);
 
     /**
      * 类型
@@ -38,7 +46,7 @@ public enum AchieveStampEnum {
      */
     private final int partitionIndex;
 
-    AchieveStampEnum(String groupId, int partitionIndex){
+    AchieveStampEnum(String groupId, int partitionIndex) {
         this.groupId = groupId;
         this.partitionIndex = partitionIndex;
     }
@@ -49,5 +57,12 @@ public enum AchieveStampEnum {
 
     public int getPartitionIndex() {
         return partitionIndex;
+    }
+
+    public static AchieveStampEnum groupIdOf(String groupId) {
+        return Arrays.stream(values())
+                .filter(achieveStampEnum -> achieveStampEnum.getGroupId().equals(groupId))
+                .findFirst()
+                .orElse(AchieveStampEnum.EMPTY_TYPE);
     }
 }

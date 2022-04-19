@@ -2,6 +2,7 @@ package com.yundingxi.web.configuration.kafka.achievestamp;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.yundingxi.common.model.constant.CommonConstant;
 import com.yundingxi.common.model.enums.AchieveStampEnum;
 import com.yundingxi.common.util.SpringUtil;
 import com.yundingxi.web.configuration.kafka.more.AchieveStampContext;
@@ -67,7 +68,7 @@ public class AchieveStampAssignor extends AbstractPartitionAssignor {
              * */
             consumers.forEach(consumerId -> {
                 int topicPartitionIndex = map.compute(consumerId, (k, v) -> v == null
-                        ? AchieveStampEnum.valueOf(consumerId).getPartitionIndex()
+                        ? AchieveStampEnum.groupIdOf(consumerId).getPartitionIndex()
                         : v + numPartitionsForTopic - 1);
                 assignment.compute(consumerId, (k, v) -> {
                     if (Objects.isNull(v)) {
@@ -91,12 +92,30 @@ public class AchieveStampAssignor extends AbstractPartitionAssignor {
     private Map<String, List<String>> consumersPerTopic(Map<String, Subscription> consumerMetadata) {
         Map<String, List<String>> res = Maps.newHashMap();
         for (Map.Entry<String, Subscription> subscriptionEntry : consumerMetadata.entrySet()) {
-            String consumerId = subscriptionEntry.getKey();
+            String consumerId = transformConsumerId(subscriptionEntry.getKey());
             for (String topic : subscriptionEntry.getValue().topics()) {
                 put(res, topic, consumerId);
             }
         }
         return res;
+    }
+
+    /**
+     * @param consumerId consumer-spit-17-9f5748ae-0067-4b64-853b-b966199d1990
+     * @return spit
+     */
+    private String transformConsumerId(String consumerId) {
+        if (consumerId.contains(CommonConstant.DIARY)) {
+            return CommonConstant.DIARY;
+        } else if (consumerId.contains(CommonConstant.LETTER)) {
+            return CommonConstant.LETTER;
+        } else if (consumerId.contains(CommonConstant.SPIT)) {
+            return CommonConstant.SPIT;
+        } else if (consumerId.contains(CommonConstant.REPLY)) {
+            return CommonConstant.REPLY;
+        } else {
+            return CommonConstant.EMPTY_STRING;
+        }
     }
 
     @Override
