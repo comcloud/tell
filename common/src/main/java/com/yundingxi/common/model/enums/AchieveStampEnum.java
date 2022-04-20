@@ -35,7 +35,7 @@ public enum AchieveStampEnum {
     /**
      * 空类型
      */
-    EMPTY_TYPE("empty", -1);
+    EMPTY_TYPE("", -1);
 
     /**
      * 类型

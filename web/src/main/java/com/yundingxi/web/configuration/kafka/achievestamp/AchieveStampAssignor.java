@@ -7,10 +7,12 @@ import com.yundingxi.common.model.enums.AchieveStampEnum;
 import com.yundingxi.common.util.SpringUtil;
 import com.yundingxi.web.configuration.kafka.more.AchieveStampContext;
 import com.yundingxi.web.configuration.kafka.more.KafkaContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.internals.AbstractPartitionAssignor;
 import org.apache.kafka.common.TopicPartition;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 自定义消费者组策略
@@ -24,17 +26,11 @@ import java.util.*;
  * @Author rayss
  * @Datetime 2022/4/17 9:56 下午
  */
-
+@Slf4j
 public class AchieveStampAssignor extends AbstractPartitionAssignor {
 
     private final AchieveStampContext achieveStampContext =
             (AchieveStampContext) SpringUtil.getBean(AchieveStampContext.class);
-
-    /**
-     * key : 类型
-     * value : 类型下消费者已经处理到哪一个位置
-     */
-    private final Map<String, Integer> map = Maps.newConcurrentMap();
 
     /**
      * 专门针对成就邮票的分区分配器
@@ -46,44 +42,53 @@ public class AchieveStampAssignor extends AbstractPartitionAssignor {
     @Override
     public Map<String, List<TopicPartition>> assign(Map<String, Integer> partitionsPerTopic,
                                                     Map<String, Subscription> subscriptions) {
+        //before
+        beforeAssign(partitionsPerTopic);
+
+        //on
+        AchieveStampContext context = onAssign(partitionsPerTopic, subscriptions);
+
+        //after
+        Map<String, List<TopicPartition>> assignment = context.assignment;
+        afterAssign(assignment);
+
+        return assignment;
+    }
+
+    /**
+     * 执行assign时
+     */
+    private void beforeAssign(Map<String, Integer> partitionsPerTopic) {
         KafkaContext.PARTITIONS_PER_TOPIC.putAll(partitionsPerTopic);
+    }
+
+    private AchieveStampContext onAssign(Map<String, Integer> partitionsPerTopic, Map<String, Subscription> subscriptions) {
+        AchieveStampContext achieveStampContext = assignContext(partitionsPerTopic);
+        /*
+         * key转换，从letter -> consumer-letter-17-9f5748ae-0067-4b64-853b-b966199d1990
+         * */
+        Map<String, List<TopicPartition>> assignment = achieveStampContext.assignment;
         Map<String, List<String>> consumersPerTopic = consumersPerTopic(subscriptions);
-        Map<String, List<TopicPartition>> assignment = Maps.newHashMap();
-        //初始化assignment
-        for (String memberId : subscriptions.keySet()) {
-            assignment.put(memberId, Lists.newArrayList());
-        }
-        consumersPerTopic.forEach((topic, consumers) -> {
-            Integer numPartitionsForTopic = partitionsPerTopic.get(topic);
-            if (numPartitionsForTopic == null) {
+        List<String> consumers = consumersPerTopic.get(CommonConstant.ACHIEVE_STAMP_TOPIC);
+        consumers.forEach(consumerId -> {
+            Map.Entry<String, List<TopicPartition>> removeEntry = assignment.entrySet().stream()
+                    .filter(entry -> consumerId.contains(entry.getKey())).findFirst().orElse(null);
+            if (Objects.isNull(removeEntry)) {
                 return;
             }
-            List<TopicPartition> partitions = AbstractPartitionAssignor.partitions(topic, numPartitionsForTopic);
-            /*
-             * 这里有三种情况
-             * 1.消费者和分区对等，顺序分配即可
-             * 2.消费者偏多，实际上这种情况应该杜绝，因为过多的消费者不做事情也是浪费资源
-             * 3.消费者和分区数都多一些，消费者同一类型不止一个
-             * 对于3情况是需要考虑的，只是循环则可能每次不同的消费者消费同一分区
-             * */
-            consumers.forEach(consumerId -> {
-                int topicPartitionIndex = map.compute(consumerId, (k, v) -> v == null
-                        ? AchieveStampEnum.groupIdOf(consumerId).getPartitionIndex()
-                        : v + numPartitionsForTopic - 1);
-                assignment.compute(consumerId, (k, v) -> {
-                    if (Objects.isNull(v)) {
-                        return Lists.newArrayList(partitions.get(topicPartitionIndex));
-                    } else {
-                        v.add(partitions.get(topicPartitionIndex));
-                        return v;
-                    }
-                });
-
-            });
+            List<TopicPartition> value = removeEntry.getValue();
+            assignment.remove(removeEntry.getKey());
+            assignment.put(consumerId, value);
         });
+        return achieveStampContext;
+    }
+
+    /**
+     * 执行assign后
+     */
+    private void afterAssign(Map<String, List<TopicPartition>> assignment) {
         //将结果保存到上下文中
-        achieveStampContext.typePartitions.putAll(assignment);
-        return assignment;
+        this.achieveStampContext.assignment.putAll(assignment);
     }
 
     /**
@@ -92,7 +97,7 @@ public class AchieveStampAssignor extends AbstractPartitionAssignor {
     private Map<String, List<String>> consumersPerTopic(Map<String, Subscription> consumerMetadata) {
         Map<String, List<String>> res = Maps.newHashMap();
         for (Map.Entry<String, Subscription> subscriptionEntry : consumerMetadata.entrySet()) {
-            String consumerId = transformConsumerId(subscriptionEntry.getKey());
+            String consumerId = subscriptionEntry.getKey();
             for (String topic : subscriptionEntry.getValue().topics()) {
                 put(res, topic, consumerId);
             }
@@ -101,21 +106,42 @@ public class AchieveStampAssignor extends AbstractPartitionAssignor {
     }
 
     /**
-     * @param consumerId consumer-spit-17-9f5748ae-0067-4b64-853b-b966199d1990
-     * @return spit
+     * 处理上下文信息
+     * 1.初始化每个topic partition hashCode绑定的类型
      */
-    private String transformConsumerId(String consumerId) {
-        if (consumerId.contains(CommonConstant.DIARY)) {
-            return CommonConstant.DIARY;
-        } else if (consumerId.contains(CommonConstant.LETTER)) {
-            return CommonConstant.LETTER;
-        } else if (consumerId.contains(CommonConstant.SPIT)) {
-            return CommonConstant.SPIT;
-        } else if (consumerId.contains(CommonConstant.REPLY)) {
-            return CommonConstant.REPLY;
-        } else {
-            return CommonConstant.EMPTY_STRING;
+    private AchieveStampContext assignContext(Map<String, Integer> partitionsPerTopic) {
+        //循环变量
+        AtomicInteger numPartitionsForTopic = new AtomicInteger(partitionsPerTopic.get(CommonConstant.ACHIEVE_STAMP_TOPIC));
+        //如果分区数小于需要的分区数，说明不够分配，抛出错误日志
+        if (numPartitionsForTopic.get() < AchieveStampEnum.values().length - 1) {
+            log.error("分区数小于需要的分区数！！！");
         }
+        Map<String, List<TopicPartition>> typePartitions = achieveStampContext.assignment;
+        //拿到所有的这些topic partition
+        List<TopicPartition> partitions = AbstractPartitionAssignor.partitions(CommonConstant.ACHIEVE_STAMP_TOPIC, numPartitionsForTopic.get());
+        //最小分区索引，为0
+        int minPartitionIndex = 0;
+        //循环到分配完成
+        while (numPartitionsForTopic.get() >= minPartitionIndex) {
+            //将每个位置分配给他的类型
+            Arrays.stream(AchieveStampEnum.values())
+                    .filter(achieveStampEnum -> Boolean.FALSE.equals(achieveStampEnum.equals(AchieveStampEnum.EMPTY_TYPE)))
+                    .forEach(achieveStampEnum -> {
+                        if (numPartitionsForTopic.get() < minPartitionIndex) {
+                            return;
+                        }
+                        typePartitions.compute(achieveStampEnum.getGroupId(), (groupId, partitionIndexList) -> {
+                            TopicPartition topicPartition = partitions.get(numPartitionsForTopic.getAndIncrement());
+                            if (partitionIndexList == null) {
+                                return Lists.newArrayList(topicPartition);
+                            } else {
+                                partitionIndexList.add(topicPartition);
+                                return partitionIndexList;
+                            }
+                        });
+                    });
+        }
+        return achieveStampContext;
     }
 
     @Override

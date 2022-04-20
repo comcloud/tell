@@ -19,9 +19,14 @@ import java.util.Map;
 public class AchieveStampContext implements KafkaContext {
 
     /**
-     * key   : 类型
+     * key : type : letter etc.
      * value : 此类型的分区都有哪些
      */
-    public Map<String, List<TopicPartition>> typePartitions = Maps.newHashMap();
+    public Map<String, List<TopicPartition>> assignment = Maps.newConcurrentMap();
 
+    /**
+     * 绑定分区和类型关系
+     * value : topic partition hashCodes
+     */
+    public Map<String, List<Integer>> hashCodeTypeMap = Maps.newHashMap();
 }
