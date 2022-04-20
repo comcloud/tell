@@ -1,10 +1,14 @@
 package com.yundingxi.web.configuration.kafka.achievestamp;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.yundingxi.common.model.enums.AchieveStampEnum;
+import com.yundingxi.common.util.SpringUtil;
+import com.yundingxi.web.configuration.kafka.more.AchieveStampContext;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;
+import org.apache.kafka.common.TopicPartition;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,21 +24,22 @@ public class AchieveStampPartitioner implements Partitioner {
 
     private final Map<String, Integer> map = Maps.newConcurrentMap();
 
+    private final AchieveStampContext achieveStampContext = (AchieveStampContext) SpringUtil.getBean(AchieveStampContext.class);
+
     @Override
     public int partition(String topic, Object key, byte[] keyBytes,
                          Object value, byte[] valueBytes, Cluster cluster) {
         /*
-         * 需要根据类型进行分区分配，这里类型就使用key来代替
-         * 对分区数取模，可以达到轮训的方式
-         * 需要注意的是，我们需要做到一种情况，就是记录每次此时到哪一个分区
-         * 换句话来说就是，letter本次是0，下次如果分区允许应该是下一个位置
-         * 5个分区，4个类型
-         * */
-        Integer partitionCountForTopic = cluster.partitionCountForTopic(topic);
-        return map.compute(
-                key.toString(), (k, v) -> v == null
-                        ? AchieveStampEnum.valueOf(key.toString()).getPartitionIndex()
-                        : v + partitionCountForTopic - 1);
+        * 从绑定的上下文拿到对应负责的分区，然后轮训发往分区
+        * */
+        Map<String, List<TopicPartition>> assignment = achieveStampContext.assignment;
+        List<TopicPartition> topicPartitions = assignment.entrySet().stream()
+                .filter(entry -> entry.getKey().contains(key.toString()))
+                .map(Map.Entry::getValue).findFirst().orElse(Lists.newArrayList());
+
+        return topicPartitions.get(
+                map.compute(key.toString(), (k, v) -> v == null ? 0 : (v + 1) % topicPartitions.size())
+        ).partition();
     }
 
     @Override
