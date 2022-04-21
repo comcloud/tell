@@ -1,7 +1,6 @@
 package com.yundingxi.biz.model;
 
 import lombok.Builder;
-import lombok.Data;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
@@ -9,12 +8,11 @@ import java.io.Serializable;
 
 /**
  * @version v1.0
- * @ClassName AchieveStampMessage
+ * @ClassName KafkaMessage
  * @Author rayss
  * @Datetime 2022/4/17 9:40 下午
  */
 @Builder
-@Data
 @Component
 public class KafkaMessage<T> implements Serializable, FactoryBean<T> {
 
@@ -28,9 +26,12 @@ public class KafkaMessage<T> implements Serializable, FactoryBean<T> {
     }
 
     @Override
+    public T getObject() {
+        return object;
+    }
+
+    @Override
     public Class<?> getObjectType() {
-
-
         return object.getClass();
     }
 
