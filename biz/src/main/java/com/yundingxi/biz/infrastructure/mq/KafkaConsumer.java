@@ -68,7 +68,7 @@ public class KafkaConsumer {
      * containerFactory:定义批处理器，批处理消费的线程数由kafka.listener.concurrencys控制
      * topics：消费的消息队列的topic
      */
-    @KafkaListener(containerFactory = "kafkaBatchListener", id = LETTER, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", clientIdPrefix = LETTER, topics = {ACHIEVE_STAMP_TOPIC})
     public void letterAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends LetterStorageDto>>> records, Acknowledgment ack) {
 
         try {
@@ -90,7 +90,7 @@ public class KafkaConsumer {
     }
 
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", id = DIARY, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener( containerFactory = "kafkaBatchListener", clientIdPrefix = DIARY, topics = {ACHIEVE_STAMP_TOPIC})
     public void diaryAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends DiaryDto>>> records, Acknowledgment ack) {
 
         try {
@@ -110,7 +110,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", id = SPIT, topics = {CommonConstant.ACHIEVE_STAMP_TOPIC})
+    @KafkaListener(containerFactory = "kafkaBatchListener", clientIdPrefix = SPIT, topics = {ACHIEVE_STAMP_TOPIC})
     public void spitAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends SpittingGrooves>>> records, Acknowledgment ack) {
 
         try {
@@ -130,7 +130,7 @@ public class KafkaConsumer {
 
     }
 
-    @KafkaListener(containerFactory = "kafkaBatchListener", id = REPLY, topics = {"achieveAndStamp"})
+    @KafkaListener( containerFactory = "kafkaBatchListener", clientIdPrefix = REPLY, topics = {ACHIEVE_STAMP_TOPIC})
     public void replyAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends LetterReplyDto>>> records, Acknowledgment ack) {
 
         try {
@@ -251,7 +251,6 @@ public class KafkaConsumer {
         jsonObject.put(achieveType, list);
         redisUtil.set("listener:" + openId + ":offset", jsonObject);
     }
-
 
 
     /**

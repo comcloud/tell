@@ -111,27 +111,30 @@ public class AchieveStampAssignor extends AbstractPartitionAssignor {
      */
     private AchieveStampContext assignContext(Map<String, Integer> partitionsPerTopic) {
         //循环变量
-        AtomicInteger numPartitionsForTopic = new AtomicInteger(partitionsPerTopic.get(CommonConstant.ACHIEVE_STAMP_TOPIC));
+        int numPartitionsForTopic = partitionsPerTopic.get(CommonConstant.ACHIEVE_STAMP_TOPIC);
+
         //如果分区数小于需要的分区数，说明不够分配，抛出错误日志
-        if (numPartitionsForTopic.get() < AchieveStampEnum.values().length - 1) {
+        if (numPartitionsForTopic < AchieveStampEnum.values().length - 1) {
             log.error("分区数小于需要的分区数！！！");
         }
         Map<String, List<TopicPartition>> typePartitions = achieveStampContext.assignment;
         //拿到所有的这些topic partition
-        List<TopicPartition> partitions = AbstractPartitionAssignor.partitions(CommonConstant.ACHIEVE_STAMP_TOPIC, numPartitionsForTopic.get());
+        List<TopicPartition> partitions = AbstractPartitionAssignor.partitions(CommonConstant.ACHIEVE_STAMP_TOPIC, numPartitionsForTopic);
         //最小分区索引，为0
         int minPartitionIndex = 0;
         //循环到分配完成
-        while (numPartitionsForTopic.get() >= minPartitionIndex) {
+        for (AtomicInteger partitionIndex = new AtomicInteger(numPartitionsForTopic - 1); partitionIndex.get() >= minPartitionIndex; ) {
             //将每个位置分配给他的类型
             Arrays.stream(AchieveStampEnum.values())
                     .filter(achieveStampEnum -> Boolean.FALSE.equals(achieveStampEnum.equals(AchieveStampEnum.EMPTY_TYPE)))
                     .forEach(achieveStampEnum -> {
-                        if (numPartitionsForTopic.get() < minPartitionIndex) {
+                        //可被分配的分区数已经小于最小分区索引直接结束
+                        if (partitionIndex.get() < minPartitionIndex) {
                             return;
                         }
                         typePartitions.compute(achieveStampEnum.getGroupId(), (groupId, partitionIndexList) -> {
-                            TopicPartition topicPartition = partitions.get(numPartitionsForTopic.getAndIncrement());
+                            //获取对应索引位置的分区
+                            TopicPartition topicPartition = partitions.get(partitionIndex.getAndDecrement());
                             if (partitionIndexList == null) {
                                 return Lists.newArrayList(topicPartition);
                             } else {
