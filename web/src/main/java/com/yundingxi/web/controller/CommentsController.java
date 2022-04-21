@@ -1,7 +1,7 @@
 package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.response.Result;
 import com.yundingxi.dao.model.Comments;
 import com.yundingxi.model.vo.CommentVo;
 import com.yundingxi.biz.service.CommentsService;

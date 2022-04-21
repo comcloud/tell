@@ -1,6 +1,6 @@
 package com.yundingxi.web.controller;
 
-import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.response.Result;
 import com.yundingxi.model.vo.AchieveVo;
 import com.yundingxi.model.vo.StampVo;
 import com.yundingxi.biz.service.AchieveService;

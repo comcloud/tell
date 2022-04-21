@@ -5,11 +5,11 @@ import java.util.*;
 import com.yundingxi.biz.service.BeautyArticleService;
 import com.yundingxi.common.model.enums.FileEnums;
 import com.yundingxi.common.model.enums.redis.RedisEnums;
-import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.redis.RedisUtil;
 import com.yundingxi.common.util.FileUtil;
 import com.yundingxi.common.util.ReptileUtils;
-import com.yundingxi.common.util.Result;
-import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.common.util.response.Result;
+import com.yundingxi.common.util.response.ResultGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;

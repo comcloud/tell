@@ -2,7 +2,7 @@ package com.yundingxi.biz.service;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.common.util.ModelUtil;
-import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.response.Result;
 import com.yundingxi.dao.model.User;
 import com.yundingxi.model.vo.HistoryDataVo;
 import com.yundingxi.model.vo.ProfileNumVo;

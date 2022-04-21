@@ -2,9 +2,9 @@ package com.yundingxi.biz.service.Impl;
 
 
 import com.yundingxi.biz.service.AchieveService;
-import com.yundingxi.common.redis.RedisUtil;
-import com.yundingxi.common.util.Result;
-import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.common.util.redis.RedisUtil;
+import com.yundingxi.common.util.response.Result;
+import com.yundingxi.common.util.response.ResultGenerator;
 import com.yundingxi.dao.mapper.AchieveMapper;
 import com.yundingxi.dao.model.Achieve;
 import com.yundingxi.model.vo.AchieveVo;

@@ -2,7 +2,7 @@ package com.yundingxi.biz.service;
 
 
 
-import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.response.Result;
 import com.yundingxi.dao.model.UserStamp;
 import com.yundingxi.model.vo.StampVo;
 

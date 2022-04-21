@@ -1,5 +1,6 @@
-package com.yundingxi.common.util;
+package com.yundingxi.common.util.response;
 
+import com.yundingxi.common.util.response.Result;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;

@@ -1,11 +1,8 @@
 package com.yundingxi.web.component;
 
-import com.alibaba.fastjson.JSONObject;
-import com.yundingxi.biz.service.AchieveService;
 import com.yundingxi.biz.service.LetterService;
 import com.yundingxi.biz.service.TaskService;
 import com.yundingxi.biz.service.UserService;
-import com.yundingxi.common.redis.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

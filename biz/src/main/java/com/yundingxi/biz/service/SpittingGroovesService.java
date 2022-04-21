@@ -1,7 +1,7 @@
 package com.yundingxi.biz.service;
 
 import com.github.pagehelper.PageInfo;
-import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.response.Result;
 import com.yundingxi.dao.model.SpittingGrooves;
 import com.yundingxi.model.vo.SpittingGroovesVo;
 import org.apache.ibatis.annotations.Param;

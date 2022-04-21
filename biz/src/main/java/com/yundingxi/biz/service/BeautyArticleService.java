@@ -1,7 +1,7 @@
 package com.yundingxi.biz.service;
 
 
-import com.yundingxi.common.util.Result;
+import com.yundingxi.common.util.response.Result;
 
 import java.util.List;
 import java.util.Map;

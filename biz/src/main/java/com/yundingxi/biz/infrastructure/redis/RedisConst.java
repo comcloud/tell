@@ -1,4 +1,4 @@
-package com.yundingxi.common.redis;
+package com.yundingxi.biz.infrastructure.redis;
 
 /**
  * redis常量类

@@ -1,4 +1,4 @@
-package com.yundingxi.common.util;
+package com.yundingxi.common.util.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

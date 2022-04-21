@@ -2,7 +2,7 @@ package com.yundingxi.web.configuration.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yundingxi.biz.model.UserBehaviorEvent;
-import com.yundingxi.common.redis.RedisUtil;
+import com.yundingxi.common.util.redis.RedisUtil;
 import com.yundingxi.dao.mapper.LetterMapper;
 import com.yundingxi.dao.model.Letter;
 import com.yundingxi.model.vo.IndexLetterVo;

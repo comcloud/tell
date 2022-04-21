@@ -1,9 +1,9 @@
 package com.yundingxi.biz.service.Impl;
 
 import com.yundingxi.biz.service.StampService;
-import com.yundingxi.common.redis.RedisUtil;
-import com.yundingxi.common.util.Result;
-import com.yundingxi.common.util.ResultGenerator;
+import com.yundingxi.common.util.redis.RedisUtil;
+import com.yundingxi.common.util.response.Result;
+import com.yundingxi.common.util.response.ResultGenerator;
 import com.yundingxi.dao.mapper.StampMapper;
 import com.yundingxi.dao.model.Stamp;
 import com.yundingxi.dao.model.UserStamp;

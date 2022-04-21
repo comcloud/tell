@@ -4,8 +4,7 @@ package com.yundingxi.biz.service.Impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yundingxi.biz.service.AchieveService;
 import com.yundingxi.biz.service.TaskService;
-import com.yundingxi.common.redis.RedisUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yundingxi.common.util.redis.RedisUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
