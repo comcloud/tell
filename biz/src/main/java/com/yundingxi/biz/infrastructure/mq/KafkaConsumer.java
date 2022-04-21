@@ -1,7 +1,7 @@
 package com.yundingxi.biz.infrastructure.mq;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yundingxi.biz.model.AchieveStampMessage;
+import com.yundingxi.biz.model.KafkaMessage;
 import com.yundingxi.biz.service.TaskService;
 import com.yundingxi.common.util.redis.RedisUtil;
 import com.yundingxi.dao.mapper.AchieveMapper;
@@ -68,13 +68,13 @@ public class KafkaConsumer {
      * topics：消费的消息队列的topic
      */
     @KafkaListener(containerFactory = "kafkaBatchListener", clientIdPrefix = LETTER, topics = {ACHIEVE_STAMP_TOPIC})
-    public void letterAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends LetterStorageDto>>> records, Acknowledgment ack) {
+    public void letterAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends KafkaMessage<? extends LetterStorageDto>>> records, Acknowledgment ack) {
 
         try {
             records.forEach(record -> {
                 log.info("receive {} msg:{}", record.topic(), record.value().toString());
-                AchieveStampMessage<? extends LetterStorageDto> achieveStampMessage = record.value();
-                LetterStorageDto letterStorageDto = achieveStampMessage.getObject();
+                KafkaMessage<? extends LetterStorageDto> kafkaMessage = record.value();
+                LetterStorageDto letterStorageDto = kafkaMessage.getObject();
                 String openId = letterStorageDto.getOpenId();
                 String content = letterStorageDto.getContent();
                 consumeMessage(openId, LETTER, content);
@@ -90,13 +90,13 @@ public class KafkaConsumer {
 
 
     @KafkaListener( containerFactory = "kafkaBatchListener", clientIdPrefix = DIARY, topics = {ACHIEVE_STAMP_TOPIC})
-    public void diaryAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends DiaryDto>>> records, Acknowledgment ack) {
+    public void diaryAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends KafkaMessage<? extends DiaryDto>>> records, Acknowledgment ack) {
 
         try {
             records.forEach(record -> {
                 log.info("receive {} msg:{}", record.topic(), record.value().toString());
-                AchieveStampMessage<? extends DiaryDto> achieveStampMessage = record.value();
-                DiaryDto diaryDto = achieveStampMessage.getObject();
+                KafkaMessage<? extends DiaryDto> kafkaMessage = record.value();
+                DiaryDto diaryDto = kafkaMessage.getObject();
                 consumeMessage(diaryDto.getOpenId(), DIARY, diaryDto.getContent());
             });
         } catch (Exception e) {
@@ -110,13 +110,13 @@ public class KafkaConsumer {
     }
 
     @KafkaListener(containerFactory = "kafkaBatchListener", clientIdPrefix = SPIT, topics = {ACHIEVE_STAMP_TOPIC})
-    public void spitAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends SpittingGrooves>>> records, Acknowledgment ack) {
+    public void spitAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends KafkaMessage<? extends SpittingGrooves>>> records, Acknowledgment ack) {
 
         try {
             records.forEach(record -> {
                 log.info("receive {} msg:{}", record.topic(), record.value().toString());
-                AchieveStampMessage<? extends SpittingGrooves> achieveStampMessage = record.value();
-                SpittingGrooves spittingGrooves = achieveStampMessage.getObject();
+                KafkaMessage<? extends SpittingGrooves> kafkaMessage = record.value();
+                SpittingGrooves spittingGrooves = kafkaMessage.getObject();
                 consumeMessage(spittingGrooves.getOpenId(), SPIT, spittingGrooves.getContent());
             });
         } catch (Exception e) {
@@ -130,13 +130,13 @@ public class KafkaConsumer {
     }
 
     @KafkaListener( containerFactory = "kafkaBatchListener", clientIdPrefix = REPLY, topics = {ACHIEVE_STAMP_TOPIC})
-    public void replyAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends AchieveStampMessage<? extends LetterReplyDto>>> records, Acknowledgment ack) {
+    public void replyAchieveAndStampConsumer(List<ConsumerRecord<?, ? extends KafkaMessage<? extends LetterReplyDto>>> records, Acknowledgment ack) {
 
         try {
             records.forEach(record -> {
                 log.info("receive {} msg:{}", record.topic(), record.value().toString());
-                AchieveStampMessage<? extends LetterReplyDto> achieveStampMessage = record.value();
-                LetterReplyDto replyDto = achieveStampMessage.getObject();
+                KafkaMessage<? extends LetterReplyDto> kafkaMessage = record.value();
+                LetterReplyDto replyDto = kafkaMessage.getObject();
                 consumeMessage(replyDto.getSender(), REPLY, replyDto.getMessage());
             });
         } catch (Exception e) {

@@ -2,7 +2,7 @@ package com.yundingxi.web.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.yundingxi.biz.infrastructure.mq.KafkaProducer;
-import com.yundingxi.biz.model.AchieveStampMessage;
+import com.yundingxi.biz.model.KafkaMessage;
 import com.yundingxi.common.model.constant.CommonConstant;
 import com.yundingxi.common.model.enums.AchieveStampEnum;
 import com.yundingxi.common.util.response.Result;
@@ -41,7 +41,7 @@ public class SpittingGroovesController {
     private ApplicationEventPublisher publisher;
 
     @Resource
-    private KafkaProducer<AchieveStampMessage<?>> kafkaProducer;
+    private KafkaProducer<KafkaMessage<?>> kafkaProducer;
 
     /**
      * 插入一条记录
@@ -55,7 +55,7 @@ public class SpittingGroovesController {
         String success = "发布成功";
         if (success.equals(result.getMessage())) {
 //            publisher.publishEvent(new UserBehaviorEvent<>(this, entity));
-            kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.SPIT_TYPE, AchieveStampMessage.builder().object(entity).build());
+            kafkaProducer.sendMessage(CommonConstant.ACHIEVE_STAMP_TOPIC, AchieveStampEnum.SPIT_TYPE, KafkaMessage.builder().object(entity).build());
         }
         return result;
     }
