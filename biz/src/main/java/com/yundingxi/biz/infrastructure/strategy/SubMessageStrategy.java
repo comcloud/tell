@@ -10,7 +10,7 @@ import com.yundingxi.model.vo.submessage.SubMessageParam;
  * @Author rayss
  * @Datetime 2021/5/29 8:52 上午
  */
-
+@FunctionalInterface
 public interface SubMessageStrategy {
     /**
      * 处理订阅消息，将其
@@ -18,4 +18,13 @@ public interface SubMessageStrategy {
      * @param reserveParam 预留参数
      */
     void processSubMessage(SubMessageParam param, String... reserveParam);
+
+
+    /**
+     * 作为空值使用
+     * @return 空值策略
+     */
+    static SubMessageStrategy nullSubMessageStrategy() {
+        return (param, reserveParam) -> { };
+    }
 }

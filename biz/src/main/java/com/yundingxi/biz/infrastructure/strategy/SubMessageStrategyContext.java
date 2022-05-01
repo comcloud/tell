@@ -7,11 +7,17 @@ import com.yundingxi.model.vo.submessage.SubMessageCommentDataVo;
 import com.yundingxi.model.vo.submessage.SubMessageParam;
 import com.yundingxi.model.vo.submessage.SubMessageReplyVo;
 import com.yundingxi.model.vo.submessage.SubMessageValueVo;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @version v1.0
@@ -19,8 +25,27 @@ import java.util.Map;
  * @Author rayss
  * @Datetime 2021/5/29 9:08 上午
  */
+@Component
+public class SubMessageStrategyContext implements InitializingBean {
 
-public class SubMessageStrategyContext {
+    /**
+     * 策略缓存
+     */
+    private static final Map<String, SubMessageStrategy> STRATEGY_CACHE = new HashMap<>();
+
+    @Override
+    public void afterPropertiesSet() {
+        STRATEGY_CACHE.putAll(SubMessageTemplateEnum.getAllClazz().entrySet()
+                .stream().collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> {
+                            try {
+                                return (SubMessageStrategy) Class.forName(entry.getValue()).newInstance();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                return SubMessageStrategy.nullSubMessageStrategy();
+                            }
+                        })));
+    }
 
     /**
      * 根据模版ID选择使用哪中方式执行订阅消息
@@ -29,22 +54,19 @@ public class SubMessageStrategyContext {
      * @return 订阅消息策略模式接口
      */
     public static SubMessageStrategy getSubMessageStrategy(WeChatEnum templateId) {
-        Map<String, String> allClazz = SubMessageTemplateEnum.getAllClazz();
-        String clazz = allClazz.get(templateId.getValue());
-        SubMessageStrategy strategy = null;
-        try {
-            strategy = (SubMessageStrategy) Class.forName(clazz).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
+        if (Objects.isNull(templateId)) {
+            return SubMessageStrategy.nullSubMessageStrategy();
         }
-        return strategy;
+        return STRATEGY_CACHE.get(templateId.getValue());
     }
+
 
     /**
      * 回信订阅消息策略实现类
      */
     @SuppressWarnings("unused")
     public static class ReplySubMessageStrategy implements SubMessageStrategy {
+
 
         @Override
         public void processSubMessage(SubMessageParam param, String... reserveParam) {

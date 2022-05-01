@@ -485,7 +485,7 @@ public final class RedisUtil {
 
     public Boolean zSSet(String key, Object value, double score) {
         try {
-            return template.opsForZSet().add(key, value, 2);
+            return template.opsForZSet().add(key, value, score);
         } catch (Exception e) {
             log.error(key, e);
             return false;

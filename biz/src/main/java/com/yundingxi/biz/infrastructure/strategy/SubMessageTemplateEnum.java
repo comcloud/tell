@@ -1,7 +1,10 @@
 package com.yundingxi.biz.infrastructure.strategy;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @version v1.0
@@ -37,10 +40,8 @@ public enum SubMessageTemplateEnum {
     }
 
     public static Map<String, String> getAllClazz() {
-        Map<String, String> map = new HashMap<>(4);
-        for (SubMessageTemplateEnum value : SubMessageTemplateEnum.values()) {
-            map.put(value.getTemplateId(), value.getClassName());
-        }
-        return map;
+        return Arrays.stream(SubMessageTemplateEnum.values())
+                .collect(Collectors.toMap(subMessageTemplateEnum -> subMessageTemplateEnum.templateId
+                        , subMessageTemplateEnum -> subMessageTemplateEnum.className));
     }
 }
